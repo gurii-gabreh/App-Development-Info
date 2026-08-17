@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — アーキテクチャ</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px);
+    line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink);
+  }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .lede a { color: var(--accent-strong); }
+
+  section.topic { margin: 0 0 64px; padding-top: 44px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 28px; }
+
+  figure { margin: 0 0 26px; padding: 22px 20px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .diagram-wrap { overflow-x: auto; }
+  figure svg { display: block; margin: 0 auto; width: 100%; max-width: 100%; height: auto; color: var(--ink-soft); }
+  figcaption { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 12px; font-family: var(--mono); letter-spacing: 0.01em; }
+
+  .cat-line { stroke: var(--accent); }
+  .dim-line { stroke: var(--line-strong); }
+
+  .cat-block { margin: 0 0 28px; }
+  .cat-block:last-child { margin-bottom: 0; }
+  .cat-block-head { display: flex; align-items: baseline; gap: 10px; margin: 0 0 12px; }
+  .cat-block-head .cat-name {
+    font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent-strong);
+    background: var(--accent-soft); border-radius: 5px; padding: 2px 8px; white-space: nowrap;
+  }
+  .cat-block-head .cat-q { font-size: 13px; color: var(--ink-faint); }
+
+  .concept-grid { display: grid; gap: 14px; margin: 0; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13.5px; font-weight: 700; margin: 0 0 7px; color: var(--ink); }
+  .concept-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 7px; }
+  .concept-card p.ex { padding-top: 7px; border-top: 1px dashed var(--line); }
+  .concept-card p.ex .ex-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); margin-right: 4px; }
+  .concept-card code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .compare-note { font-size: 14px; color: var(--ink-soft); max-width: 58ch; margin: 0; }
+  .compare-note strong { color: var(--ink); font-weight: 600; }
+
+  .example { display: flex; gap: 12px; padding: 16px 18px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 26px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+  .example p + p { margin-top: 8px; }
+  .example strong { color: var(--ink); font-weight: 600; }
+  .example code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .why { margin: 0 0 26px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 16px; font-weight: 600; margin: 0 0 10px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+  .why ul { margin: 8px 0 12px; padding-left: 20px; font-size: 13.5px; color: var(--ink-soft); }
+  .why li { margin-bottom: 4px; }
+  .why .q-map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0 14px; }
+  .why .q-map div { background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 7px; padding: 9px 11px; font-size: 12.5px; color: var(--ink-soft); }
+  .why .q-map strong { display: block; font-family: var(--mono); font-size: 11px; color: var(--accent-strong); margin-bottom: 3px; }
+  @media (max-width: 560px) { .why .q-map { grid-template-columns: 1fr; } }
+
+  .recap { margin: 26px 0 0; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .closing { margin-top: 8px; padding: 20px 22px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 14px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 一覧に戻る</a>
+  <p class="eyebrow">学習資料 — アーキテクチャ</p>
+  <h1>学習資料: アーキテクチャ</h1>
+  <p class="lede">
+    デザインパターン・SOLID・Clean Architecture・モノリス vs マイクロサービスの解説。
+    このページは<strong>学んだ内容そのもの(参照用の資料)</strong>で、自分の理解や正誤の記録は
+    <a href="../records/architecture.html">学習記録ページ</a>に分けて残している。
+  </p>
+
+  <div class="why" style="margin-bottom:44px;">
+    <h3>そもそも、アーキテクチャとは何か</h3>
+    <p>
+      ソフトウェアを実現するための<strong>技術的な構造の設計</strong>のこと。「何を作るか」が決まった後に、
+      それを「どう作るか」を決める設計図にあたる。システム全体の構成(モノリスかマイクロサービスか、層構造をどうするか)から、
+      個々のクラスの設計(デザインパターン、SOLID)まで、規模の異なる複数のレベルにまたがる概念。
+    </p>
+    <p><strong>要件定義との違い</strong>: 要件定義は「何を作るか」(例: 「ユーザーは商品を検索し注文できる」)を決める工程で、
+      アーキテクチャはその要件を技術的にどう実現するか(例: 「注文処理をどう層分けするか」「決済方法を後で差し替えやすくするにはどう抽象化するか」)を決める工程。
+      要件定義が先、アーキテクチャはそれを受けた技術側の設計にあたる。</p>
+    <p><strong>基本設計・詳細設計との関係</strong>: 伝統的な開発工程(要件定義→基本設計→詳細設計→実装)に当てはめると、アーキテクチャは1つの工程には収まらず、次のように2つにまたがる。</p>
+    <ul>
+      <li><strong>システム全体の構造</strong>(モノリスvsマイクロサービス、Clean Architectureの層構成)は<strong>基本設計(外部設計)</strong>に近い。システム構成図として基本設計書に載ることが多い</li>
+      <li><strong>クラス・モジュール単位の設計</strong>(デザインパターン、SOLID)は<strong>詳細設計(内部設計)</strong>に近い。クラス図として詳細設計書に載ることが多い</li>
+    </ul>
+    <p>ただし基本設計と詳細設計の境界の引き方は会社・プロジェクトによって幅があるため、これはあくまで一般的な目安。</p>
+  </div>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">01</span>
+      <h2>デザインパターンの3系統</h2>
+    </div>
+    <p class="topic-lede">
+      GoFの23パターンは「何を作るか」「どう組み立てるか」「どうやり取りするか」の3系統に分かれる。
+      各系統を代表する1パターンだけ、仕組みを図にした。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ存在するのか</h3>
+      <p>
+        1994年、4人のエンジニア(通称GoF)が実際の現場のコードを大量に観察して気づいたのは、
+        <strong>全く違う業務ドメインのプロジェクトなのに、同じ形の設計問題が何度も繰り返し出てくる</strong>という事実だった。
+        「インスタンスは1つだけにしたい」「新機能を足したいが既存コードは触りたくない」「外部ライブラリと形が合わない」
+        「1つの状態変化を複数箇所へ自動で伝えたい」——こうした問題に、GoFは名前をつけて23種類に整理した。
+        名前がつけば「ここはObserverでいこう」の一言で相手に解決策の形が伝わる。将棋の定跡や料理の技法名と同じで、
+        <strong>名前=共有できる語彙であること</strong>がパターンの本体の価値。
+      </p>
+      <p>3系統は、設計で必ず直面する3つの問いにそのまま対応している。</p>
+      <div class="q-map">
+        <div><strong>生成</strong>オブジェクトをどう作るか。<code>new</code>を至る所に直書きすると、実装を差し替えたい時に全箇所を探す羽目になる</div>
+        <div><strong>構造</strong>オブジェクト同士をどう組み合わせるか。形の合わない外部ライブラリ/レガシーコードとどう無理なく繋ぐか</div>
+        <div><strong>振る舞い</strong>オブジェクト同士がどうやり取りするか。育つにつれ絡まっていく通信経路をどう整理するか</div>
+      </div>
+      <p>
+        必要性が効いてくるのは2つの場面。<strong>他のエンジニアとの会話</strong>(レビューで「Strategyで書けない?」に
+        ついていけるか)と、<strong>AIが出したコードの設計を評価する力</strong>(過剰設計か妥当かを見抜く語彙があるか)。
+        「作れる」を「説明できる・議論できる」に変えることが、このセクションの目的そのもの。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 950 220" role="img" aria-label="生成パターンの例としてFactory、構造パターンの例としてAdapter、振る舞いパターンの例としてObserverの仕組みを示す3枚組の図。3枚は横に並び、互いに重ならない">
+          <defs>
+            <marker id="arrow1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <g transform="translate(0,0)">
+            <text x="150" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent-strong)" font-family="var(--mono)">生成 — 例：Factory</text>
+            <rect x="10" y="90" width="70" height="34" rx="6" fill="none" stroke="currentColor"/>
+            <text x="45" y="112" text-anchor="middle" font-size="12">Client</text>
+            <line x1="80" y1="107" x2="128" y2="107" stroke="currentColor" marker-end="url(#arrow1)"/>
+            <text x="104" y="98" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">create()</text>
+            <rect x="130" y="90" width="76" height="34" rx="17" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="168" y="112" text-anchor="middle" font-size="12" fill="var(--accent-strong)">Factory</text>
+            <line x1="206" y1="100" x2="228" y2="65" class="cat-line" marker-end="url(#arrow1)"/>
+            <line x1="206" y1="107" x2="228" y2="107" class="cat-line" marker-end="url(#arrow1)"/>
+            <line x1="206" y1="114" x2="228" y2="149" class="cat-line" marker-end="url(#arrow1)"/>
+            <rect x="230" y="50" width="68" height="26" rx="5" fill="none" stroke="var(--line-strong)"/>
+            <text x="264" y="67" text-anchor="middle" font-size="11">ProductA</text>
+            <rect x="230" y="94" width="68" height="26" rx="5" fill="none" stroke="var(--line-strong)"/>
+            <text x="264" y="111" text-anchor="middle" font-size="11">ProductB</text>
+            <rect x="230" y="138" width="68" height="26" rx="5" fill="none" stroke="var(--line-strong)"/>
+            <text x="264" y="155" text-anchor="middle" font-size="11">ProductC</text>
+            <text x="150" y="195" text-anchor="middle" font-size="11" fill="var(--ink-faint)">どれを作るかはFactory内部が決める</text>
+          </g>
+
+          <g transform="translate(325,0)">
+            <text x="143" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent-strong)" font-family="var(--mono)">構造 — 例：Adapter</text>
+            <rect x="0" y="90" width="70" height="34" rx="6" fill="none" stroke="currentColor"/>
+            <text x="35" y="112" text-anchor="middle" font-size="12">Client</text>
+            <line x1="70" y1="107" x2="98" y2="107" stroke="currentColor" marker-end="url(#arrow1)"/>
+            <rect x="100" y="90" width="76" height="34" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="138" y="112" text-anchor="middle" font-size="12" fill="var(--accent-strong)">Adapter</text>
+            <line x1="176" y1="107" x2="204" y2="107" class="cat-line" marker-end="url(#arrow1)"/>
+            <rect x="206" y="90" width="80" height="34" rx="6" fill="none" stroke="var(--line-strong)"/>
+            <text x="246" y="112" text-anchor="middle" font-size="12">Legacy</text>
+            <text x="143" y="164" text-anchor="middle" font-size="11" fill="var(--ink-faint)">形の違うClientとLegacyを橋渡し</text>
+          </g>
+
+          <g transform="translate(650,0)">
+            <text x="105" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent-strong)" font-family="var(--mono)">振る舞い — 例：Observer</text>
+            <rect x="65" y="40" width="80" height="30" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="105" y="61" text-anchor="middle" font-size="12" fill="var(--accent-strong)">Subject</text>
+            <line x1="90" y1="70" x2="30" y2="130" class="cat-line" marker-end="url(#arrow1)"/>
+            <line x1="105" y1="70" x2="105" y2="130" class="cat-line" marker-end="url(#arrow1)"/>
+            <line x1="120" y1="70" x2="180" y2="130" class="cat-line" marker-end="url(#arrow1)"/>
+            <text x="60" y="100" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">notify()</text>
+            <rect x="0" y="132" width="60" height="28" rx="5" fill="none" stroke="var(--line-strong)"/>
+            <text x="30" y="151" text-anchor="middle" font-size="11">Observer1</text>
+            <rect x="75" y="132" width="60" height="28" rx="5" fill="none" stroke="var(--line-strong)"/>
+            <text x="105" y="151" text-anchor="middle" font-size="11">Observer2</text>
+            <rect x="150" y="132" width="60" height="28" rx="5" fill="none" stroke="var(--line-strong)"/>
+            <text x="180" y="151" text-anchor="middle" font-size="11">Observer3</text>
+            <text x="105" y="188" text-anchor="middle" font-size="11" fill="var(--ink-faint)">状態が変わったら購読者全員に自動通知</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>それぞれの系統を代表する1パターンの、実際の仕組み</figcaption>
+    </figure>
+
+    <div class="cat-block">
+      <div class="cat-block-head"><span class="cat-name">生成</span><span class="cat-q">何を作るか、をどう決めるかの型</span></div>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h4>Factory</h4>
+          <p>呼び出す側は「何が欲しいか」だけを伝え、具体的にどのクラスのインスタンスを作るかはFactory側が決める。生成ロジックを1箇所にまとめておけば、後で作るものの種類が増えても呼び出し側のコードは変えずに済む。</p>
+          <p class="ex"><span class="ex-tag">身近な例</span>Reactの<code>React.createElement()</code>。JSXを書くと裏でこの関数が呼ばれ、具体的なDOM要素の生成方法を意識せずにUI部品を作れる。</p>
+        </div>
+        <div class="concept-card">
+          <h4>Singleton</h4>
+          <p>アプリの中でそのクラスのインスタンスが絶対に1つしか存在してはいけないことを保証する。複数存在すると不整合が起きるもの(設定情報、DB接続プールなど)に使う。</p>
+          <p class="ex"><span class="ex-tag">身近な例</span>アプリ全体の設定情報や、DB接続プールを管理するオブジェクト。2つ以上作られると、片方だけ設定が古いまま、といった食い違いが起きる。</p>
+        </div>
+        <div class="concept-card">
+          <h4>Builder</h4>
+          <p>コンストラクタの引数が多く複雑になりすぎるオブジェクトを、メソッドを1つずつ呼びながら段階的に組み立てる。どの項目を指定するかを呼び出し側が選べる。</p>
+          <p class="ex"><span class="ex-tag">身近な例</span><code>new Pizza().setSize("L").addTopping("cheese").build()</code>のようなメソッドチェーン。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-block-head"><span class="cat-name">構造</span><span class="cat-q">形の違うもの同士をどう組み合わせるか</span></div>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h4>Adapter</h4>
+          <p>インターフェース(呼び出し方)の形が合わない2つのコードを、間に変換役を挟むことで無理なく繋ぐ。既存コードにも外部ライブラリにも手を入れずに済む。</p>
+          <p class="ex"><span class="ex-tag">身近な例</span>形の違う電源プラグを、変換アダプタ1つで既存のコンセントに挿せるようにするのと同じ発想。</p>
+        </div>
+        <div class="concept-card">
+          <h4>Facade</h4>
+          <p>内部で複数のクラスが複雑にやり取りしている処理に対して、シンプルな窓口を1つだけ用意する。呼び出す側は内部の複雑さを知らなくていい。</p>
+          <p class="ex"><span class="ex-tag">身近な例</span><code>fetch()</code>一発の裏でTCP接続やヘッダ処理など多数の処理が動いているが、呼ぶ側はそれを意識しない。</p>
+        </div>
+        <div class="concept-card">
+          <h4>Decorator</h4>
+          <p>継承でクラスの数を増やさずに、既存のオブジェクトへ機能を後から重ね着させる。どの機能を組み合わせるかを動的に変えられる。</p>
+          <p class="ex"><span class="ex-tag">身近な例</span>Reactの高階コンポーネント(HOC)や、<code>withLogging(withAuth(Base))</code>のような関数の合成。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-block-head"><span class="cat-name">振る舞い</span><span class="cat-q">オブジェクト同士がどうやり取りするか</span></div>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h4>Observer</h4>
+          <p>状態を持つ側(Subject)が、状態の変化を購読者(Observer)全員へ自動で知らせる。通知する側は、誰が聞いているかを具体的に知らなくていい。</p>
+          <p class="ex"><span class="ex-tag">身近な例</span>DOMの<code>addEventListener("click", ...)</code>は、「クリックというイベントを購読して、発生したら通知を受ける」Observerパターンそのもの。</p>
+        </div>
+        <div class="concept-card">
+          <h4>Strategy</h4>
+          <p>アルゴリズムや処理の中身をまるごと差し替え可能にする。呼び出す側のコードを変えずに、中身だけ入れ替えられる。</p>
+          <p class="ex"><span class="ex-tag">身近な例</span>決済処理をStripeからPayPalへ差し替える例(下のSOLID・D原則の節と同じ形)。</p>
+        </div>
+        <div class="concept-card">
+          <h4>Command</h4>
+          <p>「これから実行する操作」そのものを、その場で実行するのではなくオブジェクトとして扱う。後で実行したり、取り消したり、キューに並べたりできるようになる。</p>
+          <p class="ex"><span class="ex-tag">身近な例</span>Undo/Redo機能。実行した操作を履歴として保存しておき、逆再生することで取り消す。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>デザインパターンは「よくある設計問題」に名前をつけた<strong>共有語彙</strong>。実装力そのものより、他者との会話や設計評価のために覚える</li>
+        <li>3系統は設計の3つの局面に対応: <strong>生成</strong>(何を作るか)・<strong>構造</strong>(どう組み合わせるか)・<strong>振る舞い</strong>(どうやり取りするか)</li>
+        <li>各系統の代表例: 生成=Factory/Singleton/Builder、構造=Adapter/Facade/Decorator、振る舞い=Observer/Strategy/Command</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">02</span>
+      <h2>SOLID原則の5つ</h2>
+    </div>
+    <p class="topic-lede">
+      SOLIDは、1つ1つのクラスをどう設計すれば「変更に強いコード」になるかをまとめた5つの原則。
+      デザインパターンが「よくある問題への具体的な解決の型」だとすれば、SOLIDはもっと抽象度の高い、
+      設計そのものの良し悪しを判断するための基準にあたる。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ存在するのか</h3>
+      <p>
+        1990年代後半〜2000年代、ロバート・C・マーティン(通称Uncle Bob)が、
+        <strong>「オブジェクト指向で書いたはずなのに、変更のたびに壊れやすいコード」に共通する原因</strong>を5つに整理してまとめたのがSOLID。
+        コードは一度書いて終わりではなく、その後も何度も変更される。変更のたびに影響範囲が想定より広がったり、
+        直したつもりのない箇所まで壊れたりするのを防ぐための指針にあたる。
+      </p>
+      <p>
+        5つのうち図にして伝わりやすいのは「D(依存性逆転)」だけで、矢印の向きが変わる、その一点が全て。
+        残り4つは文章の定義そのものが要点なので、下では1つずつ平易な言葉と具体例で説明する。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 620 190" role="img" aria-label="依存性逆転の原則。適用前は上位モジュールが下位モジュールに直接依存し、適用後は両方が共通の抽象インターフェースに依存する向きに変わることを示す比較図">
+          <defs>
+            <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <text x="140" y="20" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--ink-faint)">適用前</text>
+          <rect x="60" y="35" width="160" height="34" rx="6" fill="none" stroke="currentColor"/>
+          <text x="140" y="57" text-anchor="middle" font-size="12">High-level Module</text>
+          <line x1="140" y1="69" x2="140" y2="106" class="dim-line" marker-end="url(#arrow2)"/>
+          <text x="176" y="91" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">直接依存</text>
+          <rect x="60" y="108" width="160" height="34" rx="6" fill="none" stroke="var(--line-strong)"/>
+          <text x="140" y="130" text-anchor="middle" font-size="12">Low-level Module</text>
+
+          <line x1="255" y1="95" x2="310" y2="95" stroke="var(--ink-faint)" marker-end="url(#arrow2)"/>
+          <text x="282" y="83" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">DIP適用</text>
+
+          <text x="470" y="20" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--accent-strong)">適用後</text>
+          <rect x="390" y="20" width="160" height="34" rx="6" fill="none" stroke="currentColor"/>
+          <text x="470" y="42" text-anchor="middle" font-size="12">High-level Module</text>
+          <rect x="410" y="88" width="120" height="30" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-dasharray="4 3"/>
+          <text x="470" y="107" text-anchor="middle" font-size="11.5" fill="var(--accent-strong)">Interface(抽象)</text>
+          <rect x="390" y="145" width="160" height="34" rx="6" fill="none" stroke="var(--line-strong)"/>
+          <text x="470" y="167" text-anchor="middle" font-size="12">Low-level Module</text>
+          <line x1="470" y1="54" x2="470" y2="86" class="cat-line" marker-end="url(#arrow2)"/>
+          <line x1="470" y1="145" x2="470" y2="120" class="cat-line" marker-end="url(#arrow2)"/>
+          <text x="470" y="182" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">両方が抽象に向かって依存する</text>
+        </svg>
+      </div>
+      <figcaption>矢印の向きが「モジュール→モジュール」から「両方→抽象」に変わる</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>S — 単一責任の原則(Single Responsibility Principle)</h4>
+        <p>1つのクラスが担う役割は1つだけにする。「このクラスを変更する理由」が2つ以上あるなら、実は性質の違う2つの責任を1つのクラスに詰め込んでいる。役割ごとに分ければ、片方を変えてももう片方に影響しない。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>「ユーザー登録」の1クラスが、入力チェック・DB保存・メール送信を全部抱えていると、メール文面を変えたいだけなのにDB保存のコードまで壊すリスクを負う。役割ごとに分ければ、変更の影響範囲が狭くなる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>O — 開放閉鎖の原則(Open/Closed Principle)</h4>
+        <p>新しい機能を追加するときは、既存のコードを直接書き換えるのではなく、コードを「追加」するだけで済むようにする。既存コードを直接触らなければ、既存の動作を壊すリスクも減る。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>支払い方法を増やすたびに既存の<code>processPayment()</code>関数の中身をif文で書き換えていくと、既存のケースを壊すリスクが常につきまとう。新しい支払い方法をクラスとして追加するだけで済む設計にしておけば、既存コードは触らずに済む。</p>
+      </div>
+      <div class="concept-card">
+        <h4>L — リスコフの置換原則(Liskov Substitution Principle)</h4>
+        <p>派生クラス(サブクラス)は、基底クラス(親クラス)が使われている場所にそのまま置き換えても、正しく動作しなければならない。振る舞いの前提が違うクラス同士を、安易に親子関係にしてはいけないことを示す原則。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>「鳥は飛べる」という前提でクラスを作り、それを継承して「ペンギン」クラスを作ると、飛べない鳥がいることでこの原則が壊れる。<code>fly()</code>を呼んだ瞬間にエラーになる、という形で表面化する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>I — インターフェース分離の原則(Interface Segregation Principle)</h4>
+        <p>使わないメソッドへの依存を、クラスに強制しない。1つの巨大なインターフェースを全員に実装させるのではなく、必要な機能ごとに小さなインターフェースへ分ける。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>印刷・スキャン・FAXをまとめた「複合機インターフェース」を全ての実装クラスに強制すると、印刷機能しかない機種にも使わない<code>scan()</code>の実装を書かせることになる。機能ごとに分ければ、使わないものへの依存を強制しない。</p>
+      </div>
+      <div class="concept-card">
+        <h4>D — 依存性逆転の原則(Dependency Inversion Principle)</h4>
+        <p>上位のモジュール(業務ロジックなど)も、下位のモジュール(DBやAPIなど具体的な実装)も、両方とも「抽象(インターフェース)」に依存するようにする。具体的な実装同士が直接依存し合わないようにすることで、片方を差し替えても他方に影響が及ばない。上の図の、矢印の向きが変わる部分がこれにあたる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>決済処理クラスが<code>StripeClient</code>に直接依存していると、後でPayPalも使いたくなった時に決済クラスごと書き直しになる。<code>PaymentGateway</code>という抽象を間に挟んでおけば、実装を差し替えるだけで済む。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>SOLIDは<strong>「変更に強いクラス設計」</strong>を判断するための5つの基準。パターンより抽象度が高い</li>
+        <li><strong>S</strong>単一責任・<strong>O</strong>開放閉鎖・<strong>L</strong>リスコフの置換・<strong>I</strong>インターフェース分離・<strong>D</strong>依存性逆転</li>
+        <li>図で伝わるのは<strong>D</strong>だけ: 矢印の向きが「モジュール→モジュール」から「両方→抽象」に変わる</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">03</span>
+      <h2>Clean Architectureの核心図</h2>
+    </div>
+    <p class="topic-lede">
+      同心円の図そのものが本体。中心がビジネスロジック、外側が技術的な詳細で、
+      依存の矢印はいつも内向き。この1本のルールを図にすると、こうなる。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ存在するのか</h3>
+      <p>
+        ロバート・C・マーティンが2012年頃に提唱した設計思想。似た発想(Hexagonal Architecture、Onion Architectureなど)は
+        それ以前からあったが、<strong>「依存の向きを常に内側(ビジネスロジック)へ揃える」</strong>という1つのルールに
+        集約して整理し直した。目的は、DBやWebフレームワークなど「後から変わりうる技術的な都合」で、
+        アプリ本来の業務ルールまで書き換わってしまう事態を防ぐこと。
+      </p>
+      <p>下の図の4つの層は、それぞれこういう意味を持つ。</p>
+      <ul>
+        <li><strong>Entities(中心)</strong> — 業務ルールそのもの。特定のDBやフレームワークに一切依存しない、純粋なロジック</li>
+        <li><strong>Use Cases</strong> — アプリ固有の処理の流れ(「注文を確定する」など)</li>
+        <li><strong>Interface Adapters</strong> — 中心のロジックと、外側の技術(DB・Web)を橋渡しする層</li>
+        <li><strong>Frameworks &amp; Drivers(外周)</strong> — DB、Webフレームワーク、UIなど、後から差し替え可能な技術的詳細</li>
+      </ul>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 380 380" role="img" aria-label="Clean Architectureの同心円図。内側からEntities、Use Cases、Interface Adapters、Frameworks and Driversの4層があり、依存の矢印は常に外側から内側に向かう" style="max-width:420px">
+          <defs>
+            <marker id="arrow3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+            </marker>
+          </defs>
+          <circle cx="190" cy="190" r="170" fill="none" stroke="var(--line-strong)"/>
+          <circle cx="190" cy="190" r="128" fill="none" stroke="var(--line-strong)"/>
+          <circle cx="190" cy="190" r="86" fill="none" stroke="var(--line-strong)"/>
+          <circle cx="190" cy="190" r="44" fill="var(--accent-soft)" stroke="var(--accent)"/>
+
+          <text x="190" y="186" text-anchor="middle" font-size="13" font-weight="700" fill="var(--accent-strong)">Entities</text>
+          <text x="190" y="201" text-anchor="middle" font-size="10" fill="var(--accent-strong)">業務ルール</text>
+
+          <text x="190" y="119" text-anchor="middle" font-size="12">Use Cases</text>
+          <text x="190" y="73" text-anchor="middle" font-size="11.5">Interface Adapters</text>
+          <text x="190" y="31" text-anchor="middle" font-size="11.5">Frameworks &amp; Drivers</text>
+
+          <line x1="190" y1="24" x2="190" y2="150" class="cat-line" marker-end="url(#arrow3)" stroke-width="1.8"/>
+          <text x="222" y="60" font-size="11" fill="var(--accent-strong)">依存は常に内向き</text>
+        </svg>
+      </div>
+      <figcaption>DB・UI・フレームワークが変わっても、中心のビジネスロジックは影響を受けない</figcaption>
+    </figure>
+
+    <div class="example">
+      <span class="tag">身近な例</span>
+      <div>
+        <p>ECサイトの注文処理で考えると、中心の「注文が確定したら在庫を減らし、確認メールを送る」というルール(Entities/Use Cases)はピュアなロジックのまま。DBをMySQLからPostgreSQLに変えても、決済会社をStripeから別社に変えても(Frameworks & Drivers側の変更)、この中心ロジックは書き換えずに済む — というのがこの図の実利。</p>
+        <p>逆に言えば、業務ロジックのコードの中に<code>SELECT * FROM orders</code>のようなSQL文や、特定のWebフレームワーク固有の書き方が直接混ざっていたら、それはこの図の矢印の向きに反している、という判断基準にもなる。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>ルールは1つだけ: <strong>依存の矢印は常に内側(ビジネスロジック)へ</strong>向く</li>
+        <li>中心のEntities/Use Casesは、DBやフレームワークが変わっても書き換えなくて済む純粋なロジック</li>
+        <li>業務ロジックにSQLやフレームワーク固有の書き方が直接混ざっていたら、矢印の向きに反しているサイン</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">04</span>
+      <h2>モノリス vs マイクロサービス</h2>
+    </div>
+    <p class="topic-lede">
+      アプリの作り方を大きく2つに分けたときの対比。違いは「デプロイ(コードを本番環境に反映する単位)の境界線がいくつあるか」と
+      「その境界を越えるたびにネットワーク通信が挟まるかどうか」。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ知っておく必要があるか</h3>
+      <p>
+        実務では「マイクロサービスにすべきか」という議論が非常によく起きる。しかし流行り言葉だけで判断すると、
+        <strong>小規模なチームがいきなり分散システムの複雑さを背負い込み、かえって開発速度が落ちる</strong>という失敗パターンが多い。
+        両者のトレードオフを知っていることが、チームやサービスの規模に見合わない設計判断を避ける助けになる。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 660 230" role="img" aria-label="モノリスは1つのデプロイ境界の中にUI、ロジック、DBがまとまっている。マイクロサービスは3つの独立したサービスに分かれ、それぞれの間をネットワーク越しのAPI呼び出しがつなぐ、という比較図">
+          <defs>
+            <marker id="arrow4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <text x="130" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--ink-faint)">モノリス — デプロイ境界は1つ</text>
+          <rect x="20" y="30" width="220" height="150" rx="8" fill="none" stroke="var(--ink-faint)" stroke-dasharray="5 4"/>
+          <rect x="36" y="46" width="188" height="32" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="130" y="67" text-anchor="middle" font-size="11.5">UI</text>
+          <rect x="36" y="90" width="188" height="32" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="130" y="111" text-anchor="middle" font-size="11.5">業務ロジック</text>
+          <rect x="36" y="134" width="188" height="32" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="130" y="155" text-anchor="middle" font-size="11.5">DB</text>
+
+          <text x="440" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--accent-strong)">マイクロサービス — 境界が複数</text>
+
+          <rect x="330" y="80" width="90" height="60" rx="8" fill="none" stroke="var(--accent)" stroke-dasharray="4 3"/>
+          <rect x="342" y="98" width="66" height="26" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="375" y="115" text-anchor="middle" font-size="11">Service A</text>
+
+          <rect x="460" y="30" width="90" height="60" rx="8" fill="none" stroke="var(--accent)" stroke-dasharray="4 3"/>
+          <rect x="472" y="48" width="66" height="26" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="505" y="65" text-anchor="middle" font-size="11">Service B</text>
+
+          <rect x="460" y="132" width="90" height="60" rx="8" fill="none" stroke="var(--accent)" stroke-dasharray="4 3"/>
+          <rect x="472" y="150" width="66" height="26" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="505" y="167" text-anchor="middle" font-size="11">Service C</text>
+
+          <line x1="420" y1="100" x2="465" y2="72" stroke="currentColor" marker-end="url(#arrow4)"/>
+          <line x1="420" y1="120" x2="465" y2="150" stroke="currentColor" marker-end="url(#arrow4)"/>
+          <text x="440" y="79" text-anchor="middle" font-size="10" fill="var(--ink-faint)">API</text>
+          <text x="440" y="149" text-anchor="middle" font-size="10" fill="var(--ink-faint)">API</text>
+        </svg>
+      </div>
+      <figcaption>マイクロサービスは境界を越えるたびにネットワーク呼び出し(遅延・失敗の可能性)が発生する</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>モノリス</h4>
+        <p><strong>利点</strong> — 1つのコードベース・1つのデプロイなので、開発初期は動作確認もデバッグもシンプル。関数呼び出し1つで済む処理に、わざわざネットワーク通信を挟む必要がない。</p>
+        <p><strong>弱点</strong> — アプリが大きくなるほど、1箇所の変更が思わぬ場所に影響しやすくなる。デプロイも全体を一括で行うため、一部だけ先にリリースする、といった柔軟さに欠ける。</p>
+      </div>
+      <div class="concept-card">
+        <h4>マイクロサービス</h4>
+        <p><strong>利点</strong> — サービスごとに個別デプロイ・個別スケール(負荷に応じて増減)ができる。チームが大きくなっても、サービス単位で担当を分けやすい。</p>
+        <p><strong>弱点</strong> — サービス間の呼び出しがネットワーク越しになるため、遅延や通信失敗が新たなリスクとして発生する。デバッグも、複数サービスをまたいでログを追う必要が出て複雑になる。</p>
+      </div>
+    </div>
+
+    <p class="compare-note">
+      近年の主流は<strong>「まずモノリスで作り、本当に必要になった箇所だけ切り出す」</strong>という段階的アプローチ。
+      最初からマイクロサービスで始めると、チーム規模に見合わない分散システムの複雑さを早期に背負い込みやすい。
+    </p>
+
+    <div class="example">
+      <span class="tag">身近な例</span>
+      <div>
+        <p>Netflixは元々1つの大きなモノリスから始まり、事業規模が拡大してデプロイ頻度・チーム数が増えた段階で、負荷が集中する部分やチーム分割が必要になった部分から段階的にマイクロサービス化していったことで知られる。最初からマイクロサービスありきではなく、規模が理由を作ってから移行した順序が要点。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>違いは<strong>「デプロイ境界の数」</strong>と<strong>「境界を越えるたびにネットワークが挟まるか」</strong></li>
+        <li>モノリス=シンプルだが変更の影響範囲が広がりやすい / マイクロサービス=柔軟だが分散システムの複雑さを背負う</li>
+        <li>定石は<strong>「まずモノリス、必要になった箇所だけ切り出す」</strong>という段階的アプローチ</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: 学んだ内容そのもの(参照用資料)。自分の理解・正誤の記録・他AIによる確認は
+    <a href="../records/architecture.html">学習記録ページ</a>に分けて残している。
+  </div>
+
+</div>
+</body>
+</html>
