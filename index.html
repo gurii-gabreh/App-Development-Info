@@ -59,6 +59,11 @@
   .subject-pending { margin: 0 0 20px; padding: 16px 20px; border: 1px dashed var(--line); border-radius: 10px; }
   .subject-pending h2 { font-family: var(--mono); font-size: 13px; font-weight: 700; margin: 0; color: var(--ink-faint); }
 
+  .subject-link.disabled {
+    color: var(--ink-faint); background: var(--surface-2); border: 1px dashed var(--line-strong);
+    cursor: default; pointer-events: none;
+  }
+
   .note {
     font-size: 13px; color: var(--ink-faint); margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line);
   }
@@ -83,7 +88,15 @@
     </div>
   </div>
 
-  <div class="subject-pending"><h2>サーバー・インフラ — 未着手</h2></div>
+  <div class="subject">
+    <h2>🖥 サーバー・インフラ</h2>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 14px;">HTTP/HTTPSの基本構造・サーバーレス vs 従来型サーバー・ロードバランサー/キャッシュ/CDN・クラウドの基本語彙</p>
+    <div class="subject-links">
+      <a class="subject-link" href="materials/server-infra.html">📖 学習資料</a>
+      <span class="subject-link disabled">📝 学習記録(未作成)</span>
+    </div>
+  </div>
+
   <div class="subject-pending"><h2>セキュリティ — 未着手</h2></div>
   <div class="subject-pending"><h2>AI・LLM — 未着手</h2></div>
   <div class="subject-pending"><h2>データベース — 未着手</h2></div>

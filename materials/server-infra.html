@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — サーバー・インフラ</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .lede a { color: var(--accent-strong); }
+
+  section.topic { margin: 0 0 64px; padding-top: 44px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 28px; }
+
+  figure { margin: 0 0 26px; padding: 22px 20px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .diagram-wrap { overflow-x: auto; }
+  figure svg { display: block; margin: 0 auto; width: 100%; max-width: 100%; height: auto; color: var(--ink-soft); }
+  figcaption { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 12px; font-family: var(--mono); letter-spacing: 0.01em; }
+
+  .cat-line { stroke: var(--accent); }
+  .dim-line { stroke: var(--line-strong); }
+
+  .cat-block { margin: 0 0 28px; }
+  .cat-block:last-child { margin-bottom: 0; }
+  .cat-block-head { display: flex; align-items: baseline; gap: 10px; margin: 0 0 12px; }
+  .cat-block-head .cat-name {
+    font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent-strong);
+    background: var(--accent-soft); border-radius: 5px; padding: 2px 8px; white-space: nowrap;
+  }
+  .cat-block-head .cat-q { font-size: 13px; color: var(--ink-faint); }
+
+  .concept-grid { display: grid; gap: 14px; margin: 0; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13.5px; font-weight: 700; margin: 0 0 7px; color: var(--ink); }
+  .concept-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 7px; }
+  .concept-card p.ex { padding-top: 7px; border-top: 1px dashed var(--line); }
+  .concept-card p.ex .ex-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); margin-right: 4px; }
+  .concept-card code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .compare-note { font-size: 14px; color: var(--ink-soft); max-width: 58ch; margin: 0; }
+  .compare-note strong { color: var(--ink); font-weight: 600; }
+
+  .example { display: flex; gap: 12px; padding: 16px 18px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 26px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+  .example p + p { margin-top: 8px; }
+  .example strong { color: var(--ink); font-weight: 600; }
+  .example code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .why { margin: 0 0 26px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 16px; font-weight: 600; margin: 0 0 10px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+  .why ul { margin: 8px 0 12px; padding-left: 20px; font-size: 13.5px; color: var(--ink-soft); }
+  .why li { margin-bottom: 4px; }
+  .why .q-map { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0 14px; }
+  .why .q-map div { background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 7px; padding: 9px 11px; font-size: 12.5px; color: var(--ink-soft); }
+  .why .q-map strong { display: block; font-family: var(--mono); font-size: 11px; color: var(--accent-strong); margin-bottom: 3px; }
+  @media (max-width: 560px) { .why .q-map { grid-template-columns: 1fr; } }
+
+  .recap { margin: 26px 0 0; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .closing { margin-top: 8px; padding: 20px 22px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 14px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 一覧に戻る</a>
+  <p class="eyebrow">学習資料 — サーバー・インフラ</p>
+  <h1>学習資料: サーバー・インフラ</h1>
+  <p class="lede">
+    HTTP/HTTPSの基本構造・サーバーレス vs 従来型サーバー・ロードバランサー/キャッシュ/CDN・クラウドの基本語彙。
+    自分の理解の記録はまだ無いため、<a href="../records/architecture.html">アーキテクチャの学習記録</a>と同じ形式で、
+    このページを学んだ後に別途作成する。
+  </p>
+
+  <div class="why" style="margin-bottom:44px;">
+    <h3>そもそも、サーバー・インフラとは何か</h3>
+    <p>
+      アプリが<strong>実際にどこで動き、リクエストがどう届いてレスポンスが返るか</strong>という「配送網」の設計。
+      アーキテクチャがコードの構造(何がどう依存するか)を扱うのに対し、こちらは物理的・ネットワーク的な土台
+      (どのサーバーで動くか、世界中のユーザーにどう速く届けるか、アクセスが増えた時にどう捌くか)を扱う。
+      非機能要件(性能・可用性・コスト)に直結する分野。
+    </p>
+  </div>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">01</span>
+      <h2>HTTP/HTTPSのリクエスト・レスポンスの基本構造</h2>
+    </div>
+    <p class="topic-lede">
+      ブラウザとサーバーが会話する「共通言語」の文法。ここが分かれば、あらゆるWeb通信の中身が読める。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ存在するのか</h3>
+      <p>
+        インターネット上のあらゆるコンピュータ同士が、メーカーも言語も違っても通信できるのは、
+        <strong>HTTPという共通のルール(プロトコル)</strong>に従っているから。ブラウザは「こういう形でお願いします」
+        (リクエスト)を送り、サーバーは「こういう形で返します」(レスポンス)を返す、という往復の型が決まっている。
+        HTTPSはこのHTTPに<strong>暗号化(TLS)</strong>を足したもので、通信内容を途中で盗み見・改ざんされないようにする。
+        現在ではほぼ全てのWebサイトがHTTPSを使う。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 720 260" role="img" aria-label="ブラウザがサーバーへGETリクエスト(メソッド・パス・ヘッダー)を送り、サーバーがステータスコード・ヘッダー・ボディを含むレスポンスを返す往復の図">
+          <defs>
+            <marker id="sarrow1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <rect x="20" y="70" width="140" height="50" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="90" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="var(--accent-strong)">Client(ブラウザ)</text>
+
+          <rect x="560" y="70" width="140" height="50" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="630" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="var(--accent-strong)">Server</text>
+
+          <line x1="160" y1="90" x2="558" y2="90" class="cat-line" marker-end="url(#sarrow1)" stroke-width="1.6"/>
+          <text x="360" y="76" text-anchor="middle" font-size="11.5" font-family="var(--mono)" fill="var(--accent-strong)">Request →</text>
+          <rect x="230" y="98" width="260" height="52" rx="6" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="360" y="116" text-anchor="middle" font-size="10.5" font-family="var(--mono)">GET /items/42 HTTP/1.1</text>
+          <text x="360" y="132" text-anchor="middle" font-size="10" fill="var(--ink-faint)">Headers: Host, Authorization...</text>
+          <text x="360" y="146" text-anchor="middle" font-size="10" fill="var(--ink-faint)">Body(POSTなどの時のみ)</text>
+
+          <line x1="558" y1="180" x2="160" y2="180" class="dim-line" marker-end="url(#sarrow1)" stroke-width="1.6"/>
+          <text x="360" y="166" text-anchor="middle" font-size="11.5" font-family="var(--mono)" fill="var(--ink-faint)">← Response</text>
+          <rect x="230" y="188" width="260" height="52" rx="6" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="360" y="206" text-anchor="middle" font-size="10.5" font-family="var(--mono)">HTTP/1.1 200 OK</text>
+          <text x="360" y="222" text-anchor="middle" font-size="10" fill="var(--ink-faint)">Headers: Content-Type...</text>
+          <text x="360" y="236" text-anchor="middle" font-size="10" fill="var(--ink-faint)">Body: {"id":42,"name":"..."}</text>
+        </svg>
+      </div>
+      <figcaption>1往復のHTTP通信 = リクエスト(メソッド+パス+ヘッダー+任意のボディ)とレスポンス(ステータスコード+ヘッダー+ボディ)</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>リクエストメソッド</h4>
+        <p>「何をしたいか」を表す動詞。<code>GET</code>(取得)・<code>POST</code>(新規作成)・<code>PUT</code>/<code>PATCH</code>(更新)・<code>DELETE</code>(削除)が代表的。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ブラウザでページを開く時は裏で<code>GET</code>が飛んでおり、フォームを送信すると<code>POST</code>が飛ぶ。</p>
+      </div>
+      <div class="concept-card">
+        <h4>ステータスコード</h4>
+        <p>結果を表す3桁の数字。<code>200</code>(成功)・<code>404</code>(見つからない)・<code>500</code>(サーバー側のエラー)・<code>301/302</code>(リダイレクト)などが代表的。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>存在しないURLにアクセスした時に出る「404 Not Found」は、このステータスコードがそのまま表示されている。</p>
+      </div>
+      <div class="concept-card">
+        <h4>ヘッダー</h4>
+        <p>本文とは別に付随する、通信のメタ情報。認証情報・データ形式・キャッシュ指示などをここに載せる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ログイン状態を保つための認証トークンは、多くの場合ヘッダー(<code>Authorization</code>)に載せて毎回送られる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>HTTPS(TLS暗号化)</h4>
+        <p>HTTPの通信内容をTLSという仕組みで暗号化したもの。途中の経路(公共Wi-Fi等)で盗み見・改ざんされるのを防ぐ。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ブラウザのアドレスバーに出る鍵マークは、その通信がHTTPSで暗号化されている印。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>HTTPは「リクエスト→レスポンス」の1往復が基本単位の共通ルール</li>
+        <li>リクエストは<strong>メソッド+パス+ヘッダー(+ボディ)</strong>、レスポンスは<strong>ステータスコード+ヘッダー+ボディ</strong></li>
+        <li>HTTPS = HTTP + TLS暗号化。現在はほぼ標準</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">02</span>
+      <h2>サーバーレス vs 従来型サーバー</h2>
+    </div>
+    <p class="topic-lede">
+      「アプリをどこでどう動かすか」の2つの型。コスト・スケーリング・応答速度のトレードオフが変わる。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ知っておく必要があるか</h3>
+      <p>
+        新しくアプリを作る時、必ず「どこで動かすか」を決める必要がある。ここを誤ると、
+        アクセスが少ない時期に払わなくていいサーバー代を払い続けたり、逆にアクセス急増時にサーバーが落ちたりする。
+        Cloudflare Workersのような新しい世代のサーバーレスは、
+        <strong>V8 isolate(ブラウザのJSエンジンと同じ軽量な実行単位)</strong>を使うことで、
+        従来のサーバーレス(AWS Lambda等)特有の「コールドスタート」(コンテナ起動待ちで数百ms〜1秒かかる遅延)を
+        ほぼ解消しており、1ms未満で起動する点が特徴。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 240" role="img" aria-label="従来型サーバーは常時起動しアイドル時間も課金される。サーバーレスはリクエストのたびに起動しリクエストが無い時は0台までスケールダウンする、という比較図">
+          <defs>
+            <marker id="sarrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <text x="150" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--ink-faint)">従来型サーバー — 常時起動</text>
+          <rect x="30" y="34" width="240" height="40" rx="6" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="150" y="59" text-anchor="middle" font-size="11.5">24時間起動しっぱなし</text>
+          <rect x="30" y="86" width="60" height="26" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="60" y="103" text-anchor="middle" font-size="10">リクエスト</text>
+          <rect x="105" y="86" width="60" height="26" rx="5" fill="none" stroke="var(--line-strong)" stroke-dasharray="3 3"/>
+          <text x="135" y="103" text-anchor="middle" font-size="10" fill="var(--ink-faint)">アイドル</text>
+          <rect x="180" y="86" width="60" height="26" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="210" y="103" text-anchor="middle" font-size="10">リクエスト</text>
+          <text x="150" y="140" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">アイドル中も課金される</text>
+          <text x="150" y="156" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">起動済みなので応答は速い</text>
+
+          <text x="530" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--accent-strong)">サーバーレス — 都度起動</text>
+          <rect x="410" y="86" width="60" height="26" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="440" y="103" text-anchor="middle" font-size="10">リクエスト</text>
+          <line x1="440" y1="112" x2="440" y2="130" class="cat-line" marker-end="url(#sarrow2)"/>
+          <rect x="405" y="132" width="70" height="24" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="440" y="148" text-anchor="middle" font-size="9.5">起動して処理</text>
+          <rect x="500" y="86" width="60" height="26" rx="5" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="530" y="103" text-anchor="middle" font-size="10">リクエスト</text>
+          <line x1="530" y1="112" x2="530" y2="130" class="cat-line" marker-end="url(#sarrow2)"/>
+          <rect x="495" y="132" width="70" height="24" rx="5" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="530" y="148" text-anchor="middle" font-size="9.5">起動して処理</text>
+          <text x="530" y="180" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">リクエストが無い時間は0台</text>
+          <text x="530" y="196" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">(=課金されない)</text>
+          <text x="530" y="215" text-anchor="middle" font-size="9.5" fill="var(--accent-strong)">Workers(V8 isolate)は起動が1ms未満</text>
+        </svg>
+      </div>
+      <figcaption>従来型は「常に立っている」、サーバーレスは「呼ばれた時だけ立つ」</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>コールドスタート</h4>
+        <p>リクエストが来てから実行環境を起動するまでの待ち時間。コンテナ/VM方式のサーバーレス(AWS Lambda等)では数百ms〜1秒程度かかることがある。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>Cloudflare WorkersはコンテナではなくV8 isolateという軽量な仕組みで動くため、この待ち時間がほぼ発生しない(1ms未満で起動)。</p>
+      </div>
+      <div class="concept-card">
+        <h4>実行時間・CPU時間の制限</h4>
+        <p>サーバーレスは「1回のリクエストにつき使えるCPU時間」に上限がある。無料枠は数十ms程度と非常に短く、有料プランでは秒単位(既定30秒、設定で最大5分まで)に拡張できる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>重い画像処理や長時間の集計処理は、サーバーレスの実行時間制限に引っかかりやすいため、従来型サーバーやキュー処理に向く。</p>
+      </div>
+      <div class="concept-card">
+        <h4>ステートレス</h4>
+        <p>1回1回のリクエストが独立していて、前回の状態を覚えていないこと。サーバーレスは基本的にステートレスが前提。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ログイン状態を維持したい場合、サーバー側の変数に保存するのではなく、DBやセッションストア(外部の保存場所)に保存する必要がある。</p>
+      </div>
+      <div class="concept-card">
+        <h4>スケール・トゥ・ゼロ</h4>
+        <p>アクセスが無い時間帯は起動台数を0にできる性質。従来型サーバーは最低1台を常時起動する必要があるのに対し、サーバーレスは0台まで落とせる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>個人開発でアクセスがほぼ無いアプリを従来型サーバーで運用すると、使われていなくても毎月固定費がかかるが、サーバーレスなら実質無料に近づけられる。</p>
+      </div>
+    </div>
+
+    <p class="compare-note">
+      個人開発・小規模なアプリでは、コストとスケーリングの両面でサーバーレスが有利なことが多い。
+      ただし実行時間の長い処理(バッチ処理・重い画像/動画処理など)には従来型サーバーやキュー処理の方が向く。
+    </p>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>従来型サーバー=常時起動(アイドル中も課金、応答は速い) / サーバーレス=都度起動(0台までスケールダウン、実行時間に上限)</li>
+        <li>Cloudflare WorkersはV8 isolateでコールドスタートをほぼ解消(1ms未満起動)</li>
+        <li>サーバーレスは基本ステートレス。状態はDB等の外部の保存場所に持つ必要がある</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">03</span>
+      <h2>ロードバランサー・キャッシュ・CDNの役割</h2>
+    </div>
+    <p class="topic-lede">
+      1台のサーバーでは捌ききれないアクセスをどう分散させ、世界中のユーザーにどう速く届けるか。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ存在するのか</h3>
+      <p>
+        利用者が増えると、1台のサーバーだけでは処理しきれなくなったり、物理的に距離が遠いユーザーへの応答が遅くなったりする。
+        <strong>ロードバランサー</strong>はアクセスを複数のサーバーへ振り分けて1台への集中を防ぎ、
+        <strong>CDN</strong>はユーザーに近い場所(エッジサーバー)にコンテンツのコピーを置いて配送距離を縮める。
+        <strong>キャッシュ</strong>は一度作った結果を保存しておき、同じリクエストに対して毎回作り直さずに使い回す仕組み。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 720 250" role="img" aria-label="ユーザーのリクエストがまずCDNのエッジサーバーに届き、キャッシュがあればそのまま返し、無ければロードバランサー経由で複数のオリジンサーバーのいずれかに転送される、という図">
+          <defs>
+            <marker id="sarrow3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <rect x="10" y="100" width="90" height="40" rx="7" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="55" y="124" text-anchor="middle" font-size="11.5" fill="var(--accent-strong)">User</text>
+
+          <line x1="100" y1="120" x2="158" y2="120" class="cat-line" marker-end="url(#sarrow3)"/>
+
+          <rect x="160" y="90" width="120" height="60" rx="7" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="220" y="112" text-anchor="middle" font-size="11" font-weight="700">CDN edge</text>
+          <text x="220" y="128" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">キャッシュ有り→</text>
+          <text x="220" y="141" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">即座に返す</text>
+
+          <line x1="220" y1="90" x2="220" y2="60" stroke="var(--ink-faint)" stroke-dasharray="3 3" marker-end="url(#sarrow3)"/>
+          <text x="220" y="50" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">キャッシュ命中時はここで完結</text>
+
+          <line x1="280" y1="120" x2="358" y2="120" class="dim-line" marker-end="url(#sarrow3)"/>
+          <text x="318" y="108" text-anchor="middle" font-size="9" fill="var(--ink-faint)">キャッシュ無し</text>
+
+          <rect x="360" y="95" width="110" height="50" rx="7" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="415" y="124" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent-strong)">Load Balancer</text>
+
+          <line x1="470" y1="105" x2="540" y2="60" stroke="currentColor" marker-end="url(#sarrow3)"/>
+          <line x1="470" y1="120" x2="540" y2="120" stroke="currentColor" marker-end="url(#sarrow3)"/>
+          <line x1="470" y1="135" x2="540" y2="180" stroke="currentColor" marker-end="url(#sarrow3)"/>
+
+          <rect x="542" y="38" width="150" height="34" rx="6" fill="none" stroke="var(--line-strong)"/>
+          <text x="617" y="59" text-anchor="middle" font-size="10.5">Origin Server A</text>
+          <rect x="542" y="103" width="150" height="34" rx="6" fill="none" stroke="var(--line-strong)"/>
+          <text x="617" y="124" text-anchor="middle" font-size="10.5">Origin Server B</text>
+          <rect x="542" y="163" width="150" height="34" rx="6" fill="none" stroke="var(--line-strong)"/>
+          <text x="617" y="184" text-anchor="middle" font-size="10.5">Origin Server C</text>
+        </svg>
+      </div>
+      <figcaption>キャッシュ命中ならCDNだけで完結、外れたらロードバランサーが空いているオリジンサーバーへ転送する</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>ロードバランサー</h4>
+        <p>クライアントとサーバーの間に立ち、アクセスを複数のサーバーへ振り分ける仕組み。各サーバーの負荷や稼働状況を見て、空いているサーバーへ転送する。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>レジが複数あるスーパーで、空いているレジへ客を案内する店員のような役割。</p>
+      </div>
+      <div class="concept-card">
+        <h4>キャッシュ</h4>
+        <p>一度作った結果を一時的に保存し、同じリクエストが来た時にゼロから作り直さず使い回す仕組み。応答速度が上がり、サーバー負荷も減る。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>よく聞く曲を毎回ダウンロードし直さず、端末に保存しておいて再生するのと同じ発想。</p>
+      </div>
+      <div class="concept-card">
+        <h4>CDN(Content Delivery Network)</h4>
+        <p>世界中に分散配置された「エッジサーバー」に、コンテンツのコピーをキャッシュしておく仕組み。ユーザーは地理的に近いエッジサーバーから配信を受けるため、距離による遅延が減る。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>日本のユーザーがアメリカのオリジンサーバーへ毎回アクセスする代わりに、日本国内にあるCDNのエッジサーバーから配信を受ける。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>ロードバランサー</strong>=アクセスを複数サーバーへ分散(1台への集中を防ぐ)</li>
+        <li><strong>キャッシュ</strong>=作った結果を使い回す(作り直しを減らす)</li>
+        <li><strong>CDN</strong>=ユーザーに近い場所にコンテンツを置く(配送距離を縮める)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">04</span>
+      <h2>クラウドの基本語彙</h2>
+    </div>
+    <p class="topic-lede">
+      AWS・Google Cloud・Cloudflareなど、クラウドサービスの料金・障害対応を理解するための共通言語。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ知っておく必要があるか</h3>
+      <p>
+        クラウドの各サービス(サーバー、DB、ストレージ等)の設定画面や料金表には、これから説明する語彙が
+        当たり前のように登場する。意味を知らないまま設定すると、意図せず高コストな構成にしたり、
+        障害に弱い構成にしたりするリスクがある。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>リージョン</h4>
+        <p>クラウド事業者がサーバーを設置している地理的な地域(例: 東京、米国東部)。ユーザーに近いリージョンを選ぶほど通信の遅延が減る。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>日本向けサービスなら「東京リージョン」を選ぶことで、海外リージョンを使うより応答が速くなる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>可用性(ゾーン)</h4>
+        <p>サービスが止まらずに使い続けられる度合い。1つのリージョン内でも、電源系統やネットワークが独立した複数の「可用性ゾーン」に分けて配置することで、1箇所が落ちても他が生き残るようにする。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>同じ建物の中でも電気系統を分けておけば、一部が停電しても別の部分は動き続けられる、というのと同じ考え方。</p>
+      </div>
+      <div class="concept-card">
+        <h4>スケーリング(垂直・水平)</h4>
+        <p>負荷が増えた時にどう対応を増やすか。<strong>垂直スケーリング</strong>は1台のスペック(CPU・メモリ)を上げること、<strong>水平スケーリング</strong>は台数を増やすこと。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>垂直スケーリングは「1人の店員をもっと有能にする」、水平スケーリングは「店員の人数を増やす」に近い。サーバーレスは水平スケーリングを自動でやってくれる仕組み。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>リージョン</strong>=サーバーの地理的な場所。近いほど速い</li>
+        <li><strong>可用性(ゾーン)</strong>=1箇所が落ちても他が生き残る仕組み</li>
+        <li><strong>スケーリング</strong>=垂直(1台を強く)か水平(台数を増やす)か</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: サーバー・インフラ分野の学習資料(学んだ内容そのもの)。
+    アーキテクチャと同様、この後「自分の理解→正誤の記録→他AIによる確認」の学習記録ページを別途作成する想定
+    (<a href="../records/architecture.html">アーキテクチャの学習記録</a>と同じ形式)。
+  </div>
+
+  <p class="source-note">
+    Cloudflare Workersの起動時間・CPU時間制限に関する記述は、developers.cloudflare.com の公開情報(2025年10月・2025年3月の変更内容含む)をもとに2026年8月時点で確認。
+  </p>
+
+</div>
+</body>
+</html>
