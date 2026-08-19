@@ -212,12 +212,124 @@
     </div>
   </div>
 
-  <div class="part-marker"><span class="part-num">PART 3</span><span class="part-label">他AIによる確認</span></div>
+  <div class="part-marker"><span class="part-num">PART 4</span><span class="part-label">自分の理解(2回目・原文まま記録)</span></div>
+  <h3 class="part-title">積極的想起チェック(2回目)</h3>
+  <p class="part-lede">1回目とは別の機会に、資料を見ずにもう一度まとめ直した内容。全5トピック(アーキテクチャ・デザインパターン・SOLID・Clean Architecture・モノリスとマイクロサービス)を通し、途中で疑問点も自発的に書き出している。誤字・表記ゆれもそのまま原文で記録する。</p>
+  <p class="raw-note-caption">記録日: 2026-08-16</p>
+  <div class="raw-note">STU-002タスク
+アーキテクチャ
+・アーキテクチャとは、ソフトウェアの技術的要素を指す。
+・要件定義は、相手からの要望を抽出化するが、アーキテクチャはどれを技術的にどう対応するかを明確化する
+デザインパターン
+全てのソフトウェアなどの開発に言えるデータ構造の考え方
+・生成は、どのようなオブジェクト仕様の考え方。更新が入った際に容易にかつ正確に更新できるようにする考え方を持つ
+・構造は、オブジェクト同士のつながりをどの様に構成するかの考え方。また、外部からのデータ連携もどの様にすれば、データ仕様が違うものでも取り込み地投げられるかを考える
+・振る舞いは、オブジェクト同士のリンクをどう取り持つか
+【疑問】構造と振る舞いの違いが不明
+、どちらもデータ同士のつながりに見える
+SOLID
+クラスの設計についての定義。
+この考え方により、変更に強い構造にできる
+・一つのクラスに複数の役割を持たせない、これにより変更したとしても他の部分への影響を回避できる
+・既存クラスへの更新は、ベースは変えずに追加する形式で更新をしていく、これにより、既存設定に不具合を与えることを回避
+・サブクラスを設定するときは、ベースクラスと前提・基準が同じ仕様のものを組み合わせること
+・インターフェースは、各クラスに必要な部分のみを利用できるようにする、不要な設定による不具合を回避するため
+・上位と下位モジュールの連携は、直接連携しないようにする。中間に別クラスを設けることで、もし変更があってもそこの設定を変えるのみで、実装でき不要な実装を回避できる
+Clean Architectureの核心図
+・重要と成る制約を階層毎に明確にすることで、何をマストに厳守しないといけないかと変えても問題ない部分を明確にできる
+モノリスとマイクロサービス
+・モノリスは、単体の環境化を想定のもとシステム構築をする。また、外部との連携はしない想定、そのため変更があった場合、影響が全体に広がりやすい、また変更も基盤データを修正することが多くなるため、予測していない不具合が出やすい
+・マイクロサービスは、Service毎に環境を設けそれぞれの環境を連携し成り立つ、そのため改修があった場合に、必要なServiceのみの影響下で対応できるため、改修がしやすい、ただし、連携が必要となるため各環境化でもインターフェースや各環境ごとの通信方法を管理する手間が出るため、機能実装はできても連携部での不具合が起こりやすい
+・そのため、基盤データをモノリスで作ったうえで、追加となる部分はマイクロサービスで連携していくのが一番良い構造</div>
+
+  <div class="part-marker"><span class="part-num">PART 5</span><span class="part-label">正誤の記録(2回目)</span></div>
+  <h3 class="part-title">照合結果(2回目)</h3>
+  <p class="part-lede">上記PART4の11項目を、学習資料の内容と照合した結果。大枠は正しく捉えられているが、6点の訂正が入った。</p>
+
+  <div class="verdict-group-title good">✅ 正しい理解</div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>要件定義とアーキテクチャの違い</strong> — 「相手の要望を抽出する」vs「それをどう技術的に実現するか」という区別は正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>デザインパターン「生成」</strong> — オブジェクトの作り方を1箇所にまとめ、変更に強くするという理解は妥当</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>デザインパターン「構造」</strong> — オブジェクト同士のつながりの構成+仕様の違う外部データを取り込む橋渡し(Adapter)、正しい</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>SOLID全体の位置づけ</strong> — 「変更に強い構造にできる」で正しい</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>S(単一責任)・O(開放閉鎖)・L(リスコフ)・I(インターフェース分離)</strong> — いずれも正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>マイクロサービスの説明</strong> — 「必要なServiceのみの影響で改修できるが、連携部分の管理コストと不具合リスクが増える」まで踏み込めており、かなり正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>モノリス→マイクロサービスへの移行方針</strong> — 「基盤はモノリス、追加分はマイクロサービス」は定石通り</p></div>
+  </div>
+
+  <div class="verdict-group-title warn">⚠️ 訂正した理解</div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>誤: 「アーキテクチャとは、ソフトウェアの技術的要素を指す」</strong></p>
+      <p>正: 漠然としすぎている。正しくは技術的な<strong>構造の設計</strong>。何がどう繋がり依存するかという「構造」がキーワードで、単なる「要素」の集まりではない。</p>
+    </div>
+  </div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>誤: 「デザインパターンは、全てのソフトウェア開発に言えるデータ構造の考え方」</strong></p>
+      <p>正: 配列・木構造などの「データ構造」(別の話題)と混同している。デザインパターンは、オブジェクトの<strong>生成・組み合わせ・やり取り</strong>の型であり、データの持ち方とは別物。</p>
+    </div>
+  </div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>疑問への回答: 「構造と振る舞いの違いが不明、どちらもデータ同士のつながりに見える」</strong></p>
+      <p>
+        構造(Structural) = <strong>静的な組み立て方</strong>。設計時に「AがBを内部に持つ」「AはBを継承する」という形が一度決まったら実行中に変わらない。建物の「間取り」に相当。
+        振る舞い(Behavioral) = <strong>実行時の動的なやり取り</strong>。「誰が誰にいつ何を伝えるか」という実行中のメッセージの流れ。建物の中を人が動き回る「人の流れ」に相当。
+        Adapter(構造)は「AdapterがLegacyを内部に持つ」という配線を1回決めたら完結するが、Observer(振る舞い)はSubjectが状態変化のたびに<code>notify()</code>を呼ぶという、時間経過とともに繰り返し発生するやり取りそのものが本体。組み立てが固定か、やり取りが動き続けるかが分岐点。
+      </p>
+    </div>
+  </div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>誤: 「(D原則で)上位と下位モジュールの連携は、中間に別クラスを設ける」</strong></p>
+      <p>正: 挟むのは「別クラス」ではなく、正確には<strong>抽象(インターフェース)</strong>。具体的なクラスをもう1つ挟むだけでは、結局そのクラス同士が直接依存する形になり、差し替えが効かない。抽象に依存させることが本質。</p>
+    </div>
+  </div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>誤: 「Clean Architectureは、重要な制約を階層ごとに明確にすることで…」</strong></p>
+      <p>正: 抽象的すぎて核心に触れられていない。核心は<strong>依存の矢印は常に内側へ向く</strong>こと。中心=業務ルール、外周=DB/UIなどの技術的詳細、という具体的な構造まで言えるようにする必要がある。</p>
+    </div>
+  </div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>誤: 「モノリスは、外部との連携はしない想定」</strong></p>
+      <p>正: モノリスでも外部API連携は普通に行う。本質は「外部連携の有無」ではなく、<strong>1つの単位としてまとめてデプロイされる</strong>(内部のやり取りはネットワークを介さない直接の関数呼び出し)こと。</p>
+    </div>
+  </div>
+
+  <div class="part-marker"><span class="part-num">PART 6</span><span class="part-label">他AIによる確認</span></div>
   <h3 class="part-title">第二意見チェック(POL-002)</h3>
   <div class="pending-box">
     <span class="pending-status">⏳ 未実施</span>
     <p>
-      本ページのPART1〜2の内容は、まだ別AI(DeepSeek / Kimi / Gemini Pro)による確認を経ていません。
+      本ページのPART1〜2、4〜5の内容は、まだ別AI(DeepSeek / Kimi / Gemini Pro)による確認を経ていません。
       実施した実際の回答が得られるまで、この欄に架空の確認結果を記載することはしません。
     </p>
     <p>POL-002(progress-tracker-dashboard: data/policy.json)に沿って、次の手順で実施予定です。</p>
