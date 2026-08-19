@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料一覧</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8; --accent-soft: #223640;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8; --accent-soft: #223640;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede a { color: var(--accent-strong); }
+
+  .subject-row {
+    display: flex; align-items: center; gap: 14px; padding: 16px 20px; margin: 0 0 12px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    text-decoration: none; color: inherit;
+  }
+  .subject-row:hover { border-color: var(--accent); }
+  .subject-row .icon { font-size: 20px; flex: 0 0 auto; }
+  .subject-row .body { flex: 1 1 auto; min-width: 0; }
+  .subject-row h2 { font-family: var(--serif); font-weight: 600; font-size: 16.5px; margin: 0 0 3px; color: var(--ink); }
+  .subject-row p { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+  .subject-row .arrow { font-size: 14px; color: var(--ink-faint); flex: 0 0 auto; }
+
+  .subject-row-pending {
+    display: flex; align-items: center; padding: 14px 20px; margin: 0 0 12px;
+    border: 1px dashed var(--line); border-radius: 10px; font-family: var(--mono);
+    font-size: 12.5px; font-weight: 700; color: var(--ink-faint);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 分野一覧に戻る</a>
+  <p class="eyebrow">学習資料</p>
+  <h1>学習資料一覧</h1>
+  <p class="lede">
+    分野ごとに学んだ内容そのもの(参照用資料)をまとめています。自分の理解・正誤の記録・他AIによる確認は
+    <a href="../records/index.html">学習記録一覧</a>に分けています。
+  </p>
+
+  <a class="subject-row" href="architecture.html">
+    <span class="icon">📐</span>
+    <span class="body">
+      <h2>アーキテクチャ</h2>
+      <p>デザインパターン・SOLID・Clean Architecture・モノリス vs マイクロサービス</p>
+    </span>
+    <span class="arrow">→</span>
+  </a>
+
+  <a class="subject-row" href="server-infra.html">
+    <span class="icon">🖥</span>
+    <span class="body">
+      <h2>サーバー・インフラ</h2>
+      <p>HTTP/HTTPSの基本構造・サーバーレス vs 従来型サーバー・ロードバランサー/キャッシュ/CDN・クラウドの基本語彙</p>
+    </span>
+    <span class="arrow">→</span>
+  </a>
+
+  <div class="subject-row-pending">セキュリティ — 未着手</div>
+  <div class="subject-row-pending">AI・LLM — 未着手</div>
+  <div class="subject-row-pending">データベース — 未着手</div>
+  <div class="subject-row-pending">テスト — 未着手</div>
+  <div class="subject-row-pending">基本・詳細設計 — 未着手</div>
+
+</div>
+</body>
+</html>

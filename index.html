@@ -42,31 +42,18 @@
   h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
   .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
 
-  .subject { margin: 0 0 36px; padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
-  .subject h2 { font-family: var(--serif); font-weight: 600; font-size: 19px; margin: 0 0 12px; color: var(--ink); }
-  .subject-links { display: flex; gap: 10px; flex-wrap: wrap; }
-  .subject-link {
-    display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600;
-    text-decoration: none; color: var(--accent-strong); background: var(--accent-soft);
-    border-radius: 8px; padding: 8px 14px;
+  .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0 0 20px; }
+  @media (max-width: 560px) { .hub-grid { grid-template-columns: 1fr; } }
+  .hub-card {
+    display: block; padding: 26px 24px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; text-decoration: none; color: inherit;
   }
-  .subject-link:hover { filter: brightness(0.96); }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .subject-link:hover { filter: brightness(1.1); }
-  }
-  :root[data-theme="dark"] .subject-link:hover { filter: brightness(1.1); }
+  .hub-card:hover { border-color: var(--accent); }
+  .hub-card .icon { font-size: 26px; display: block; margin-bottom: 10px; }
+  .hub-card h2 { font-family: var(--serif); font-weight: 600; font-size: 19px; margin: 0 0 8px; color: var(--ink); }
+  .hub-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
 
-  .subject-pending { margin: 0 0 20px; padding: 16px 20px; border: 1px dashed var(--line); border-radius: 10px; }
-  .subject-pending h2 { font-family: var(--mono); font-size: 13px; font-weight: 700; margin: 0; color: var(--ink-faint); }
-
-  .subject-link.disabled {
-    color: var(--ink-faint); background: var(--surface-2); border: 1px dashed var(--line-strong);
-    cursor: default; pointer-events: none;
-  }
-
-  .note {
-    font-size: 13px; color: var(--ink-faint); margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line);
-  }
+  .note { font-size: 13px; color: var(--ink-faint); margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); }
 </style>
 </head>
 <body>
@@ -76,34 +63,23 @@
   <h1>アプリ開発の基礎知識 学習記録</h1>
   <p class="lede">
     分野ごとに、<strong>学習資料</strong>(学んだ内容そのもの)と<strong>学習記録</strong>
-    (自分の理解・正誤の記録・他AIによる確認)をページを分けて残しています。
+    (自分の理解・正誤の記録・他AIによる確認)をページを分けて管理しています。
   </p>
 
-  <div class="subject">
-    <h2>📐 アーキテクチャ</h2>
-    <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 14px;">デザインパターン・SOLID・Clean Architecture・モノリス vs マイクロサービス</p>
-    <div class="subject-links">
-      <a class="subject-link" href="materials/architecture.html">📖 学習資料</a>
-      <a class="subject-link" href="records/architecture.html">📝 学習記録</a>
-    </div>
+  <div class="hub-grid">
+    <a class="hub-card" href="materials/index.html">
+      <span class="icon">📖</span>
+      <h2>学習資料</h2>
+      <p>各分野で学んだ内容そのもの。図や身近な例を交えた参照用資料。</p>
+    </a>
+    <a class="hub-card" href="records/index.html">
+      <span class="icon">📝</span>
+      <h2>学習記録</h2>
+      <p>自分の理解・正誤の記録・他AIによる確認。想起チェックのたびに追記。</p>
+    </a>
   </div>
 
-  <div class="subject">
-    <h2>🖥 サーバー・インフラ</h2>
-    <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 14px;">HTTP/HTTPSの基本構造・サーバーレス vs 従来型サーバー・ロードバランサー/キャッシュ/CDN・クラウドの基本語彙</p>
-    <div class="subject-links">
-      <a class="subject-link" href="materials/server-infra.html">📖 学習資料</a>
-      <span class="subject-link disabled">📝 学習記録(未作成)</span>
-    </div>
-  </div>
-
-  <div class="subject-pending"><h2>セキュリティ — 未着手</h2></div>
-  <div class="subject-pending"><h2>AI・LLM — 未着手</h2></div>
-  <div class="subject-pending"><h2>データベース — 未着手</h2></div>
-  <div class="subject-pending"><h2>テスト — 未着手</h2></div>
-  <div class="subject-pending"><h2>基本・詳細設計 — 未着手</h2></div>
-
-  <p class="note">progress-tracker-dashboardのDGT-005(学習記録ページ)に対応。分野を学び終えるたびに、同じ構成(学習資料/学習記録)でこのリポジトリに追加していく。</p>
+  <p class="note">progress-tracker-dashboardのDGT-005(学習記録ページ)に対応。学習資料と学習記録はダッシュボード側でも別タブとして管理する。</p>
 
 </div>
 </body>
