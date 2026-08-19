@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習記録 — サーバー・インフラ</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --good: #2f7a4f;
+    --good-soft: #e2f2e7;
+    --warn: #a3541c;
+    --warn-soft: #f7e8d9;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+      --good: #6fc796; --good-soft: #1c2f22;
+      --warn: #e0a361; --warn-soft: #332417;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+    --good: #6fc796; --good-soft: #1c2f22;
+    --warn: #e0a361; --warn-soft: #332417;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .lede a { color: var(--accent-strong); }
+
+  .part-marker { display: flex; align-items: center; gap: 12px; margin: 0 0 20px; }
+  .part-marker:not(:first-of-type) { margin-top: 56px; padding-top: 44px; border-top: 1px solid var(--line); }
+  .part-marker .part-num {
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    color: var(--accent-strong); background: var(--accent-soft);
+    border-radius: 5px; padding: 3px 9px; white-space: nowrap;
+  }
+  .part-marker .part-label { font-size: 13.5px; color: var(--ink-faint); }
+  h3.part-title { font-family: var(--serif); font-weight: 600; font-size: 20px; margin: 0 0 10px; color: var(--ink); }
+  .part-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 24px; }
+
+  /* 自分の理解(原文まま記録) */
+  .raw-note {
+    margin: 0 0 20px; padding: 18px 20px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 10px; font-size: 13.5px;
+    color: var(--ink-soft); white-space: pre-wrap; font-family: var(--mono); line-height: 1.9;
+  }
+  .raw-note-caption { font-size: 12px; color: var(--ink-faint); margin: 0 0 10px; }
+
+  /* 正誤の記録 */
+  .verdict-card { display: flex; gap: 12px; padding: 14px 16px; margin: 0 0 10px; border-radius: 8px; border: 1px solid var(--line); }
+  .verdict-card.good { background: var(--good-soft); border-color: color-mix(in srgb, var(--good) 30%, var(--line)); }
+  .verdict-card.warn { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 30%, var(--line)); }
+  .verdict-mark { font-size: 15px; flex: 0 0 auto; line-height: 1.5; }
+  .verdict-body p { margin: 0; font-size: 13.5px; color: var(--ink); }
+  .verdict-body p + p { margin-top: 6px; color: var(--ink-soft); }
+  .verdict-body strong { font-weight: 700; }
+  .verdict-group-title {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.04em; margin: 22px 0 10px; text-transform: uppercase;
+  }
+  .verdict-group-title.good { color: var(--good); }
+  .verdict-group-title.warn { color: var(--warn); }
+  .verdict-group-title:first-of-type { margin-top: 0; }
+
+  /* 他AIによる確認(未実施プレースホルダ) */
+  .pending-box {
+    margin: 0; padding: 20px 22px; background: var(--surface-2);
+    border: 1px dashed var(--line-strong); border-radius: 10px;
+    font-size: 13.5px; color: var(--ink-soft);
+  }
+  .pending-box .pending-status {
+    display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.04em; color: var(--ink-faint); background: var(--surface);
+    border: 1px solid var(--line-strong); border-radius: 5px; padding: 2px 8px; margin-bottom: 10px;
+  }
+  .pending-box ol { margin: 10px 0 0; padding-left: 20px; }
+  .pending-box li { margin-bottom: 4px; }
+
+  .closing { margin-top: 8px; padding: 20px 22px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 14px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 一覧に戻る</a>
+  <p class="eyebrow">学習記録 — サーバー・インフラ</p>
+  <h1>学習記録: サーバー・インフラ</h1>
+  <p class="lede">
+    <a href="../materials/server-infra.html">学習資料(HTTP/HTTPSの基本構造・サーバーレス vs 従来型サーバー・ロードバランサー/キャッシュ/CDN・クラウドの基本語彙)</a>
+    を学んだ後の、<strong>①自分の理解 → ②正誤の記録 → ③他AIによる確認</strong>の記録。学んだ内容そのものは
+    資料ページ側にまとめてあり、このページには含めていない。
+  </p>
+
+  <div class="part-marker"><span class="part-num">PART 1</span><span class="part-label">自分の理解(原文まま記録)</span></div>
+  <h3 class="part-title">積極的想起チェック</h3>
+  <p class="part-lede">資料を見ずに、自分の言葉でまとめた内容。誤字・表記ゆれもそのまま原文で記録する。</p>
+  <p class="raw-note-caption">記録日: 2026-08-19</p>
+  <div class="raw-note">サーバー・インフラとは
+・アプリがどこで動き、どこにリクエストを出し、レスポンスがどこに返るかの設定
+・主にどのように通信をして、遅延なく、また通信が途絶えないようにし、コストを抑えた方法をするための分野
+HTTP/HTTPSの基本構造
+・HTTPとは、使用が違うコンピュータ同士が通信できるようにするための共通の通信プロトコルをさす。これにより、コンピュータにはこう情報を送り、サーバーにはこう送るなどのプロトコルが設定されている
+・HTTPSは、HTTPを暗号化し、通信内容を改善や盗み見から防ぐことを役割にしている。ほぞ全てのWEBサイト
+で使用されている
+・リクエストメソットドとは、なにをしたいかを、情報の取得get、新規作成post、更新put,patch、削除deleteが代表的
+・ステータスコードは、結果を表す３桁の数字。200成功、404見つからない、500サーバー側のエラー、301,302リダイレクトを指す
+・ヘッダーは、本文とは別に付属する通信のメタ情報、
+いまいちどう情報を渡しているのかが不明、URLに明記している？
+サーバーレスと従来型サーバー
+・従来型のサーバーは、必ず１台起動させておくため、ランニングコストが大幅に係る、その分いつでもすぐに通信ができ、データ容量が大きくても問題なく送ることができる
+・サーバーレスの場合は、必要な時に起動させるため、ランニングコストは大幅に抑えられる、しかし、一回一回のやり年下内容は次の通信には引き継がれなく、また一度処理が終わってしばらく経ってから再度処理する場合はコンピュータを起動させる必要があるため、時間がかかってしまう、また大規模なデータを送る場合は時間がかかり、また容量にも制約が係る
+ロードバランサー、キャッシュ、CDN
+・ロードバランサーは、利用者が増えた場合に、一つのサーバーに集中しないようにバラけさせて通信を安定させる役割がある
+・キャッシュは、一度アクセスした情報を保持しておき、同じリクエストが来た場合に位置から作成せずに住むようにする仕組み、これにより応答スピードを上げる
+・CDNは、一番近いエッジサーバーを見つけ、そこに格納されている本データのコピーにアクセスし、データ元からの距離による遅延を防ぐ
+クラウドの基礎知識
+・リージョンは、サーバーが設置されている地理的な地域を指す
+・可用性（ゾーン）は、Serviceが止まらずに使い続けられるようにする仕組み。複数の可用性ゾーンをつくり、一つがだめでも他の可用性ゾーンで補えるようにする仕組み
+・スケーリングは、負荷が増えた時に同対応を増やすかの方針。垂直スケーリングは１台のスペックを増やし、水平スケーリングは台数を増やすこと</div>
+
+  <div class="part-marker"><span class="part-num">PART 2</span><span class="part-label">正誤の記録</span></div>
+  <h3 class="part-title">照合結果</h3>
+  <p class="part-lede">上記PART1を学習資料の内容と照合した結果。大枠はよく捉えられており、13項目が正しく、3項目に訂正・補足が入った。</p>
+
+  <div class="verdict-group-title good">✅ 正しい理解(13項目)</div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>サーバー・インフラの定義</strong> — アプリがどこで動き、リクエスト/レスポンスがどう届くかの「配送網」の設計、という理解は正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>HTTPは共通の通信プロトコル</strong> — 仕様の違うコンピュータ同士でも同じ型で通信できる、という理解は正しい</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>HTTPSは暗号化により改ざん・盗み見を防ぐ、ほぼ全サイトで使用</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>リクエストメソッド(GET/POST/PUT,PATCH/DELETE)</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>ステータスコード(200/404/500/301,302)</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>ヘッダーは本文とは別に付属する通信のメタ情報</strong> — 定義自体は正確(渡し方の疑問はPART3で回答)</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>従来型サーバーは常時起動でランニングコスト大・応答が速い</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>サーバーレスは必要な時だけ起動しコストを抑えられる</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>サーバーレスは1回1回のやり取りが次の通信に引き継がれない</strong> — ステートレスの理解として正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>ロードバランサーは通信を複数サーバーへ分散させ安定させる</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>キャッシュは一度作った結果を保持し使い回すことで応答速度を上げる</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>CDNは一番近いエッジサーバーからデータのコピーを配信し、距離による遅延を防ぐ</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>リージョン・可用性ゾーン・垂直/水平スケーリング</strong> — いずれも正確(可用性ゾーンを複数持たせて1箇所が落ちても補う、垂直=1台のスペック増、水平=台数増、の理解も含めて正しい)</p></div>
+  </div>
+
+  <div class="verdict-group-title warn">⚠️ 訂正・補足した理解(3項目)</div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>疑問への回答: 「ヘッダーはどう情報を渡しているのか不明、URLに明記している？」</strong></p>
+      <p>
+        いいえ、ヘッダーは<strong>URLには含まれない</strong>。URLの一部として送られるのはパス(<code>/items/42</code>)と、
+        <code>?</code>以降のクエリパラメータ(<code>?page=2</code>など)だけ。ヘッダーはURLとは別に、HTTPメッセージ自体の中に
+        「メソッド+パスの行」の直後に<code>キー: 値</code>という形の行として並べて送られており、URLバーには一切表示されない
+        (認証トークンなど、URLに載せたくない情報をここに載せる理由でもある)。MDN(developer.mozilla.org)の解説でも、
+        ヘッダーはリクエスト/レスポンスのメタデータ部分に属し、クエリパラメータ(URLの一部)とは明確に別物とされている。
+      </p>
+    </div>
+  </div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>誤: 「サーバーレスは、再度処理する時にコンピュータを起動させる必要があるため時間がかかる」(一般論として)</strong></p>
+      <p>
+        これは全てのサーバーレスに当てはまるわけではない。コンテナ/VM方式のサーバーレス(AWS Lambda等)では
+        このコールドスタートが数百ms〜1秒程度かかることがあるが、学習資料で確認したCloudflare Workersのような
+        <strong>V8 isolate方式</strong>は、ブラウザのJSエンジンと同じ軽量な実行単位を使うためコールドスタートがほぼ解消されており、
+        1ms未満で起動する。「サーバーレス=再起動に時間がかかる」ではなく、方式によって差が大きい点が抜けていた。
+      </p>
+    </div>
+  </div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>補足: 「大規模なデータを送る場合は時間がかかり、容量にも制約が係る」</strong></p>
+      <p>
+        方向性としては妥当(サーバーレスには制約があるという理解自体は正しい)だが、学習資料で公式情報をもとに確認できたのは
+        <strong>CPU実行時間の上限</strong>(無料枠は数十ms程度、有料プランは既定30秒・設定で最大5分)であり、
+        「データ容量そのものの上限」については今回まだ個別に検証していない。根拠のない数値を断定しないため、
+        この点は正誤ではなく「時間の制約は確認済み、容量の制約は未検証」という扱いにしておく。
+      </p>
+    </div>
+  </div>
+
+  <div class="part-marker"><span class="part-num">PART 3</span><span class="part-label">他AIによる確認</span></div>
+  <h3 class="part-title">第二意見チェック(POL-002)</h3>
+  <div class="pending-box">
+    <span class="pending-status">⏳ 未実施</span>
+    <p>
+      本ページのPART1〜2の内容は、まだ別AI(DeepSeek / Kimi / Gemini Pro)による確認を経ていません。
+      実施した実際の回答が得られるまで、この欄に架空の確認結果を記載することはしません。
+    </p>
+    <p>POL-002(progress-tracker-dashboard: data/policy.json)に沿って、次の手順で実施予定です。</p>
+    <ol>
+      <li>AIが対象内容を中立に(結論を書かず事実のみ)まとめた依頼文を作成し、内容の性質に応じてDeepSeek/Kimi/Gemini Proのいずれかを提案する</li>
+      <li>人間がその依頼文をコピーし、該当AIの無料Web版に貼り付ける</li>
+      <li>人間が実際の回答をコピーしてAIに貼り戻す</li>
+      <li>AIがその回答を要約し、この欄に実施日・使用AI・結果を追記する</li>
+    </ol>
+  </div>
+
+  <div class="closing" style="margin-top:44px;">
+    <strong>このページの位置づけ</strong>: progress-tracker-dashboardのDGT-005(学習記録ページの新規実装)に対応。
+    学んだ内容そのものは<a href="../materials/server-infra.html">学習資料ページ</a>に分けてある。
+    今後の学習分野も同じ構成でこのリポジトリに追加していく。
+  </div>
+
+  <p class="source-note">
+    ヘッダー/URLの構造に関する回答はMDN Web Docs(developer.mozilla.org/en-US/docs/Web/HTTP/Headers)を、
+    サーバーレスの実行時間制限に関する回答はdevelopers.cloudflare.comの公開情報(学習資料ページと同一の出典)を
+    2026年8月時点で確認。
+  </p>
+
+</div>
+</body>
+</html>
