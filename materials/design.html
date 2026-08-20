@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — 基本・詳細設計</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .lede a { color: var(--accent-strong); }
+
+  section.topic { margin: 0 0 64px; padding-top: 44px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 28px; }
+
+  figure { margin: 0 0 26px; padding: 22px 20px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .diagram-wrap { overflow-x: auto; }
+  figure svg { display: block; margin: 0 auto; width: 100%; max-width: 100%; height: auto; color: var(--ink-soft); }
+  figcaption { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 12px; font-family: var(--mono); letter-spacing: 0.01em; }
+
+  .cat-line { stroke: var(--accent); }
+  .dim-line { stroke: var(--line-strong); }
+
+  .concept-grid { display: grid; gap: 14px; margin: 0; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13.5px; font-weight: 700; margin: 0 0 7px; color: var(--ink); }
+  .concept-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 7px; }
+  .concept-card p.ex { padding-top: 7px; border-top: 1px dashed var(--line); }
+  .concept-card p.ex .ex-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); margin-right: 4px; }
+  .concept-card code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .why { margin: 0 0 26px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 16px; font-weight: 600; margin: 0 0 10px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .recap { margin: 26px 0 0; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .closing { margin-top: 8px; padding: 20px 22px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 14px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 一覧に戻る</a>
+  <p class="eyebrow">学習資料 — 基本・詳細設計</p>
+  <h1>学習資料: 基本・詳細設計</h1>
+  <p class="lede">
+    UI・画面設計/外部インターフェース仕様/処理フローの詳細設計/エラーハンドリング仕様/API仕様の詳細。
+    このページを学んだ後の自分の理解・正誤の記録は<a href="../records/design.html">学習記録ページ</a>にまとめる予定。
+  </p>
+
+  <div class="why" style="margin-bottom:44px;">
+    <h3>そもそも、基本・詳細設計とは何か</h3>
+    <p>
+      要件定義(何を作るか)とアーキテクチャ(どう構造化するか)が決まった後、それを<strong>実装できる粒度まで
+      具体化する</strong>工程。基本設計は「外から見える仕様」(画面・外部連携)を、詳細設計は「内部の処理の
+      具体的な進め方」(処理フロー・エラー処理・API)を扱う。ここが甘いと、実装時に仕様の解釈違いや考慮もれが
+      多発し、DGT-003(要件定義〜詳細設計の設計工程確立)で目指している「懸念点を潰してから実装する」ができなくなる。
+    </p>
+  </div>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">01</span>
+      <h2>UI・画面設計</h2>
+    </div>
+    <p class="topic-lede">
+      画面がどう遷移し、各画面の入力項目に何が求められるかを、実装前に具体化しておく。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        「ログイン画面の次はどこに行くか」「このボタンを押したら何が起きるか」が曖昧なまま実装を始めると、
+        画面ごとに実装者の解釈がばらつく。<strong>画面遷移図</strong>で画面同士のつながりを、<strong>画面項目定義</strong>
+        で各入力欄のデータ型・必須条件を明確にしておくことで、実装時の迷いを減らす。これらは、機能仕様の
+        フローチャートやシーケンス図と連動し、画面操作がどう処理・DBアクセスにつながるかも明確にする。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>画面遷移図</h4>
+        <p>どの画面からどの画面へ、どんな操作で移動するかを図示したもの。ユーザーの操作の流れ全体を俯瞰できる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>画面項目定義</h4>
+        <p>各入力欄のデータ型・必須/任意・入力チェック仕様(文字数上限、形式など)を一覧化したもの。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>画面遷移図</strong>=画面同士のつながり、<strong>画面項目定義</strong>=各入力欄の仕様</li>
+        <li>機能仕様のフローチャート・シーケンス図と連動させ、画面操作と裏側の処理を対応づける</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">02</span>
+      <h2>外部インターフェース仕様</h2>
+    </div>
+    <p class="topic-lede">
+      システムの外(他システム・外部サービス)とどんな形式でデータをやり取りするかを定義する。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        外部システムとの連携部分は、自分たちのコードだけを直しても解決しない(相手側の仕様に合わせる必要がある)
+        ため、認識の齟齬が最も高くつく箇所。データ形式・プロトコル・エラーコードをあらかじめ文書化しておくことで、
+        連携先との齟齬を防ぐ。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>データ形式</h4>
+        <p>JSON・XML・CSVなど、やり取りするデータの形式。フィールド名・型・必須項目も含めて定義する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>プロトコル</h4>
+        <p>HTTP/HTTPS・WebSocketなど、どの通信方式を使うか。サーバー・インフラ分野で学んだHTTP/HTTPSの知識がここで直結する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>エラーコードの取り決め</h4>
+        <p>連携先とどんなエラーコード・エラーメッセージ形式でやり取りするかを、事前に合意しておく。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>外部連携は<strong>自分たちだけでは直せない</strong>ため、最も齟齬が高くつく箇所</li>
+        <li>データ形式・プロトコル・エラーコードを<strong>事前に文書化</strong>し、連携先と合意しておく</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">03</span>
+      <h2>処理フローの詳細設計</h2>
+    </div>
+    <p class="topic-lede">
+      分岐・ループ・例外系まで含めた、実装レベルの処理の流れを事前に書き出しておく。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        基本設計の「何をするか」だけでは、実装時に「どういう順番で」「どの条件で分岐するか」「異常時はどうするか」
+        が定まらない。詳細設計では、これらを<strong>フローチャートや擬似コード</strong>で明文化し、実装者(AIを
+        含む)が迷わず実装できる粒度まで落とし込む。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>フローチャート</h4>
+        <p>処理の流れを図で表現したもの。分岐(条件分け)・ループ(繰り返し)・例外(異常系)を含めて描く。</p>
+      </div>
+      <div class="concept-card">
+        <h4>擬似コード</h4>
+        <p>特定のプログラミング言語に依存しない、処理手順の書き下し。実装前に処理ロジックの妥当性を確認できる。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>処理フローの詳細設計=<strong>分岐・ループ・例外系まで含めた</strong>実装レベルの流れ</li>
+        <li><strong>フローチャート・擬似コード</strong>で、実装前にロジックの妥当性を確認する</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">04</span>
+      <h2>エラーハンドリング仕様</h2>
+    </div>
+    <p class="topic-lede">
+      「何か問題が起きた時、どう応答するか」を一覧化しておく。行き当たりばったりのエラー処理を防ぐ。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        エラー処理を実装のたびに個別に考えると、同じような異常系でもエンドポイントごとに応答形式がバラバラになる。
+        現在の標準的なアプローチは、機械可読なエラー形式を統一すること。IETFの<strong>RFC 9457</strong>
+        (「Problem Details for HTTP APIs」、2023年7月発行、RFC 7807の後継)は、type・title・status・detail・instance
+        という5つの基本フィールドからなる、<code>application/problem+json</code>形式のエラー応答を標準として定めている。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>RFC 9457(Problem Details for HTTP APIs)</h4>
+        <p>HTTP APIの機械可読なエラー応答を定めたIETF標準。type(エラー種別のURI)・title(概要)・status(HTTPステータスコード)・detail(詳細説明)・instance(発生箇所)の5フィールドが基本。</p>
+      </div>
+      <div class="concept-card">
+        <h4>異常系の一覧化</h4>
+        <p>入力エラー・認証エラー・外部連携先の障害・タイムアウトなど、想定される異常系をあらかじめリスト化し、それぞれの応答仕様を定めておく。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>エラー応答の形式を<strong>統一</strong>し、エンドポイントごとにバラバラにしない</li>
+        <li>現在の標準は<strong>RFC 9457</strong>(type/title/status/detail/instanceの5フィールド)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">05</span>
+      <h2>API仕様の詳細</h2>
+    </div>
+    <p class="topic-lede">
+      エンドポイント・リクエスト/レスポンス形式・認証方式・ステータスコードを、実装前に確定させる「契約」。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        APIを持つシステムでは、<strong>API仕様がフロントエンドとバックエンドの間の契約そのもの</strong>になる。
+        仕様が曖昧なまま両者が並行実装すると、結合時に食い違いが噴出する。現在の標準的な記述方法は
+        <strong>OpenAPI Specification(OAS)</strong>で、プログラミング言語に依存しない形でHTTP APIのインターフェースを
+        定義できる。最新版のOpenAPI 3.2.0(2025年9月リリース)では、構造化されたタグナビゲーションやストリーミング
+        向けメディアタイプなどが追加されたが、3.1との後方互換性は保たれている。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>OpenAPI Specification(OAS)</h4>
+        <p>HTTP APIのインターフェースを、言語非依存な形式(YAML/JSON)で記述する標準規格。エンドポイント・パラメータ・レスポンス形式・認証方式を機械可読な形で定義できる。最新版はOpenAPI 3.2.0(2025年9月)。</p>
+      </div>
+      <div class="concept-card">
+        <h4>API仕様=契約</h4>
+        <p>フロントエンドとバックエンドが並行して開発する際、API仕様が両者の合意点(契約)になる。仕様が固まっていれば、実装の完成を待たずにモックを使って並行開発できる。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>API仕様は<strong>フロントとバックエンドの契約</strong>そのもの</li>
+        <li>記述の標準規格は<strong>OpenAPI Specification</strong>(最新は3.2.0、2025年9月リリース)</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: 基本・詳細設計分野の学習資料(学んだ内容そのもの)。これで7分野の①インプット一巡目が完了。
+    自分の理解→正誤の記録→他AIによる確認は<a href="../records/design.html">学習記録ページ</a>にまとめる予定(まだ未作成)。
+  </div>
+
+  <p class="source-note">
+    画面設計・詳細設計の一般的な記述はbook.st-hakky.com・docuwriter.ai等、API仕様(OpenAPI 3.2.0)の記述は
+    xano.com・buildwithfern.com等、エラーハンドリング(RFC 9457)の記述はIETF標準文書に基づく解説記事を、
+    2026年8月時点で確認して作成。
+  </p>
+
+</div>
+</body>
+</html>

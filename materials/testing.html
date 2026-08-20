@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — テスト</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .lede a { color: var(--accent-strong); }
+
+  section.topic { margin: 0 0 64px; padding-top: 44px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 28px; }
+
+  figure { margin: 0 0 26px; padding: 22px 20px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .diagram-wrap { overflow-x: auto; }
+  figure svg { display: block; margin: 0 auto; width: 100%; max-width: 100%; height: auto; color: var(--ink-soft); }
+  figcaption { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 12px; font-family: var(--mono); letter-spacing: 0.01em; }
+
+  .cat-line { stroke: var(--accent); }
+  .dim-line { stroke: var(--line-strong); }
+
+  .concept-grid { display: grid; gap: 14px; margin: 0; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13.5px; font-weight: 700; margin: 0 0 7px; color: var(--ink); }
+  .concept-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 7px; }
+  .concept-card p.ex { padding-top: 7px; border-top: 1px dashed var(--line); }
+  .concept-card p.ex .ex-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); margin-right: 4px; }
+  .concept-card code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .why { margin: 0 0 26px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 16px; font-weight: 600; margin: 0 0 10px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .recap { margin: 26px 0 0; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .closing { margin-top: 8px; padding: 20px 22px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 14px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 一覧に戻る</a>
+  <p class="eyebrow">学習資料 — テスト</p>
+  <h1>学習資料: テスト</h1>
+  <p class="lede">
+    単体/結合/E2Eテストの違い・TDD(Red→Green→Refactor)・カバレッジ。
+    このページを学んだ後の自分の理解・正誤の記録は<a href="../records/testing.html">学習記録ページ</a>にまとめる予定。
+  </p>
+
+  <div class="why" style="margin-bottom:44px;">
+    <h3>そもそも、テストとは何か</h3>
+    <p>
+      「実装した通りに動いているか」を、人手ではなくコードで継続的に確認する仕組み。DGT-004(テスト項目のナレッジ化・
+      フェーズ別チェックポイント作成)で構想している内容の土台になる分野で、AIが実装した内容を検証する仕組みそのものでもある。
+    </p>
+  </div>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">01</span>
+      <h2>単体テスト・結合テスト・E2Eテストの違い</h2>
+    </div>
+    <p class="topic-lede">
+      「どの範囲を確認するか」で3段階に分かれる。範囲が広いほど信頼性は高いが、遅く・壊れやすくなる。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ3段階に分けるのか</h3>
+      <p>
+        1つのテストで全てを確認しようとすると、遅く、失敗した時にどこが原因か分かりにくくなる。
+        <strong>単体テスト</strong>は1つの関数・部品だけを素早く確認し、<strong>結合テスト</strong>は複数の部品が
+        正しく連携するか(サービスとDBの間の「契約」が守られているか等)を確認し、<strong>E2Eテスト</strong>は
+        実際にユーザーが操作する流れ全体を、動いているアプリ上で確認する。範囲が広がるほど、実際のユーザー体験に
+        近づく一方、実行が遅くなり、無関係な変更でも壊れやすくなる。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 210" role="img" aria-label="単体テストは1つの関数を素早く確認し、結合テストは複数の部品の連携を確認し、E2Eテストは実際のユーザー操作の流れ全体を確認する、というピラミッド状の図。上に行くほど範囲は広いが遅く壊れやすい">
+          <polygon points="350,20 470,90 230,90" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="350" y="60" text-anchor="middle" font-size="10" font-weight="700">E2E</text>
+          <text x="350" y="75" text-anchor="middle" font-size="8.5" fill="var(--ink-faint)">ユーザー操作全体</text>
+
+          <polygon points="230,90 470,90 520,150 180,150" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="350" y="125" text-anchor="middle" font-size="10" font-weight="700">結合テスト</text>
+          <text x="350" y="140" text-anchor="middle" font-size="8.5" fill="var(--ink-faint)">複数部品の連携</text>
+
+          <polygon points="180,150 520,150 570,205 130,205" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="350" y="180" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--accent-strong)">単体テスト</text>
+          <text x="350" y="197" text-anchor="middle" font-size="8.5" fill="var(--accent-strong)">1つの関数・部品</text>
+
+          <text x="620" y="60" text-anchor="middle" font-size="9" fill="var(--ink-faint)">遅い</text>
+          <text x="620" y="180" text-anchor="middle" font-size="9" fill="var(--ink-faint)">速い</text>
+        </svg>
+      </div>
+      <figcaption>下ほど範囲が狭く速い・上ほど範囲が広く実際のユーザー体験に近い</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>単体テスト(Unit Test)</h4>
+        <p>1つの関数・クラスなど最小単位を対象に、他への依存を切り離して確認する。実行が速く、素早いフィードバックが得られる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>結合テスト(Integration Test)</h4>
+        <p>複数の部品(サービスとDB、複数のマイクロサービス間など)が正しく連携するかを確認する。「部品同士の契約が守られているか」がポイント。</p>
+      </div>
+      <div class="concept-card">
+        <h4>E2Eテスト(End-to-End Test)</h4>
+        <p>実際に動いているアプリ上で、ユーザー操作の流れ全体を確認する。合否の基準は技術的な契約ではなく「ユーザーから見て目的の操作が完了できるか」。</p>
+      </div>
+      <div class="concept-card">
+        <h4>2026年時点の配分の変化</h4>
+        <p>AIによるコード生成を多用するチームでは、従来のテストピラミッド配分より、単体60%・結合25%・E2E15%(高リスクな領域では50/30/20)程度の比率の方が、実際の障害発生率を下げるという知見が出てきている。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>単体</strong>=1部品を高速確認、<strong>結合</strong>=部品同士の連携確認、<strong>E2E</strong>=ユーザー操作全体を確認</li>
+        <li>範囲が広いほど<strong>実際の体験に近いが、遅く壊れやすい</strong></li>
+        <li>AI生成コードが増える中、単体テストの比率をやや厚めにする配分が有効という知見がある</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">02</span>
+      <h2>TDD(テスト駆動開発)のサイクル</h2>
+    </div>
+    <p class="topic-lede">
+      実装より先にテストを書く開発スタイル。Red(失敗)→Green(成功)→Refactor(整理)の反復。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ先にテストを書くのか</h3>
+      <p>
+        先に「何ができればよいか」をテストとして明文化することで、実装のゴールが曖昧にならない。また、実装が
+        終わった時点で既にテストが揃っているため、後から慌ててテストを書く(そして書き忘れる)ことを防げる。
+        サイクルは3ステップ: <strong>①Red</strong>(まだ実装が無いので失敗するテストを書く)→<strong>②Green</strong>
+        (そのテストが通る最小限の実装をする)→<strong>③Refactor</strong>(テストが通ったままコードを整理する)を繰り返す。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 160" role="img" aria-label="Red(失敗するテストを書く)からGreen(テストを通す実装をする)、Refactor(コードを整理する)へと進み、また次の機能のRedへ戻る、というサイクル図">
+          <defs>
+            <marker id="tdd1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+          <circle cx="130" cy="80" r="55" fill="var(--surface-2)" stroke="#a3541c" stroke-width="1.5"/>
+          <text x="130" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="#a3541c">🔴 Red</text>
+          <text x="130" y="92" text-anchor="middle" font-size="8.5" fill="var(--ink-faint)">失敗するテストを書く</text>
+
+          <line x1="185" y1="80" x2="243" y2="80" class="cat-line" marker-end="url(#tdd1)"/>
+
+          <circle cx="350" cy="80" r="55" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+          <text x="350" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent-strong)">🟢 Green</text>
+          <text x="350" y="92" text-anchor="middle" font-size="8.5" fill="var(--ink-faint)">通す最小限の実装</text>
+
+          <line x1="405" y1="80" x2="463" y2="80" class="cat-line" marker-end="url(#tdd1)"/>
+
+          <circle cx="570" cy="80" r="55" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+          <text x="570" y="76" text-anchor="middle" font-size="12" font-weight="700">🔵 Refactor</text>
+          <text x="570" y="92" text-anchor="middle" font-size="8.5" fill="var(--ink-faint)">通ったまま整理</text>
+
+          <path d="M 570 135 Q 350 175 130 135" fill="none" class="dim-line" stroke-dasharray="3 3" marker-end="url(#tdd1)"/>
+          <text x="350" y="150" text-anchor="middle" font-size="9" fill="var(--ink-faint)">次の機能のRedへ戻る</text>
+        </svg>
+      </div>
+      <figcaption>Red→Green→Refactorを1機能ごとに繰り返す</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>① Red</h4>
+        <p>実装がまだ無い状態で、期待する動作をテストとして書く。当然このテストは失敗(赤)する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>② Green</h4>
+        <p>そのテストが通る、必要最小限の実装をする。きれいさより「まず通す」ことを優先する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>③ Refactor</h4>
+        <p>テストが通っている状態を維持したまま、コードの構造を整理する。テストがあるおかげで、整理中に壊してもすぐ気づける。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>TDD=<strong>Red(失敗)→Green(成功)→Refactor(整理)</strong>を機能ごとに繰り返す開発スタイル</li>
+        <li>先にテストを書くことで、実装のゴールを曖昧にしない</li>
+        <li>テストがある状態で整理するため、壊れてもすぐ気づける</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">03</span>
+      <h2>カバレッジ: テストで通った割合を示す指標</h2>
+    </div>
+    <p class="topic-lede">
+      「コードのうち何%がテストで実行されたか」を示す数値。高ければ安心、とは限らない点に注意が必要。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ気をつけて使う必要があるか</h3>
+      <p>
+        カバレッジは「そのコードがテスト<strong>実行された</strong>か」を測る指標であり、「そのコードが
+        <strong>正しく動くことを確認した</strong>か」を測る指標ではない。実行はされたが、結果を検証(assert)して
+        いないテストでも、カバレッジ上は100%になり得る。カバレッジだけを目標にすると、数字を上げるための
+        意味の薄いテストが増えるリスクがある。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>カバレッジが測るもの</h4>
+        <p>コードの各行・分岐が、テスト実行中に少なくとも1回通過したかどうか。実行されたかどうかだけを見ており、結果が正しいかは見ていない。</p>
+      </div>
+      <div class="concept-card">
+        <h4>「高カバレッジ=高品質」ではない</h4>
+        <p>複数の単体を組み合わせて初めて意味のある結果が出るような処理は、カバレッジだけでは品質の指標として不十分とされる。結合テスト・E2Eテストと合わせて評価する必要がある。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>カバレッジ=<strong>コードが実行された割合</strong>(正しく動いた割合ではない)</li>
+        <li>数字だけを追うと、意味の薄いテストが増えるリスクがある</li>
+        <li>単体テストのカバレッジだけでなく、結合・E2Eと合わせて品質を判断する</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: テスト分野の学習資料(学んだ内容そのもの)。
+    自分の理解→正誤の記録→他AIによる確認は<a href="../records/testing.html">学習記録ページ</a>にまとめる予定(まだ未作成)。
+  </div>
+
+  <p class="source-note">
+    単体/結合/E2Eテストの記述はgetautonoma.com・shiftasia.com等、TDDの記述はcircleci.com等の技術記事を、
+    AI生成コード時代のテスト配分の知見はgetautonoma.com記載の情報を、2026年8月時点で確認して作成。
+  </p>
+
+</div>
+</body>
+</html>

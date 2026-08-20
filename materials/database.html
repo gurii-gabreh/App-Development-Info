@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — データベース</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .lede a { color: var(--accent-strong); }
+
+  section.topic { margin: 0 0 64px; padding-top: 44px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 28px; }
+
+  figure { margin: 0 0 26px; padding: 22px 20px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .diagram-wrap { overflow-x: auto; }
+  figure svg { display: block; margin: 0 auto; width: 100%; max-width: 100%; height: auto; color: var(--ink-soft); }
+  figcaption { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 12px; font-family: var(--mono); letter-spacing: 0.01em; }
+
+  .cat-line { stroke: var(--accent); }
+  .dim-line { stroke: var(--line-strong); }
+
+  .concept-grid { display: grid; gap: 14px; margin: 0; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13.5px; font-weight: 700; margin: 0 0 7px; color: var(--ink); }
+  .concept-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 7px; }
+  .concept-card p.ex { padding-top: 7px; border-top: 1px dashed var(--line); }
+  .concept-card p.ex .ex-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); margin-right: 4px; }
+  .concept-card code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .why { margin: 0 0 26px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 16px; font-weight: 600; margin: 0 0 10px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .recap { margin: 26px 0 0; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .closing { margin-top: 8px; padding: 20px 22px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 14px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 一覧に戻る</a>
+  <p class="eyebrow">学習資料 — データベース</p>
+  <h1>学習資料: データベース</h1>
+  <p class="lede">
+    SQL vs NoSQL・正規化・インデックス・トランザクション/ACID。
+    このページを学んだ後の自分の理解・正誤の記録は<a href="../records/database.html">学習記録ページ</a>にまとめる予定。
+  </p>
+
+  <div class="why" style="margin-bottom:44px;">
+    <h3>そもそも、データベースとは何か</h3>
+    <p>
+      アプリの「データをどう持ち、どう壊れずに保つか」を扱う分野。アーキテクチャがコードの構造を、セキュリティが
+      悪用への備えを扱うのに対し、こちらは<strong>データそのものの整合性・検索性能</strong>を扱う。特にトランザクション/ACIDは、
+      Clean Architectureの学習で出てきた「中心的な業務ルールが依存する、外周の技術的詳細」の代表例でもある。
+    </p>
+  </div>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">01</span>
+      <h2>SQL vs NoSQL</h2>
+    </div>
+    <p class="topic-lede">
+      「厳格な表形式」か「柔軟な形式」か。どちらが優れているかではなく、データの性質に応じた使い分けが基本。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ2種類あるのか</h3>
+      <p>
+        SQLデータベース(リレーショナルDB)は、列のルールが厳格な表計算シートのように、全ての行が同じ形式に従う必要があり、
+        <strong>ACID</strong>(後述)による厳密な整合性保証を標準で持つ。NoSQLデータベースは、フォルダごとに中身が自由な
+        キャビネットのように、スキーマ(データ形式)が柔軟で、スケーラビリティを優先する代わりに整合性は
+        <strong>BASE</strong>(基本的に利用可能・厳密でない一貫性・結果的な整合性)という緩い保証がデフォルトになる。
+        ただし2026年時点ではこの境界は曖昧になりつつあり、MongoDBやDynamoDBのようなNoSQL DBも複数ドキュメントに
+        またがるACIDトランザクションをサポートし始めている。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 200" role="img" aria-label="SQLデータベースは全ての行が同じ列構成に従う表形式であるのに対し、NoSQLデータベースはドキュメントごとに自由な形式を持てる、という対比図">
+          <text x="160" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--ink-faint)">SQL(表形式・厳格なスキーマ)</text>
+          <rect x="30" y="34" width="260" height="90" rx="6" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <line x1="30" y1="58" x2="290" y2="58" stroke="var(--line-strong)"/>
+          <text x="70" y="50" text-anchor="middle" font-size="9" font-family="var(--mono)">id</text>
+          <text x="160" y="50" text-anchor="middle" font-size="9" font-family="var(--mono)">name</text>
+          <text x="250" y="50" text-anchor="middle" font-size="9" font-family="var(--mono)">email</text>
+          <text x="70" y="80" text-anchor="middle" font-size="9">1</text>
+          <text x="160" y="80" text-anchor="middle" font-size="9">田中</text>
+          <text x="250" y="80" text-anchor="middle" font-size="9">a@..</text>
+          <text x="70" y="105" text-anchor="middle" font-size="9">2</text>
+          <text x="160" y="105" text-anchor="middle" font-size="9">佐藤</text>
+          <text x="250" y="105" text-anchor="middle" font-size="9">b@..</text>
+          <text x="160" y="150" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">全ての行が同じ列に従う</text>
+
+          <text x="540" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--accent-strong)">NoSQL(ドキュメント・柔軟なスキーマ)</text>
+          <rect x="410" y="34" width="120" height="90" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="470" y="52" text-anchor="middle" font-size="8.5" font-family="var(--mono)">{ id: 1,</text>
+          <text x="470" y="66" text-anchor="middle" font-size="8.5" font-family="var(--mono)">name: "田中",</text>
+          <text x="470" y="80" text-anchor="middle" font-size="8.5" font-family="var(--mono)">tags: [...] }</text>
+          <rect x="550" y="34" width="120" height="90" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="610" y="52" text-anchor="middle" font-size="8.5" font-family="var(--mono)">{ id: 2,</text>
+          <text x="610" y="66" text-anchor="middle" font-size="8.5" font-family="var(--mono)">name: "佐藤",</text>
+          <text x="610" y="80" text-anchor="middle" font-size="8.5" font-family="var(--mono)">addr: {...} }</text>
+          <text x="540" y="150" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">ドキュメントごとに形式が違ってよい</text>
+
+          <text x="350" y="185" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">2026年時点、多くの本番システムは両方を用途に応じて併用する</text>
+        </svg>
+      </div>
+      <figcaption>SQL=全行共通の表構造、NoSQL=ドキュメントごとに柔軟な構造</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>SQL(リレーショナルDB)</h4>
+        <p>PostgreSQL・MySQLなど。列のルールが厳格で、ACIDによる整合性保証が標準。Stack Overflow開発者調査で複数年連続トップのPostgreSQLが代表例。</p>
+      </div>
+      <div class="concept-card">
+        <h4>NoSQL</h4>
+        <p>MongoDB(ドキュメント型)・DynamoDB(キーバリュー型)など。スキーマが柔軟でスケールしやすい。BASE(結果的な整合性)がデフォルトだが、近年はACIDトランザクションに対応するものも増えている。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>SQL</strong>=厳格な表構造+ACID標準、<strong>NoSQL</strong>=柔軟な構造+BASE(結果整合性)がデフォルト</li>
+        <li>どちらが優れているかではなく、<strong>データの性質・用途による使い分け</strong>が基本</li>
+        <li>SQL/NoSQLの境界は年々曖昧になりつつある(NoSQL側もACID対応が進んでいる)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">02</span>
+      <h2>正規化: データの重複を減らす設計手法</h2>
+    </div>
+    <p class="topic-lede">
+      同じ情報をあちこちに重複して持たない設計にすることで、更新もれ・矛盾を防ぐ。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        もし「注文」テーブルに顧客名・住所をそのままコピーして持たせると、顧客が引っ越した時に<strong>全注文分</strong>の
+        住所を更新しなければならず、更新もれが起きれば矛盾したデータが残る。正規化は、こうした重複を排除し、
+        1つの情報は1箇所にだけ持たせる(顧客情報は「顧客」テーブルに1つだけ持ち、注文からは顧客IDで参照する)設計手法。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>正規化前(非正規)</h4>
+        <p>注文テーブルに顧客名・住所を直接コピーして持たせる。同じ顧客が何度も注文すると、同じ情報が何行にも重複する。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>引っ越したのに、過去の注文履歴の住所が古いまま矛盾して残ってしまう。</p>
+      </div>
+      <div class="concept-card">
+        <h4>正規化後</h4>
+        <p>顧客情報は「顧客」テーブルに1つだけ持ち、注文テーブルからは顧客IDで参照する。顧客情報の更新は1箇所で済む。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>住所変更は顧客テーブルの1行を直すだけで、紐づく全注文に自動的に反映される。</p>
+      </div>
+      <div class="concept-card">
+        <h4>トレードオフ</h4>
+        <p>正規化しすぎるとテーブルが分かれすぎて、参照(JOIN)の回数が増え検索が遅くなることがある。読み取り重視のシステムでは、あえて一部を非正規化(重複を許容)することもある。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>正規化=<strong>同じ情報を1箇所にだけ持たせる</strong>ことで更新もれ・矛盾を防ぐ</li>
+        <li>正規化しすぎるとテーブルが増え、検索(JOIN)が重くなることがある</li>
+        <li>用途に応じて、あえて非正規化(重複を許容)する判断もある</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">03</span>
+      <h2>インデックス: 検索を高速化する仕組み</h2>
+    </div>
+    <p class="topic-lede">
+      本の索引と同じ発想。検索は速くなるが、その分書き込みは遅くなるというトレードオフがある。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        インデックスが無いと、データベースは検索のたびに全行を1つずつ確認する(フルスキャン)。データ量が増えるほど
+        これは致命的に遅くなる。インデックスは、特定の列の値をあらかじめ検索しやすい形(木構造など)で並べておく
+        仕組みで、本の索引ページから該当ページへ一気に飛べるのと同じ発想。ただし、データを書き込むたびにインデックス
+        側も更新する必要があるため、<strong>書き込みは遅くなる</strong>というトレードオフがある。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>インデックスが無い場合</h4>
+        <p>検索のたびに全行を1つずつ確認する(フルスキャン)。データ量に比例して検索が遅くなる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>インデックスがある場合</h4>
+        <p>特定の列であらかじめ検索しやすい順序を作っておき、該当箇所へ一気にアクセスできる。検索は速くなるが、書き込み(挿入・更新・削除)のたびにインデックスも更新する必要があり、その分遅くなる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>分厚い辞書の索引ページ。索引が無ければ最初から1ページずつめくって探すことになる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>使いどころの判断</h4>
+        <p>よく検索される列にはインデックスを張るべきだが、頻繁に書き込みが発生し検索頻度が低い列にまで張ると、無駄に書き込みを遅くするだけになる。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>インデックス=<strong>検索を高速化</strong>する仕組み(本の索引と同じ発想)</li>
+        <li>検索は速くなるが、<strong>書き込みは遅くなる</strong>トレードオフがある</li>
+        <li>よく検索される列にだけ張るのが基本</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">04</span>
+      <h2>トランザクション/ACID</h2>
+    </div>
+    <p class="topic-lede">
+      「全部成功するか、全部失敗するか」を保証する仕組み。お金の移動など、中途半端な状態を絶対に許してはいけない処理に必須。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        口座Aから口座Bへ送金する処理は、「Aから引く」「Bに足す」の2ステップからなる。この途中で処理が止まると、
+        Aからは引かれたのにBには足されていない、という矛盾した状態が残ってしまう。<strong>トランザクション</strong>は
+        複数の処理をひとまとまりにし、<strong>ACID</strong>(原子性・一貫性・独立性・永続性)という4つの性質でこれを防ぐ。
+        1970年にCoddによって提唱された、リレーショナルDBの根幹をなす概念。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 170" role="img" aria-label="送金処理において、口座Aから引く処理と口座Bに足す処理が1つのトランザクションとしてまとめられ、途中で失敗した場合は両方とも取り消される(全部成功か全部失敗か)、という図">
+          <defs>
+            <marker id="db1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+          <rect x="180" y="20" width="340" height="90" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-dasharray="4 4"/>
+          <text x="350" y="14" text-anchor="middle" font-size="10" font-family="var(--mono)" fill="var(--accent-strong)">1つのトランザクション</text>
+
+          <rect x="200" y="45" width="130" height="40" rx="6" fill="var(--surface)" stroke="var(--line-strong)"/>
+          <text x="265" y="69" text-anchor="middle" font-size="10">A口座から引く</text>
+          <line x1="330" y1="65" x2="368" y2="65" class="cat-line" marker-end="url(#db1)"/>
+          <rect x="370" y="45" width="130" height="40" rx="6" fill="var(--surface)" stroke="var(--line-strong)"/>
+          <text x="435" y="69" text-anchor="middle" font-size="10">B口座に足す</text>
+
+          <text x="350" y="135" text-anchor="middle" font-size="10" fill="var(--ink-faint)">どちらか一方でも失敗したら、両方とも「無かったこと」にする(ロールバック)</text>
+          <text x="350" y="153" text-anchor="middle" font-size="10" fill="var(--accent-strong)">= 中途半端な状態を絶対に残さない</text>
+        </svg>
+      </div>
+      <figcaption>複数の処理を1つのトランザクションにまとめ、全部成功か全部失敗かを保証する</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>A: 原子性(Atomicity)</h4>
+        <p>トランザクション内の処理は「全部成功」か「全部失敗(無かったことになる)」のどちらかしかない。中途半端な状態は残らない。</p>
+      </div>
+      <div class="concept-card">
+        <h4>C: 一貫性(Consistency)</h4>
+        <p>トランザクションの前後で、データが定めたルール(制約)を常に満たしている状態が保たれる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>I: 独立性(Isolation)</h4>
+        <p>複数のトランザクションが同時に実行されても、互いに干渉せず、あたかも1つずつ順番に実行されたかのような結果になる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>D: 永続性(Durability)</h4>
+        <p>トランザクションが完了(コミット)したら、その後に障害が起きてもデータは失われない。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>トランザクション=複数の処理を<strong>1つのまとまり</strong>として扱う仕組み</li>
+        <li><strong>ACID</strong>(原子性・一貫性・独立性・永続性)で、中途半端な状態が残らないことを保証する</li>
+        <li>近年はNoSQL側もACIDトランザクションに対応するものが増えている(SQL専用の概念ではなくなりつつある)</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: データベース分野の学習資料(学んだ内容そのもの)。
+    自分の理解→正誤の記録→他AIによる確認は<a href="../records/database.html">学習記録ページ</a>にまとめる予定(まだ未作成)。
+  </div>
+
+  <p class="source-note">
+    SQL/NoSQL・ACID/BASEの記述はbuilder.ai2sql.io・alekseialeinikov.com・medium.com(Sravani Reddy Bokka)等の
+    技術記事を2026年8月時点で確認して作成。
+  </p>
+
+</div>
+</body>
+</html>

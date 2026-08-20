@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — AI・LLM</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .lede a { color: var(--accent-strong); }
+
+  section.topic { margin: 0 0 64px; padding-top: 44px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 28px; }
+
+  figure { margin: 0 0 26px; padding: 22px 20px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .diagram-wrap { overflow-x: auto; }
+  figure svg { display: block; margin: 0 auto; width: 100%; max-width: 100%; height: auto; color: var(--ink-soft); }
+  figcaption { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 12px; font-family: var(--mono); letter-spacing: 0.01em; }
+
+  .cat-line { stroke: var(--accent); }
+  .dim-line { stroke: var(--line-strong); }
+
+  .concept-grid { display: grid; gap: 14px; margin: 0; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13.5px; font-weight: 700; margin: 0 0 7px; color: var(--ink); }
+  .concept-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 7px; }
+  .concept-card p.ex { padding-top: 7px; border-top: 1px dashed var(--line); }
+  .concept-card p.ex .ex-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); margin-right: 4px; }
+  .concept-card code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .example { display: flex; gap: 12px; padding: 16px 18px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 26px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+  .example p + p { margin-top: 8px; }
+  .example strong { color: var(--ink); font-weight: 600; }
+  .example code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .why { margin: 0 0 26px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 16px; font-weight: 600; margin: 0 0 10px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .recap { margin: 26px 0 0; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .closing { margin-top: 8px; padding: 20px 22px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 14px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 一覧に戻る</a>
+  <p class="eyebrow">学習資料 — AI・LLM</p>
+  <h1>学習資料: AI・LLM</h1>
+  <p class="lede">
+    プロンプトエンジニアリングの基本・RAG(検索拡張生成)・Embedding(埋め込み)・トークン/レート制限/コストの関係。
+    このページを学んだ後の自分の理解・正誤の記録は<a href="../records/ai-llm.html">学習記録ページ</a>にまとめる予定。
+  </p>
+
+  <div class="why" style="margin-bottom:44px;">
+    <h3>そもそも、AI・LLMとは何か</h3>
+    <p>
+      本プロジェクト自体が「AIとどう協働してアプリを作るか」を軸にしているため、<strong>AIをどう使いこなすか</strong>
+      という知識自体が実装力に直結する分野。他の6分野が「作るものの中身」の話なら、ここは「作る手段(AI)そのもの」
+      の仕組みを扱う。
+    </p>
+  </div>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">01</span>
+      <h2>プロンプトエンジニアリングの基本</h2>
+    </div>
+    <p class="topic-lede">
+      同じAIでも、指示の与え方(プロンプト)次第で出力の質が大きく変わる。曖昧な指示は曖昧な結果しか生まない。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ指示の与え方が重要か</h3>
+      <p>
+        AIは指示の曖昧さを、新人社員と同じように「best effortで埋める」。「あなたは優秀なアシスタントです」のような
+        抽象的な指示は、履歴書が空欄のまま採用するようなもので、出力の質を上げない。<strong>役割・目的・制約を具体的に
+        書くほど</strong>、意図通りの出力に近づく。また、複数の例を示す(Few-shot)、考える過程を書かせる
+        (Chain-of-Thought、思考の連鎖)といった技法で、精度をさらに上げられる。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 190" role="img" aria-label="曖昧な指示だとAIが独自に解釈して意図しない出力になりやすいのに対し、役割・目的・制約を具体的に書いた指示だと意図通りの出力に近づく、という対比図">
+          <text x="160" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="#a3541c">❌ 曖昧な指示</text>
+          <rect x="30" y="34" width="260" height="46" rx="6" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="160" y="62" text-anchor="middle" font-size="10.5">「いい感じにまとめて」</text>
+          <text x="160" y="100" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">AIが独自解釈で穴を埋める</text>
+          <text x="160" y="116" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">→ 意図と違う出力になりやすい</text>
+
+          <text x="540" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--accent-strong)">✅ 具体的な指示</text>
+          <rect x="410" y="34" width="260" height="46" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="540" y="54" text-anchor="middle" font-size="10">「あなたは校閲者。誤字と事実誤認</text>
+          <text x="540" y="68" text-anchor="middle" font-size="10">だけを箇条書きで3つ以内に指摘して」</text>
+          <text x="540" y="100" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">役割・目的・制約(件数)が明確</text>
+          <text x="540" y="116" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">→ 意図通りの出力に近づく</text>
+
+          <text x="350" y="160" text-anchor="middle" font-size="10" fill="var(--ink-faint)">Few-shot(具体例を示す)・Chain-of-Thought(考える過程を書かせる)も、指示を具体化する代表的な技法</text>
+        </svg>
+      </div>
+      <figcaption>指示の具体度が、出力の意図一致度を左右する</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>システムプロンプト / ユーザープロンプト</h4>
+        <p>システムプロンプトは役割・トーン・厳守すべき制約など「変わらないルール」を定義し、ユーザープロンプトはその場の質問・指示を書く。役割を分けることで指示がぶれにくくなる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>Few-shot(少数例示)</h4>
+        <p>期待する出力の具体例をいくつか見せてから本番の指示を出す技法。「こういう形式で答えてほしい」を言葉で説明するより、例を見せた方が伝わりやすいことが多い。</p>
+      </div>
+      <div class="concept-card">
+        <h4>Chain-of-Thought(思考の連鎖)</h4>
+        <p>「一気に答えを出す」のではなく、考える過程を段階的に書かせることで、複雑な推論タスクの精度を上げる技法。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>指示は<strong>役割・目的・制約</strong>を具体的に書くほど意図通りの出力に近づく</li>
+        <li><strong>システムプロンプト</strong>(変わらないルール)と<strong>ユーザープロンプト</strong>(その場の指示)を分けて考える</li>
+        <li><strong>Few-shot</strong>(具体例)・<strong>Chain-of-Thought</strong>(思考過程)は精度を上げる代表的な技法</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">02</span>
+      <h2>RAG(検索拡張生成)</h2>
+    </div>
+    <p class="topic-lede">
+      AIに「知らないこと」を答えさせるための仕組み。質問に関係する情報を先に検索し、それを踏まえて回答させる。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        LLMは学習時点までの情報しか知らず、社内文書や最新情報には答えられない(知らないことを堂々と答えてしまう
+        「ハルシネーション」の原因にもなる)。<strong>RAG(Retrieval-Augmented Generation、検索拡張生成)</strong>は、
+        質問に関連する情報を外部のデータ(文書・DB)から検索し、その内容をプロンプトに含めた上でLLMに回答させることで、
+        この弱点を補う。2020年にMeta AIの論文で提案され、2026年時点では知識集約型AIアプリの標準アーキテクチャになっている。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 720 220" role="img" aria-label="ユーザーの質問がまずベクトルデータベースへの検索に使われ、関連する文書の断片が見つかったら、それを質問と一緒にプロンプトに組み込んでLLMへ渡し、LLMがその情報をもとに回答する、というRAGの処理の流れ">
+          <defs>
+            <marker id="ai1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <rect x="10" y="80" width="90" height="40" rx="7" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="55" y="104" text-anchor="middle" font-size="11" fill="var(--accent-strong)">質問</text>
+
+          <line x1="100" y1="100" x2="158" y2="100" class="cat-line" marker-end="url(#ai1)"/>
+
+          <rect x="160" y="80" width="140" height="40" rx="7" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="230" y="104" text-anchor="middle" font-size="10.5" font-weight="700">ベクトルDB検索</text>
+
+          <line x1="300" y1="100" x2="358" y2="100" class="cat-line" marker-end="url(#ai1)"/>
+          <text x="329" y="85" text-anchor="middle" font-size="9" fill="var(--ink-faint)">関連断片</text>
+
+          <rect x="360" y="80" width="140" height="40" rx="7" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="430" y="104" text-anchor="middle" font-size="10.5" font-weight="700">プロンプトに結合</text>
+
+          <line x1="500" y1="100" x2="558" y2="100" class="cat-line" marker-end="url(#ai1)"/>
+
+          <rect x="560" y="80" width="140" height="40" rx="7" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="630" y="104" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--accent-strong)">LLMが回答</text>
+
+          <text x="360" y="150" text-anchor="middle" font-size="10" fill="var(--ink-faint)">質問と文書断片の両方を「意味の近さ」でベクトル化して比較するため、単語が一致しなくても</text>
+          <text x="360" y="168" text-anchor="middle" font-size="10" fill="var(--ink-faint)">「社員の福利厚生」で検索して「スタッフの手当・報酬パッケージ」の文書がヒットする、といったことが起きる</text>
+        </svg>
+      </div>
+      <figcaption>質問に関連する外部情報を検索してからLLMに渡す、というのがRAGの基本の流れ</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>チャンク分割(Chunking)</h4>
+        <p>元の文書を、検索しやすい小さな断片(チャンク)に分割しておく前処理。文書全体を毎回渡すのではなく、関連する断片だけを渡すことで効率化する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>ベクトルデータベース</h4>
+        <p>文書の断片をEmbedding(数値ベクトル)に変換して保存しておくデータベース。質問も同じ方法でベクトル化し、意味が近いものを検索する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>ハイブリッド検索</h4>
+        <p>意味の近さで探す方法(Embedding検索)と、キーワードの一致で探す従来型の検索(BM25等)を組み合わせる手法。両方を使うと、検索精度(再現率)が5〜15%程度向上するとされ、2026年時点のベストプラクティスとされる。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>RAG=質問に関連する情報を<strong>検索してから</strong>LLMに回答させる仕組み</li>
+        <li>LLMが知らないこと・最新情報に答えられない弱点を補う</li>
+        <li>意味の近さ(Embedding検索)とキーワード一致(従来検索)の<strong>ハイブリッド</strong>が現在のベストプラクティス</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">03</span>
+      <h2>Embedding(埋め込み)</h2>
+    </div>
+    <p class="topic-lede">
+      文章を「意味が近いものほど近くに配置される数値の座標」に変換する仕組み。RAGの検索を支える基礎技術。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ必要か</h3>
+      <p>
+        コンピュータは文章そのものの「意味」を直接比較できないため、まず文章を<strong>数値のベクトル(384〜3072次元程度)</strong>
+        に変換する。この変換の際、意味が似ている文章ほどベクトル空間上で近い位置に配置されるように学習されているため、
+        単語が一致していなくても「意味が近い」文章を検索できるようになる。この近さの計算にはコサイン類似度
+        (ベクトルの向きの近さを測る指標)がよく使われる。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 220" role="img" aria-label="意味空間の中で、犬と猫のように意味が近い言葉は近くに配置され、自動車のように意味が遠い言葉は離れた位置に配置される、というEmbeddingの概念図">
+          <rect x="20" y="20" width="660" height="180" rx="10" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-dasharray="4 4"/>
+          <text x="350" y="40" text-anchor="middle" font-size="10" font-family="var(--mono)" fill="var(--ink-faint)">意味空間(ベクトル空間)のイメージ</text>
+
+          <circle cx="180" cy="100" r="6" fill="var(--accent)"/>
+          <text x="180" y="90" text-anchor="middle" font-size="10.5">犬</text>
+          <circle cx="230" cy="120" r="6" fill="var(--accent)"/>
+          <text x="230" y="140" text-anchor="middle" font-size="10.5">猫</text>
+          <line x1="180" y1="100" x2="230" y2="120" class="dim-line" stroke-dasharray="3 3"/>
+          <text x="205" y="105" text-anchor="middle" font-size="8.5" fill="var(--ink-faint)">近い(意味が似ている)</text>
+
+          <circle cx="540" cy="150" r="6" fill="var(--ink-faint)"/>
+          <text x="540" y="170" text-anchor="middle" font-size="10.5">自動車</text>
+
+          <line x1="230" y1="120" x2="540" y2="150" class="dim-line" stroke-dasharray="3 3"/>
+          <text x="390" y="150" text-anchor="middle" font-size="8.5" fill="var(--ink-faint)">遠い(意味が異なる)</text>
+        </svg>
+      </div>
+      <figcaption>意味が近い言葉・文章ほど、ベクトル空間上で近い位置に配置される</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>Embeddingモデル</h4>
+        <p>文章を数値ベクトルに変換するための専用モデル。384〜3072次元程度のベクトルを出力するものが一般的。</p>
+      </div>
+      <div class="concept-card">
+        <h4>コサイン類似度</h4>
+        <p>2つのベクトルの「向き」がどれだけ近いかを測る指標。ベクトルDBはこの指標を使って、質問と意味が近い文書断片を探す。</p>
+      </div>
+      <div class="concept-card">
+        <h4>意味検索(セマンティック検索)</h4>
+        <p>単語の一致ではなく意味の近さで検索する方法。Embeddingがあるからこそ実現できる、RAGの中核技術。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>Embedding=文章を<strong>意味が近いほど近くなる数値ベクトル</strong>に変換する仕組み</li>
+        <li>ベクトル同士の近さは<strong>コサイン類似度</strong>などで測る</li>
+        <li>単語が一致しなくても意味が近ければ検索できる(<strong>意味検索</strong>)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">04</span>
+      <h2>トークン・レート制限・コストの関係</h2>
+    </div>
+    <p class="topic-lede">
+      AIとのやり取りは全て「トークン数」で計量され、それがそのままコストと利用制限に直結する。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ知っておく必要があるか</h3>
+      <p>
+        AIの利用料金は「トークン数」(文章を細かく分割した単位)に応じて課金される従量課金が基本。しかも
+        <strong>出力トークンは入力トークンよりずっと高い</strong>(2026年時点、主要モデルの出力/入力の価格比は
+        おおよそ3〜8倍、中央値は約4倍)。長い出力を要求するタスクほどコストが跳ね上がりやすい、という関係を
+        理解しておくことが、コスト管理・レート制限(利用上限)の管理につながる。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 190" role="img" aria-label="入力トークンと出力トークンの価格を棒グラフで比較し、出力トークンの方が入力トークンよりおよそ4倍高いことを示す図">
+          <text x="350" y="20" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--ink-faint)">トークン単価のイメージ(主要モデルの中央値、約4倍差)</text>
+
+          <rect x="200" y="130" width="80" height="30" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="240" y="150" text-anchor="middle" font-size="10">入力 1x</text>
+
+          <rect x="420" y="60" width="80" height="100" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="460" y="150" text-anchor="middle" font-size="10" fill="var(--accent-strong)">出力 約4x</text>
+
+          <text x="350" y="180" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">同じ文字数でも、AIに「書かせる」方が「読ませる」より高コスト</text>
+        </svg>
+      </div>
+      <figcaption>出力トークンは入力トークンよりおよそ4倍(中央値)高い、という価格の非対称性</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>トークン</h4>
+        <p>AIが文章を処理する際の最小単位。単語そのものではなく、単語の一部や記号単位に分割されることも多い。入力・出力どちらも課金対象。</p>
+      </div>
+      <div class="concept-card">
+        <h4>レート制限</h4>
+        <p>一定時間内に処理できる量の上限。多くのプロバイダで、契約プランそのものではなく<strong>累積の利用額(支払実績)</strong>に応じて上限が引き上げられる仕組みになっている。</p>
+      </div>
+      <div class="concept-card">
+        <h4>プロンプトキャッシュ</h4>
+        <p>同じ内容を繰り返し送る場合、2回目以降を安く・レート制限の対象外として扱う仕組み。長い会話・大きな資料を繰り返し参照するタスクのコスト削減に有効。</p>
+      </div>
+      <div class="concept-card">
+        <h4>モデルの使い分け(ルーティング)</h4>
+        <p>ai-config.jsonの🔀AIルーティングでも扱った考え方。単純な作業は安価なモデルに、複雑な作業は高性能モデルに振り分けることで、コストと品質のバランスを取る。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>AI利用料金は<strong>トークン数</strong>に応じた従量課金が基本</li>
+        <li><strong>出力トークンは入力トークンよりずっと高い</strong>(中央値で約4倍)</li>
+        <li>レート制限は<strong>累積利用額</strong>に応じて上がることが多く、キャッシュ活用でコスト・制限の両方を抑えられる</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: AI・LLM分野の学習資料(学んだ内容そのもの)。
+    自分の理解→正誤の記録→他AIによる確認は<a href="../records/ai-llm.html">学習記録ページ</a>にまとめる予定(まだ未作成)。
+  </div>
+
+  <p class="source-note">
+    RAG・Embeddingの記述はpromptingguide.ai・decodethefuture.org等の技術記事を、プロンプトエンジニアリングの
+    記述はk2view.com・pecollective.com等を、トークン価格・レート制限の記述はmorphllm.com・aisuperior.com等
+    (2026年6月〜8月時点の価格情報を含む)を、2026年8月時点で確認して作成。
+  </p>
+
+</div>
+</body>
+</html>
