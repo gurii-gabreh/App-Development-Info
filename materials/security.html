@@ -188,8 +188,16 @@
       <li><span class="rank-badge">A03</span><strong>Software Supply Chain Failures</strong>(ソフトウェア供給網の不備) — 2025年版で新設。外部ライブラリ・依存パッケージ経由の侵害増加を反映</li>
       <li><span class="rank-badge">A04</span><strong>Cryptographic Failures</strong>(暗号化の不備) — 弱い/古い暗号方式、平文保存など</li>
       <li><span class="rank-badge">A05</span><strong>Injection</strong>(インジェクション) — SQLインジェクション等、外部入力が命令として実行されてしまう</li>
-      <li><span class="rank-badge">A06〜A10</span>Insecure Design(安全でない設計)/Authentication Failures(認証の不備)/Software or Data Integrity Failures(整合性の不備)/Security Logging and Alerting Failures(検知・記録の不備)/Mishandling of Exceptional Conditions(例外処理の不備、2025年版で新設)</li>
+      <li><span class="rank-badge">A06</span><strong>Insecure Design</strong>(安全でない設計) — 脅威モデリングの欠如など、設計そのものの欠陥(A07〜A10の原因という意味ではなく、独立した別項目)</li>
+      <li><span class="rank-badge">A07</span><strong>Authentication Failures</strong>(認証の不備) — ログイン・本人確認の仕組みの不備</li>
+      <li><span class="rank-badge">A08</span><strong>Software or Data Integrity Failures</strong>(整合性の不備) — ソフトウェア更新・データの改ざんを検知できない</li>
+      <li><span class="rank-badge">A09</span><strong>Security Logging and Alerting Failures</strong>(検知・記録の不備) — 侵害されても気づけない・記録が残らない</li>
+      <li><span class="rank-badge">A10</span><strong>Mishandling of Exceptional Conditions</strong>(例外処理の不備) — 2025年版で新設。異常系の処理漏れ</li>
     </ul>
+    <p class="topic-lede" style="margin-top:10px;">
+      A06〜A10は、A06(安全でない設計)がA07〜A10をまとめた上位概念というわけではなく、<strong>5つとも独立して
+      順位づけられた別項目</strong>である点に注意(混同しやすいので明記)。
+    </p>
 
     <div class="recap">
       <span class="recap-tag">要点</span>
