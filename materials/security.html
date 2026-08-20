@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — セキュリティ</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .lede a { color: var(--accent-strong); }
+
+  section.topic { margin: 0 0 64px; padding-top: 44px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 28px; }
+
+  figure { margin: 0 0 26px; padding: 22px 20px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .diagram-wrap { overflow-x: auto; }
+  figure svg { display: block; margin: 0 auto; width: 100%; max-width: 100%; height: auto; color: var(--ink-soft); }
+  figcaption { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 12px; font-family: var(--mono); letter-spacing: 0.01em; }
+
+  .cat-line { stroke: var(--accent); }
+  .dim-line { stroke: var(--line-strong); }
+  .warn-line { stroke: #a3541c; }
+
+  .concept-grid { display: grid; gap: 14px; margin: 0; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13.5px; font-weight: 700; margin: 0 0 7px; color: var(--ink); }
+  .concept-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 7px; }
+  .concept-card p.ex { padding-top: 7px; border-top: 1px dashed var(--line); }
+  .concept-card p.ex .ex-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); margin-right: 4px; }
+  .concept-card code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .rank-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .rank-list li { display: flex; gap: 10px; align-items: baseline; font-size: 13px; color: var(--ink-soft); }
+  .rank-badge { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 1px 7px; flex: 0 0 auto; }
+  .rank-list li strong { color: var(--ink); font-weight: 600; }
+
+  .example { display: flex; gap: 12px; padding: 16px 18px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 26px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+  .example p + p { margin-top: 8px; }
+  .example strong { color: var(--ink); font-weight: 600; }
+  .example code { font-family: var(--mono); font-size: 12.5px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .why { margin: 0 0 26px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 16px; font-weight: 600; margin: 0 0 10px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .recap { margin: 26px 0 0; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .closing { margin-top: 8px; padding: 20px 22px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 14px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 一覧に戻る</a>
+  <p class="eyebrow">学習資料 — セキュリティ</p>
+  <h1>学習資料: セキュリティ</h1>
+  <p class="lede">
+    OWASP Top 10・暗号化の2区分(対称鍵/公開鍵)・認証と認可の違い・シークレット管理の基本。
+    このページを学んだ後の自分の理解・正誤の記録は<a href="../records/security.html">学習記録ページ</a>にまとめる予定。
+  </p>
+
+  <div class="why" style="margin-bottom:44px;">
+    <h3>そもそも、セキュリティとは何か</h3>
+    <p>
+      アプリを<strong>意図しない相手に悪用されない・データを盗まれない・止められない</strong>ようにするための分野。
+      アーキテクチャが「正しく動く構造」、サーバー・インフラが「速く安定して届く仕組み」を扱うのに対し、
+      セキュリティは「悪意ある第三者から守る」という別の軸の非機能要件を扱う。
+    </p>
+  </div>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">01</span>
+      <h2>OWASP Top 10(Webアプリの代表的な脆弱性)</h2>
+    </div>
+    <p class="topic-lede">
+      世界中の実際の脆弱性データを集計して「今、最も注意すべき10種類」をランキング化したもの。セキュリティを学ぶ最初の地図になる。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ存在するのか</h3>
+      <p>
+        脆弱性の種類は膨大で、初学者が全部を一度に把握するのは非現実的。OWASP(非営利団体)は世界中の実際の脆弱性データ
+        (2025年版は589種類のCWE[脆弱性の分類]を248カテゴリに整理して分析)をもとに、<strong>最も発生しやすく影響が大きいもの</strong>
+        を10個に絞ってランキング化している。数年おきに改訂され、直近の正式版は<strong>OWASP Top 10:2025</strong>(2025年発表、8回目の改訂版)。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 720 230" role="img" aria-label="ユーザーからアプリを経由してDB・設定に至るまでのリクエストの流れの中で、入力処理の段階でInjection、権限チェックの段階でBroken Access Control、設定・デプロイの段階でSecurity Misconfigurationという代表的な脆弱性が起きやすい、という図">
+          <defs>
+            <marker id="sec1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <rect x="10" y="90" width="90" height="40" rx="7" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="55" y="114" text-anchor="middle" font-size="11.5" fill="var(--accent-strong)">Client</text>
+
+          <line x1="100" y1="110" x2="158" y2="110" class="cat-line" marker-end="url(#sec1)"/>
+          <text x="129" y="95" text-anchor="middle" font-size="9" fill="#a3541c">A05 Injection</text>
+
+          <rect x="160" y="90" width="130" height="40" rx="7" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="225" y="114" text-anchor="middle" font-size="10.5" font-weight="700">入力処理</text>
+
+          <line x1="290" y1="110" x2="348" y2="110" class="cat-line" marker-end="url(#sec1)"/>
+          <text x="319" y="95" text-anchor="middle" font-size="9" fill="#a3541c">A01 Broken Access Control</text>
+
+          <rect x="350" y="90" width="130" height="40" rx="7" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="415" y="114" text-anchor="middle" font-size="10.5" font-weight="700">権限チェック</text>
+
+          <line x1="480" y1="110" x2="538" y2="110" class="cat-line" marker-end="url(#sec1)"/>
+          <text x="509" y="95" text-anchor="middle" font-size="9" fill="#a3541c">A02 Security Misconfiguration</text>
+
+          <rect x="540" y="90" width="150" height="40" rx="7" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="615" y="114" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--accent-strong)">DB・設定・デプロイ</text>
+
+          <text x="360" y="180" text-anchor="middle" font-size="10" fill="var(--ink-faint)">Top 10全体の1位はBroken Access Control(権限の不備)、2位はSecurity Misconfiguration(設定不備)</text>
+          <text x="360" y="198" text-anchor="middle" font-size="10" fill="var(--ink-faint)">3位は新設のSoftware Supply Chain Failures(依存ライブラリなど供給網の不備)</text>
+        </svg>
+      </div>
+      <figcaption>リクエストが通る各段階に、代表的な脆弱性カテゴリが対応する(2025年版の例)</figcaption>
+    </figure>
+
+    <ul class="rank-list">
+      <li><span class="rank-badge">A01</span><strong>Broken Access Control</strong>(アクセス制御の不備) — 権限外の操作・データに到達できてしまう。Top10全体の最重要項目</li>
+      <li><span class="rank-badge">A02</span><strong>Security Misconfiguration</strong>(セキュリティ設定の不備) — 初期設定のまま・不要な機能が有効なままなど。2021年版の5位から2位へ上昇</li>
+      <li><span class="rank-badge">A03</span><strong>Software Supply Chain Failures</strong>(ソフトウェア供給網の不備) — 2025年版で新設。外部ライブラリ・依存パッケージ経由の侵害増加を反映</li>
+      <li><span class="rank-badge">A04</span><strong>Cryptographic Failures</strong>(暗号化の不備) — 弱い/古い暗号方式、平文保存など</li>
+      <li><span class="rank-badge">A05</span><strong>Injection</strong>(インジェクション) — SQLインジェクション等、外部入力が命令として実行されてしまう</li>
+      <li><span class="rank-badge">A06〜A10</span>Insecure Design(安全でない設計)/Authentication Failures(認証の不備)/Software or Data Integrity Failures(整合性の不備)/Security Logging and Alerting Failures(検知・記録の不備)/Mishandling of Exceptional Conditions(例外処理の不備、2025年版で新設)</li>
+    </ul>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>最新の正式版は<strong>OWASP Top 10:2025</strong>(実際の脆弱性データに基づくランキング)</li>
+        <li>1位は<strong>Broken Access Control</strong>(権限の不備)、2位は<strong>Security Misconfiguration</strong>(設定の不備)</li>
+        <li>2025年版で<strong>Software Supply Chain Failures</strong>(供給網)と<strong>Mishandling of Exceptional Conditions</strong>(例外処理)が新設された</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">02</span>
+      <h2>暗号化の2区分: 対称鍵 vs 公開鍵</h2>
+    </div>
+    <p class="topic-lede">
+      「同じ鍵で開け閉めする」か「開ける鍵と閉める鍵が別」か。この違いが、速度・鍵の配り方・使いどころを決める。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ2種類あるのか</h3>
+      <p>
+        暗号化は「鍵をどう扱うか」で大きく2つに分かれる。<strong>対称鍵暗号</strong>は暗号化・復号に同じ鍵を使うため高速で
+        大量データ向きだが、通信相手ごとに鍵を安全に配る手間がある(10台が互いに通信するだけで45個の鍵が必要になる)。
+        <strong>公開鍵暗号(非対称鍵)</strong>は「公開鍵(誰に渡してもよい)」と「秘密鍵(本人だけが持つ)」のペアを使い、
+        鍵の事前共有が不要な代わりに計算コストが高い。実際のシステムでは<strong>両方を組み合わせる</strong>のが定石
+        (最初の鍵交換だけ公開鍵暗号で行い、以降の大量データは対称鍵暗号で高速に暗号化する。HTTPSも同じ仕組み)。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 240" role="img" aria-label="対称鍵暗号は送信者と受信者が同じ鍵で暗号化・復号する。公開鍵暗号は送信者が受信者の公開鍵で暗号化し、受信者は自分だけが持つ秘密鍵で復号する、という比較図">
+          <defs>
+            <marker id="sec2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <text x="150" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--ink-faint)">対称鍵暗号(共通鍵)</text>
+          <rect x="30" y="40" width="70" height="36" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="65" y="63" text-anchor="middle" font-size="10.5">送信者</text>
+          <rect x="200" y="40" width="70" height="36" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="235" y="63" text-anchor="middle" font-size="10.5">受信者</text>
+          <line x1="100" y1="58" x2="198" y2="58" class="cat-line" marker-end="url(#sec2)"/>
+          <text x="150" y="95" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">同じ鍵🔑で暗号化・復号</text>
+          <text x="150" y="112" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">高速・大量データ向き</text>
+          <text x="150" y="129" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">相手ごとに鍵を安全に配る必要</text>
+
+          <text x="530" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--accent-strong)">公開鍵暗号(非対称鍵)</text>
+          <rect x="410" y="40" width="70" height="36" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="445" y="63" text-anchor="middle" font-size="10.5">送信者</text>
+          <rect x="580" y="40" width="70" height="36" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="615" y="63" text-anchor="middle" font-size="10.5">受信者</text>
+          <line x1="480" y1="58" x2="578" y2="58" class="cat-line" marker-end="url(#sec2)"/>
+          <text x="530" y="95" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">受信者の公開鍵🔓で暗号化</text>
+          <text x="530" y="112" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">受信者だけの秘密鍵🔐で復号</text>
+          <text x="530" y="129" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">事前の鍵共有が不要</text>
+
+          <text x="360" y="180" text-anchor="middle" font-size="10" fill="var(--accent-strong)">HTTPS等の実システムは両方を併用: 最初の鍵交換は公開鍵暗号、以降のデータ本体は対称鍵暗号(AES-256が主流)</text>
+        </svg>
+      </div>
+      <figcaption>対称鍵=同じ鍵で開け閉め、公開鍵=開ける鍵(公開)と閉める鍵(秘密)が別</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>対称鍵暗号(共通鍵暗号)</h4>
+        <p>暗号化と復号に同じ1つの鍵を使う方式。計算コストが低く高速なため、大量データの暗号化に向く。代表例はAES-256(多くの準拠基準で事実上の標準)。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>家の鍵のように、施錠も解錠も同じ鍵で行うイメージ。</p>
+      </div>
+      <div class="concept-card">
+        <h4>公開鍵暗号(非対称鍵暗号)</h4>
+        <p>公開鍵(誰に渡してもよい)と秘密鍵(本人だけが保持)のペアを使う方式。事前の鍵共有が不要な代わりに計算コストが高い。デジタル署名や証明書の発行にも使われる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>南京錠(公開鍵)は誰でも掛けられるが、それを開けられる鍵(秘密鍵)は持ち主だけが持っているイメージ。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>対称鍵</strong>=同じ鍵で暗号化・復号(高速・大量データ向き)</li>
+        <li><strong>公開鍵</strong>=公開鍵で暗号化・秘密鍵で復号(鍵の事前共有が不要)</li>
+        <li>実システムは<strong>両方を組み合わせる</strong>のが定石(HTTPSも同様)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">03</span>
+      <h2>認証(Authentication)と認可(Authorization)の違い</h2>
+    </div>
+    <p class="topic-lede">
+      「あなたは誰?」を確認するのが認証、「あなたは何をしてよいか?」を確認するのが認可。似た言葉だが役割は別。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ区別する必要があるか</h3>
+      <p>
+        この2つを混同すると、「ログインさえできれば何でもできてしまう」ような設計ミス(OWASP Top 10のA01
+        Broken Access Controlに直結)につながる。<strong>認証は必ず認可より先に行われ</strong>、認証で本人確認された後、
+        認可でその人が具体的に何にアクセスできるかが判定される。会社員として認証されていても、経理データへの
+        アクセスは別途認可されていなければ見られない、という区別が必要。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 190" role="img" aria-label="ユーザーがまず認証ゲートで本人確認を受け、通過後に認可ゲートで権限確認を受け、許可された範囲のリソースにのみアクセスできる、という2段階の図">
+          <defs>
+            <marker id="sec3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <rect x="10" y="70" width="90" height="40" rx="7" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="55" y="94" text-anchor="middle" font-size="11" fill="var(--accent-strong)">User</text>
+
+          <line x1="100" y1="90" x2="158" y2="90" class="cat-line" marker-end="url(#sec3)"/>
+
+          <rect x="160" y="60" width="150" height="60" rx="7" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="235" y="86" text-anchor="middle" font-size="11" font-weight="700">🔑 認証ゲート</text>
+          <text x="235" y="102" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">あなたは誰?(本人確認)</text>
+
+          <line x1="310" y1="90" x2="368" y2="90" class="cat-line" marker-end="url(#sec3)"/>
+          <text x="339" y="75" text-anchor="middle" font-size="9" fill="var(--ink-faint)">通過後</text>
+
+          <rect x="370" y="60" width="150" height="60" rx="7" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="445" y="86" text-anchor="middle" font-size="11" font-weight="700">🛡 認可ゲート</text>
+          <text x="445" y="102" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">何をしてよい?(権限確認)</text>
+
+          <line x1="520" y1="90" x2="578" y2="90" class="cat-line" marker-end="url(#sec3)"/>
+
+          <rect x="580" y="70" width="110" height="40" rx="7" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="635" y="94" text-anchor="middle" font-size="10.5" fill="var(--accent-strong)">許可範囲の<tspan x="635" dy="12">リソース</tspan></text>
+
+          <text x="350" y="155" text-anchor="middle" font-size="10" fill="var(--ink-faint)">認証を通過しても、認可されていない範囲へは到達できない(A01 Broken Access Controlの防止)</text>
+        </svg>
+      </div>
+      <figcaption>認証(本人確認)→認可(権限確認)の順に必ず通過する2段階の関所</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>認証(Authentication)</h4>
+        <p>「あなたは誰か」を確認するプロセス。パスワード・指紋・ワンタイムコードなど、本人だけが提示できる証拠(クレデンシャル)で確認する。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>会社の入館証をかざして「この人は社員本人である」と確認される場面。</p>
+      </div>
+      <div class="concept-card">
+        <h4>認可(Authorization)</h4>
+        <p>本人確認された後、「その人が具体的に何にアクセスできるか」を確認するプロセス。役職・部署などに応じた権限設定に基づいて判定される。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>入館は許可されても、経理部のフロアには専用の権限が無いと入れない、という場面。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>認証</strong>=本人確認(あなたは誰か)、<strong>認可</strong>=権限確認(何をしてよいか)</li>
+        <li>認証は<strong>必ず認可より先</strong>に行われる</li>
+        <li>この区別を怠るとOWASP Top10の1位<strong>Broken Access Control</strong>に直結する</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">04</span>
+      <h2>シークレット管理の基本</h2>
+    </div>
+    <p class="topic-lede">
+      APIキー・パスワード・証明書などの「見られたら困る情報」を、どこにどう保管するか。地味だが被害に直結する分野。
+    </p>
+
+    <div class="why">
+      <h3>そもそも、なぜ重要か</h3>
+      <p>
+        コードにAPIキーなどを直接書き込む(ハードコーディングする)ことは、シークレット漏えいの最大の原因の1つとされる
+        (特にテスト時に書いて、コミット前に消し忘れるケース)。一度公開リポジトリにコミットされてしまうと、
+        履歴を遡って第三者に読まれるリスクが残り続ける。基本方針は<strong>コードから分離し、環境変数や専用の管理サービスに
+        置く</strong>こと。
+      </p>
+    </div>
+
+    <figure>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 700 190" role="img" aria-label="コードに直接APIキーを書き込む悪い例と、環境変数やシークレット管理サービス経由でコードとは分離して読み込む良い例を対比させた図">
+          <defs>
+            <marker id="sec4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <text x="160" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="#a3541c">❌ 直書き(ハードコーディング)</text>
+          <rect x="40" y="34" width="240" height="46" rx="6" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="160" y="62" text-anchor="middle" font-size="10" font-family="var(--mono)">const key = "sk-abc123...";</text>
+          <text x="160" y="100" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">コードと一緒にリポジトリへコミット</text>
+          <text x="160" y="116" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">→ 履歴に残り続け、公開リポジトリなら</text>
+          <text x="160" y="132" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">誰でも読める状態になる</text>
+
+          <text x="540" y="18" text-anchor="middle" font-size="12" font-weight="700" font-family="var(--mono)" fill="var(--accent-strong)">✅ コードから分離</text>
+          <rect x="420" y="34" width="240" height="46" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="540" y="62" text-anchor="middle" font-size="10" font-family="var(--mono)">const key = process.env.API_KEY;</text>
+          <text x="540" y="100" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">環境変数・シークレット管理サービスから</text>
+          <text x="540" y="116" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">実行時に読み込む</text>
+          <text x="540" y="132" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">→ コード自体には値が残らない</text>
+        </svg>
+      </div>
+      <figcaption>シークレットはコードから物理的に分離し、実行時に外部から読み込む</figcaption>
+    </figure>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>コードへの直書きを避ける</h4>
+        <p>ハードコーディングと、テスト用に書いてコミット前に消し忘れることが、シークレット漏えいの主要原因とされる。環境変数化が最低限の対策。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>このプロジェクトでも、GitHubリポジトリへのAPIキー直書きは厳禁というルールで運用している。</p>
+      </div>
+      <div class="concept-card">
+        <h4>一元管理(Single Source of Truth)</h4>
+        <p>シークレットを様々な場所に分散させず、1箇所の管理場所にまとめる。どこに何があるか把握できる状態を保つ。</p>
+      </div>
+      <div class="concept-card">
+        <h4>自動ローテーション・有効期限管理</h4>
+        <p>シークレットを定期的に自動で更新(ローテーション)し、古い認証情報が使われ続けるリスクを減らす。有効期限が近いものを検知する仕組みも重要とされる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>監査ログ</h4>
+        <p>「誰が・いつ・どのシークレットにアクセスしたか」を記録すること。漏えい時の原因調査や、規制対応の基盤になる。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li>シークレットは<strong>コードに直書きせず</strong>、環境変数や専用サービスに分離する</li>
+        <li>管理場所は<strong>一元化</strong>し、分散させない</li>
+        <li><strong>自動ローテーション・監査ログ</strong>で、漏えいリスクと事後調査の両方に備える</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: セキュリティ分野の学習資料(学んだ内容そのもの)。
+    自分の理解→正誤の記録→他AIによる確認は<a href="../records/security.html">学習記録ページ</a>にまとめる予定(まだ未作成)。
+  </div>
+
+  <p class="source-note">
+    OWASP Top 10:2025の項目・順位はcyberpress.org・securitywall.co等の解説記事(owasp.org公式ページの内容を基にしたもの)を、
+    暗号化・認証認可・シークレット管理の記述はkeyfactor.com・okta.com・strongdm.com等の技術記事を、
+    2026年8月時点で確認して作成。
+  </p>
+
+</div>
+</body>
+</html>
