@@ -203,21 +203,62 @@ Embedding(埋め込み)
     <div class="verdict-body"><p><strong>Embeddingは文章を数値化し、意味が近い文章を数値上の近さで探す手法</strong> — 正確</p></div>
   </div>
 
-  <div class="verdict-group-title neutral">➖ 今回触れていない範囲(1トピック)</div>
+  <div class="verdict-group-title neutral">➖ 今回触れていない範囲(1トピック、PART4で追加回答済み)</div>
   <div class="verdict-card neutral">
     <span class="verdict-mark">➖</span>
     <div class="verdict-body">
       <p><strong>トークン・レート制限・コストの関係</strong></p>
-      <p>学習資料の4トピックのうち、これだけ今回の想起チェックに含まれていなかった。誤りではないが、次回の間隔反復レビュー時にあわせて振り返ることを推奨(出力トークンが入力トークンよりおよそ4倍高い、レート制限は累積利用額に応じて上がる、等)。</p>
+      <p>学習資料の4トピックのうち、これだけ今回の想起チェックに含まれていなかった。誤りではないが、次回の間隔反復レビュー時にあわせて振り返ることを推奨(出力トークンが入力トークンよりおよそ4倍高い、レート制限は累積利用額に応じて上がる、等)。→ 2026-08-21、追加で回答を得たためPART4・5に記録。</p>
     </div>
   </div>
 
-  <div class="part-marker"><span class="part-num">PART 3</span><span class="part-label">他AIによる確認</span></div>
+  <div class="part-marker"><span class="part-num">PART 4</span><span class="part-label">自分の理解(追加分・原文まま記録)</span></div>
+  <h3 class="part-title">積極的想起チェック(トークン・レート制限・コストの関係)</h3>
+  <p class="part-lede">PART1で触れていなかった4トピック目について、追加で回答を得た内容。誤字・表記ゆれもそのまま原文で記録する。</p>
+  <p class="raw-note-caption">記録日: 2026-08-21</p>
+  <div class="raw-note">トークン・レート制限。コストの関係
+・トークンとは、文章を細かく分割した単位、そのため、入力されたトークンと出力したトークンにより課金の金額が算出される
+出力トークンのほうが、約倍になる
+レート制限は、一定時間内に処理できる量の上限
+プロンプトキャッシュは、繰り返される処理の場合は、通常よりも２回目は安くレート制限の対象外とする</div>
+
+  <div class="part-marker"><span class="part-num">PART 5</span><span class="part-label">正誤の記録(追加分)</span></div>
+  <h3 class="part-title">照合結果(トークン・レート制限・コストの関係)</h3>
+  <p class="part-lede">上記PART4を学習資料の内容と照合した結果。4項目は正しく、1項目に訂正が入った。</p>
+
+  <div class="verdict-group-title good">✅ 正しい理解(4項目)</div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>トークンとは、文章を細かく分割した単位</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>入力トークンと出力トークンの両方で課金額が算出される</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>レート制限は、一定時間内に処理できる量の上限</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>プロンプトキャッシュは、繰り返し送る場合に2回目以降を安く・レート制限の対象外として扱う仕組み</strong> — 正確</p></div>
+  </div>
+
+  <div class="verdict-group-title warn">⚠️ 訂正した理解(1項目)</div>
+  <div class="verdict-card warn">
+    <span class="verdict-mark">⚠️</span>
+    <div class="verdict-body">
+      <p><strong>誤: 「出力トークンのほうが、約倍になる」</strong></p>
+      <p>正: 「倍」(2倍)ではなく、学習資料で確認した2026年時点の主要モデルの価格差は<strong>およそ3〜8倍、中央値で約4倍</strong>。方向性(出力の方が高い)は正しいが、具体的な倍率が過小だった。</p>
+    </div>
+  </div>
+
+  <div class="part-marker"><span class="part-num">PART 6</span><span class="part-label">他AIによる確認</span></div>
   <h3 class="part-title">第二意見チェック(POL-002)</h3>
   <div class="pending-box">
     <span class="pending-status">⏳ 未実施</span>
     <p>
-      本ページのPART1〜2の内容は、まだ別AI(DeepSeek / Kimi / Gemini Pro)による確認を経ていません。
+      本ページのPART1〜2、4〜5の内容は、まだ別AI(DeepSeek / Kimi / Gemini Pro)による確認を経ていません。
       実施した実際の回答が得られるまで、この欄に架空の確認結果を記載することはしません。
     </p>
     <p>POL-002(progress-tracker-dashboard: data/policy.json)に沿って、次の手順で実施予定です。</p>
