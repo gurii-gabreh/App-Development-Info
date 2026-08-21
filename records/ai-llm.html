@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習記録 — AI・LLM</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --good: #2f7a4f;
+    --good-soft: #e2f2e7;
+    --warn: #a3541c;
+    --warn-soft: #f7e8d9;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+      --good: #6fc796; --good-soft: #1c2f22;
+      --warn: #e0a361; --warn-soft: #332417;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+    --good: #6fc796; --good-soft: #1c2f22;
+    --warn: #e0a361; --warn-soft: #332417;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .lede a { color: var(--accent-strong); }
+
+  .part-marker { display: flex; align-items: center; gap: 12px; margin: 0 0 20px; }
+  .part-marker:not(:first-of-type) { margin-top: 56px; padding-top: 44px; border-top: 1px solid var(--line); }
+  .part-marker .part-num {
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    color: var(--accent-strong); background: var(--accent-soft);
+    border-radius: 5px; padding: 3px 9px; white-space: nowrap;
+  }
+  .part-marker .part-label { font-size: 13.5px; color: var(--ink-faint); }
+  h3.part-title { font-family: var(--serif); font-weight: 600; font-size: 20px; margin: 0 0 10px; color: var(--ink); }
+  .part-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 24px; }
+
+  /* 自分の理解(原文まま記録) */
+  .raw-note {
+    margin: 0 0 20px; padding: 18px 20px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 10px; font-size: 13.5px;
+    color: var(--ink-soft); white-space: pre-wrap; font-family: var(--mono); line-height: 1.9;
+  }
+  .raw-note-caption { font-size: 12px; color: var(--ink-faint); margin: 0 0 10px; }
+
+  /* 正誤の記録 */
+  .verdict-card { display: flex; gap: 12px; padding: 14px 16px; margin: 0 0 10px; border-radius: 8px; border: 1px solid var(--line); }
+  .verdict-card.good { background: var(--good-soft); border-color: color-mix(in srgb, var(--good) 30%, var(--line)); }
+  .verdict-card.warn { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 30%, var(--line)); }
+  .verdict-card.neutral { background: var(--surface-2); border-color: var(--line); }
+  .verdict-mark { font-size: 15px; flex: 0 0 auto; line-height: 1.5; }
+  .verdict-body p { margin: 0; font-size: 13.5px; color: var(--ink); }
+  .verdict-body p + p { margin-top: 6px; color: var(--ink-soft); }
+  .verdict-body strong { font-weight: 700; }
+  .verdict-group-title {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.04em; margin: 22px 0 10px; text-transform: uppercase;
+  }
+  .verdict-group-title.good { color: var(--good); }
+  .verdict-group-title.warn { color: var(--warn); }
+  .verdict-group-title.neutral { color: var(--ink-faint); }
+  .verdict-group-title:first-of-type { margin-top: 0; }
+
+  /* 他AIによる確認(未実施プレースホルダ) */
+  .pending-box {
+    margin: 0; padding: 20px 22px; background: var(--surface-2);
+    border: 1px dashed var(--line-strong); border-radius: 10px;
+    font-size: 13.5px; color: var(--ink-soft);
+  }
+  .pending-box .pending-status {
+    display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.04em; color: var(--ink-faint); background: var(--surface);
+    border: 1px solid var(--line-strong); border-radius: 5px; padding: 2px 8px; margin-bottom: 10px;
+  }
+  .pending-box ol { margin: 10px 0 0; padding-left: 20px; }
+  .pending-box li { margin-bottom: 4px; }
+
+  .closing { margin-top: 8px; padding: 20px 22px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 14px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="../index.html">← 一覧に戻る</a>
+  <p class="eyebrow">学習記録 — AI・LLM</p>
+  <h1>学習記録: AI・LLM</h1>
+  <p class="lede">
+    <a href="../materials/ai-llm.html">学習資料(プロンプトエンジニアリングの基本・RAG・Embedding・トークン/レート制限/コストの関係)</a>
+    を学んだ後の、<strong>①自分の理解 → ②正誤の記録 → ③他AIによる確認</strong>の記録。学んだ内容そのものは
+    資料ページ側にまとめてあり、このページには含めていない。
+  </p>
+
+  <div class="part-marker"><span class="part-num">PART 1</span><span class="part-label">自分の理解(原文まま記録)</span></div>
+  <h3 class="part-title">積極的想起チェック</h3>
+  <p class="part-lede">資料を見ずに、自分の言葉でまとめた内容。誤字・表記ゆれもそのまま原文で記録する。</p>
+  <p class="raw-note-caption">記録日: 2026-08-21</p>
+  <div class="raw-note">学習資料のまとめ
+プロンプトエンジニアリングの基本
+・曖昧な指示だと、望んでいる結果は帰ってこない
+　役割、目的、制約を具体的に書くほど意図的な出力に近づく
+　また、例や考える過程を書かせると精度が更に上る
+システムプロンプトとユーザープロンプト
+・システムプロンプトは、基本的な変わらないルール、ベースの設定を指す
+・ユーザープロンプトは、その場の質問や指示内容を指す
+・few-shotは、事例をプロンプト内に明記し、それを下に回答を出させる手法
+・Chain-of-Thought一気に答えを出させるのではなく、考える過程を段階的に書かせて、複雑な論理をさせ回答の精度を上げる方法
+RAG
+・LLMは学習時点の情報しか持っておらず、それ以外はの知らないことでも堂々と答えてハルシネーションの原因にもなる
+・検索拡張生成を使うことで質問に対する関連する情報を外部から検索し、回答に反映させる事ができる。
+・チャンク分解は、ナレッジを検索しやすいようにチャンク化(断片)に分類しておく前処理。文章をまるまる投げるのではなく、関連する断片だけを渡し、効率化させる
+・ベクトルデータベースは、文章の断片を数値ベクトル化して保持するデータベース
+・ハイブリッド検索とは、意味の近さを探す方法と、キーワード一致の療法を組み合わせて検索する方法
+Embedding(埋め込み)
+文章を数値化し、より近い内容を検索する手法、そのため文章の意味寄りは近しい文章を数値により探し、それを下に必要な情報を集める方法</div>
+
+  <div class="part-marker"><span class="part-num">PART 2</span><span class="part-label">正誤の記録</span></div>
+  <h3 class="part-title">照合結果</h3>
+  <p class="part-lede">上記PART1を学習資料の内容と照合した結果。12項目全てが正しく、訂正は無かった。ただし資料の4トピックのうち「トークン・レート制限・コストの関係」には今回触れていない。</p>
+
+  <div class="verdict-group-title good">✅ 正しい理解(12項目)</div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>曖昧な指示だと望む結果が返らない、役割・目的・制約を具体的に書くほど意図した出力に近づく</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>例や考える過程を書かせると精度が上がる</strong> — Few-shot・Chain-of-Thoughtの効果として正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>システムプロンプト=変わらないルール・ベース設定</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>ユーザープロンプト=その場の質問・指示内容</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>Few-shot=事例をプロンプト内に示し、それを元に回答させる手法</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>Chain-of-Thought=一気に答えを出させず考える過程を段階的に書かせ、複雑な推論の精度を上げる</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>LLMは学習時点の情報しか持たず、知らないことも堂々と答えてハルシネーションの原因になる</strong> — RAGが必要な理由として正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>RAG(検索拡張生成)は質問に関連する情報を外部から検索し回答に反映させる</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>チャンク分割は、検索しやすいよう文書を断片に分けておく前処理で、関連断片だけを渡して効率化する</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>ベクトルデータベースは、文章の断片を数値ベクトル化して保持するデータベース</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>ハイブリッド検索=意味の近さで探す方法とキーワード一致で探す方法の組み合わせ</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>Embeddingは文章を数値化し、意味が近い文章を数値上の近さで探す手法</strong> — 正確</p></div>
+  </div>
+
+  <div class="verdict-group-title neutral">➖ 今回触れていない範囲(1トピック)</div>
+  <div class="verdict-card neutral">
+    <span class="verdict-mark">➖</span>
+    <div class="verdict-body">
+      <p><strong>トークン・レート制限・コストの関係</strong></p>
+      <p>学習資料の4トピックのうち、これだけ今回の想起チェックに含まれていなかった。誤りではないが、次回の間隔反復レビュー時にあわせて振り返ることを推奨(出力トークンが入力トークンよりおよそ4倍高い、レート制限は累積利用額に応じて上がる、等)。</p>
+    </div>
+  </div>
+
+  <div class="part-marker"><span class="part-num">PART 3</span><span class="part-label">他AIによる確認</span></div>
+  <h3 class="part-title">第二意見チェック(POL-002)</h3>
+  <div class="pending-box">
+    <span class="pending-status">⏳ 未実施</span>
+    <p>
+      本ページのPART1〜2の内容は、まだ別AI(DeepSeek / Kimi / Gemini Pro)による確認を経ていません。
+      実施した実際の回答が得られるまで、この欄に架空の確認結果を記載することはしません。
+    </p>
+    <p>POL-002(progress-tracker-dashboard: data/policy.json)に沿って、次の手順で実施予定です。</p>
+    <ol>
+      <li>AIが対象内容を中立に(結論を書かず事実のみ)まとめた依頼文を作成し、内容の性質に応じてDeepSeek/Kimi/Gemini Proのいずれかを提案する</li>
+      <li>人間がその依頼文をコピーし、該当AIの無料Web版に貼り付ける</li>
+      <li>人間が実際の回答をコピーしてAIに貼り戻す</li>
+      <li>AIがその回答を要約し、この欄に実施日・使用AI・結果を追記する</li>
+    </ol>
+  </div>
+
+  <div class="closing" style="margin-top:44px;">
+    <strong>このページの位置づけ</strong>: progress-tracker-dashboardのDGT-005(学習記録ページの新規実装)に対応。
+    学んだ内容そのものは<a href="../materials/ai-llm.html">学習資料ページ</a>に分けてある。
+    今後の学習分野も同じ構成でこのリポジトリに追加していく。
+  </div>
+
+</div>
+</body>
+</html>
