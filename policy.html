@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習方針</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 780px; margin: 0 auto; padding: 56px 24px 96px; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 44px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  section.topic { margin: 0 0 56px; padding-top: 40px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 24px; }
+
+  .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 16px; }
+  .step-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  .step-card .step-num { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 1px 7px; display: inline-block; margin-bottom: 8px; }
+  .step-card h4 { font-size: 14px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .step-card p { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+
+  .concept-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .concept-card h4 { font-size: 13.5px; font-weight: 700; margin: 0 0 5px; color: var(--ink); }
+  .concept-card p { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+
+  table.stage-table { width: 100%; border-collapse: collapse; margin: 0 0 12px; font-size: 13px; }
+  table.stage-table th { text-align: left; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-faint); padding: 8px 10px; border-bottom: 1px solid var(--line-strong); }
+  table.stage-table td { padding: 10px; border-bottom: 1px solid var(--line); color: var(--ink-soft); vertical-align: top; }
+  table.stage-table td.stage-name { color: var(--ink); font-weight: 600; white-space: nowrap; }
+  table.stage-table tr:last-child td { border-bottom: none; }
+
+  .why { margin: 0 0 20px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 16px; font-weight: 600; margin: 0 0 10px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .timeline li { display: flex; gap: 12px; font-size: 13px; color: var(--ink-soft); }
+  .timeline .date { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); flex: 0 0 82px; padding-top: 1px; }
+  .timeline strong { color: var(--ink); font-weight: 600; }
+
+  .recap { margin: 26px 0 0; padding: 18px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap p { margin: 0; font-size: 14px; color: var(--ink); }
+  .recap p + p { margin-top: 8px; }
+  .recap strong { font-weight: 700; }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 14px; }
+  .source-note a { color: var(--accent-strong); }
+
+  @media (max-width: 560px) {
+    .step-grid, .concept-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">学習方針</p>
+  <h1>今後の学習は、このページの方針に沿って決める</h1>
+  <p class="lede">
+    これまでの相談・決定事項を1ページにまとめたものです。<strong>今後、学習の進め方・分野追加・深堀りの是非を判断する際は、必ずこのページの内容を踏まえること。</strong>
+    方針そのものを変更する場合は、変更内容をこのページにも反映してから進める(このページを更新しないままの方針変更はしない)。
+  </p>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">01</span><h2>学習法の基本方針</h2></div>
+    <p class="topic-lede">疲労時でも続けやすい学習法(書籍「疲れ切った人の勉強法」の研究紹介)に基づき、各分野を3ステップに分解する。疲れている日は①を「理解しようとせず眺めるだけ」に切り替えてよい。</p>
+    <div class="step-grid">
+      <div class="step-card"><span class="step-num">①</span><h4>インプット</h4><p>見出し・要点をざっと眺める。理解しようとしなくてよい日があってもよい。</p></div>
+      <div class="step-card"><span class="step-num">②</span><h4>積極的想起チェック</h4><p>①の内容を、何も見ずに自分の言葉で説明できるか確認する(検索練習)。</p></div>
+      <div class="step-card"><span class="step-num">③</span><h4>間隔反復レビュー</h4><p>1〜2日空けて、忘れかけたタイミングでもう一度思い出す。</p></div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">02</span><h2>深堀りのレベル分け</h2></div>
+    <p class="topic-lede">1巡目は全分野を概要レベル(語彙に触れる)で一巡させることを優先する。一巡後、分野ごとに2周目・3周目…と深堀りラウンドを随時追加する。目標レベルはIPA情報処理技術者試験の区分に沿って3段階で積み上げる。</p>
+    <table class="stage-table">
+      <thead><tr><th>周回</th><th>目標レベル</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td class="stage-name">1周目</td><td>概要・語彙レベル</td><td>「言葉を見て反応できる」ことが目標。実装判断力はまだ求めない。</td></tr>
+        <tr><td class="stage-name">2周目</td><td>基本情報技術者試験レベル(スキルレベル2)</td><td>実際の書籍・記事等、根拠のある一次資料を軸に構成する。</td></tr>
+        <tr><td class="stage-name">3周目</td><td>応用情報技術者試験レベル(スキルレベル3)</td><td>応用情報合格者は午前I試験免除のため、システムアーキテクトへ進む場合も飛ばさず経由する。</td></tr>
+        <tr><td class="stage-name">4周目</td><td>システムアーキテクト試験レベル(スキルレベル4・高度区分)</td><td>主にアーキテクチャ分野中心の専門深化。フルスタックとして必須かは別途要検討。</td></tr>
+      </tbody>
+    </table>
+    <p class="source-note">現行の試験制度は2026年度で終了し2027年度から新試験制度へ移行予定のため、深堀り内容へ反映する際は都度ipa.go.jpの最新シラバスを確認すること。</p>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">03</span><h2>対象8分野</h2></div>
+    <p class="topic-lede">2026-08-23、8分野目「プログラミング基礎」を新設した。</p>
+    <div class="concept-grid">
+      <div class="concept-card"><h4>📐 アーキテクチャ</h4><p>デザインパターン・SOLID・アーキテクチャスタイル・トレードオフ思考</p></div>
+      <div class="concept-card"><h4>🖥 サーバー・インフラ</h4><p>HTTP/HTTPS・サーバーレス・ロードバランサー/キャッシュ/CDN</p></div>
+      <div class="concept-card"><h4>🔐 セキュリティ</h4><p>OWASP Top 10・暗号化・認証と認可・シークレット管理</p></div>
+      <div class="concept-card"><h4>🤖 AI・LLM</h4><p>プロンプトエンジニアリング・RAG・Embedding・トークン/レート制限/コスト</p></div>
+      <div class="concept-card"><h4>🗄 データベース</h4><p>SQL vs NoSQL・正規化・インデックス・ACID</p></div>
+      <div class="concept-card"><h4>✅ テスト</h4><p>単体/結合/E2E・TDD・カバレッジ</p></div>
+      <div class="concept-card"><h4>📐 基本・詳細設計</h4><p>UI設計・外部インターフェース・エラーハンドリング・API仕様</p></div>
+      <div class="concept-card"><h4>💻 プログラミング基礎(新設)</h4><p>制御構造・関数とスコープ・データ構造・エラー/スタックトレースの読み方</p></div>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">04</span><h2>目指す姿:「コードはAI、知識は自分」</h2></div>
+    <div class="why">
+      <h3>2026-08-23の相談で決めたこと</h3>
+      <p>実際にコードを書く部分はAIに任せる。その代わり、AIの実装を<strong>判断・レビューできるだけの知識</strong>を、8分野を通じて持つ。これが今後のフルスタックエンジニア像だという方針。</p>
+      <p>「プログラミング基礎」分野の追加もこの方針に基づく。目的は「書ける」ようになることではなく、<strong>AIが書いたコードの良し悪しを判断できる・エラー原因の説明についていける</strong>読解力を持つこと。</p>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">05</span><h2>到達レベルの目安(概算)</h2></div>
+    <p class="topic-lede">2026-08-23時点の見積もり。学習セッションの実績が増えるほど精度が上がる、あくまで目安。</p>
+    <table class="stage-table">
+      <thead><tr><th>段階</th><th>到達レベル</th><th>目安期間</th></tr></thead>
+      <tbody>
+        <tr><td class="stage-name">Stage1(1周目)</td><td>「聞いたことがある」レベル。会話についていける最低限</td><td>ほぼ完了</td></tr>
+        <tr><td class="stage-name">Stage2(2周目)</td><td>概念・典型パターンを説明できる。まだ実戦の判断力には不十分</td><td>2〜4ヶ月</td></tr>
+        <tr><td class="stage-name">Stage3(3周目+実プロジェクト経験)</td><td>典型的なミス・アンチパターンを自力で見抜ける、エラー原因の説明についていける。<strong>「実戦で信頼して判断できる」最低ライン</strong></td><td>6ヶ月〜1年(実プロジェクトでの経験蓄積が並行して必要)</td></tr>
+        <tr><td class="stage-name">Stage4(4周目)</td><td>アーキテクチャ分野への専門特化。フルスタックとして必須かは要検討</td><td>不明(2年以上の可能性)</td></tr>
+      </tbody>
+    </table>
+    <p class="source-note">外部の一般的な目安(週30〜40時間ペースで基礎習得3〜6ヶ月、フルスタック開発者全体で6ヶ月〜2年)と比べ、今のペース(1日15〜45分)は密度が低いため、Stage3到達には相応の期間を見込む。</p>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">06</span><h2>決定の経緯</h2></div>
+    <ul class="timeline">
+      <li><span class="date">2026-08-19</span><span>1周目を概要レベルで一巡させることを優先する方針を決定。深堀りレベルをIPA試験区分の3段階に整理。</span></li>
+      <li><span class="date">2026-08-20</span><span>7分野全ての①インプットが完了。</span></li>
+      <li><span class="date">2026-08-23</span><span>アーキテクチャ2周目を、実在の書籍(『ソフトウェアアーキテクチャの基礎 第2版』)の内容で構成。専門用語には解説を添える方針を追加。</span></li>
+      <li><span class="date">2026-08-23</span><span>「コードはAI、知識は自分」という今後のフルスタックエンジニア像を確認。8分野目「プログラミング基礎」を新設。</span></li>
+      <li><span class="date">2026-08-23</span><span>到達レベルの目安(Stage1〜4)を整理。このページを作成し、今後の学習方針の判断基準とする。</span></li>
+    </ul>
+  </section>
+
+  <div class="recap">
+    <span class="recap-tag">運用ルール</span>
+    <p><strong>今後、学習の進め方・分野追加・深堀りの是非を判断する際は、必ずこのページの内容を踏まえること。</strong></p>
+    <p>方針そのものを変更する場合は、変更内容をこのページにも反映してから進める。データ上の正本は<code>Task-WBS</code>リポジトリの<code>data/tasks.json</code>(<code>studyPolicy</code>・「勉強」ルートの<code>summary</code>)であり、このページはその内容を人が読みやすい形にまとめた要約。両者に矛盾が生じた場合はtasks.json側を正として、このページを更新する。</p>
+  </div>
+
+</div>
+</body>
+</html>
