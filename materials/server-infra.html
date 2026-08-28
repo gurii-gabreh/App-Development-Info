@@ -197,22 +197,22 @@
       <div class="concept-card">
         <h4>リクエストメソッド</h4>
         <p>「何をしたいか」を表す動詞。<code>GET</code>(取得)・<code>POST</code>(新規作成)・<code>PUT</code>/<code>PATCH</code>(更新)・<code>DELETE</code>(削除)が代表的。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>ブラウザでページを開く時は裏で<code>GET</code>が飛んでおり、フォームを送信すると<code>POST</code>が飛ぶ。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScripted REST APIでも、インシデントを検索する処理は<code>GET</code>、新規インシデントを登録する処理は<code>POST</code>で実装するのが一般的。</p>
       </div>
       <div class="concept-card">
         <h4>ステータスコード</h4>
         <p>結果を表す3桁の数字。<code>200</code>(成功)・<code>404</code>(見つからない)・<code>500</code>(サーバー側のエラー)・<code>301/302</code>(リダイレクト)などが代表的。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>存在しないURLにアクセスした時に出る「404 Not Found」は、このステータスコードがそのまま表示されている。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScripted REST APIで、存在しないsys_idを指定してレコードを取得しようとした時も、この「404 Not Found」が返る。</p>
       </div>
       <div class="concept-card">
         <h4>ヘッダー</h4>
         <p>本文とは別に付随する、通信のメタ情報。認証情報・データ形式・キャッシュ指示などをここに載せる。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>ログイン状態を保つための認証トークンは、多くの場合ヘッダー(<code>Authorization</code>)に載せて毎回送られる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのREST APIを外部から呼び出す際も、Basic認証やOAuthのトークンはヘッダー(<code>Authorization</code>)に載せて毎回送られる。</p>
       </div>
       <div class="concept-card">
         <h4>HTTPS(TLS暗号化)</h4>
         <p>HTTPの通信内容をTLSという仕組みで暗号化したもの。途中の経路(公共Wi-Fi等)で盗み見・改ざんされるのを防ぐ。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>ブラウザのアドレスバーに出る鍵マークは、その通信がHTTPSで暗号化されている印。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのインスタンスURL(<code>https://xxxxx.service-now.com</code>)も、アドレスバーの鍵マークが示す通りHTTPSで提供されている。</p>
       </div>
     </div>
 
@@ -291,22 +291,22 @@
       <div class="concept-card">
         <h4>コールドスタート</h4>
         <p>リクエストが来てから実行環境を起動するまでの待ち時間。コンテナ/VM方式のサーバーレス(AWS Lambda等)では数百ms〜1秒程度かかることがある。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>Cloudflare WorkersはコンテナではなくV8 isolateという軽量な仕組みで動くため、この待ち時間がほぼ発生しない(1ms未満で起動)。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>対照的に、ServiceNowのScheduled JobやBusiness Ruleは常時稼働しているインスタンス上で動くため、そもそもコールドスタートという概念自体が発生しない。</p>
       </div>
       <div class="concept-card">
         <h4>実行時間・CPU時間の制限</h4>
         <p>サーバーレスは「1回のリクエストにつき使えるCPU時間」に上限がある。無料枠は数十ms程度と非常に短く、有料プランでは秒単位(既定30秒、設定で最大5分まで)に拡張できる。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>重い画像処理や長時間の集計処理は、サーバーレスの実行時間制限に引っかかりやすいため、従来型サーバーやキュー処理に向く。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScheduled Jobにも1回あたりの実行時間に上限があり、大量レコードの一括処理のような重い処理は、複数回に分割したり非同期のFlowに任せる設計が必要になる。</p>
       </div>
       <div class="concept-card">
         <h4>ステートレス</h4>
         <p>1回1回のリクエストが独立していて、前回の状態を覚えていないこと。サーバーレスは基本的にステートレスが前提。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>ログイン状態を維持したい場合、サーバー側の変数に保存するのではなく、DBやセッションストア(外部の保存場所)に保存する必要がある。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScripted REST APIを外部から呼び出す場合も、1回1回の呼び出しは独立していて前回の状態を覚えていない。ログイン状態を維持したいなら、DBやセッションストアに保存する必要がある。</p>
       </div>
       <div class="concept-card">
         <h4>スケール・トゥ・ゼロ</h4>
         <p>アクセスが無い時間帯は起動台数を0にできる性質。従来型サーバーは最低1台を常時起動する必要があるのに対し、サーバーレスは0台まで落とせる。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>個人開発でアクセスがほぼ無いアプリを従来型サーバーで運用すると、使われていなくても毎月固定費がかかるが、サーバーレスなら実質無料に近づけられる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>対照的に、ServiceNowは使用量に関わらず契約に応じた固定的なライセンス費用がかかることが多い(無料のPDI検証環境は例外)。この点はサーバーレスの従量課金・スケール・トゥ・ゼロとは対照的。</p>
       </div>
     </div>
 
@@ -391,17 +391,17 @@
       <div class="concept-card">
         <h4>ロードバランサー</h4>
         <p>クライアントとサーバーの間に立ち、アクセスを複数のサーバーへ振り分ける仕組み。各サーバーの負荷や稼働状況を見て、空いているサーバーへ転送する。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>レジが複数あるスーパーで、空いているレジへ客を案内する店員のような役割。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowも大規模契約では複数のアプリケーションノードでクラスタを組み、アクセスを分散させる構成になっている。</p>
       </div>
       <div class="concept-card">
         <h4>キャッシュ</h4>
         <p>一度作った結果を一時的に保存し、同じリクエストが来た時にゼロから作り直さず使い回す仕組み。応答速度が上がり、サーバー負荷も減る。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>よく聞く曲を毎回ダウンロードし直さず、端末に保存しておいて再生するのと同じ発想。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのAI Searchも、頻繁に検索されるインデックス結果をキャッシュしておくことで、毎回ゼロから検索し直さずに応答を高速化している。</p>
       </div>
       <div class="concept-card">
         <h4>CDN(Content Delivery Network)</h4>
         <p>世界中に分散配置された「エッジサーバー」に、コンテンツのコピーをキャッシュしておく仕組み。ユーザーは地理的に近いエッジサーバーから配信を受けるため、距離による遅延が減る。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>日本のユーザーがアメリカのオリジンサーバーへ毎回アクセスする代わりに、日本国内にあるCDNのエッジサーバーから配信を受ける。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowも契約時にデータセンターのリージョンを選べ、日本のユーザー向けであればAPAC(アジア太平洋)リージョンを選ぶことで、遠いリージョンを使うより応答を速くできる。</p>
       </div>
     </div>
 
@@ -437,17 +437,17 @@
       <div class="concept-card">
         <h4>リージョン</h4>
         <p>クラウド事業者がサーバーを設置している地理的な地域(例: 東京、米国東部)。ユーザーに近いリージョンを選ぶほど通信の遅延が減る。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>日本向けサービスなら「東京リージョン」を選ぶことで、海外リージョンを使うより応答が速くなる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのインスタンス契約でも、日本向けサービスなら国内・APACのデータセンターリージョンを選ぶことで、海外リージョンより応答が速くなる。</p>
       </div>
       <div class="concept-card">
         <h4>可用性(ゾーン)</h4>
         <p>サービスが止まらずに使い続けられる度合い。1つのリージョン内でも、電源系統やネットワークが独立した複数の「可用性ゾーン」に分けて配置することで、1箇所が落ちても他が生き残るようにする。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>同じ建物の中でも電気系統を分けておけば、一部が停電しても別の部分は動き続けられる、というのと同じ考え方。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowも複数のデータセンター間でフェイルオーバー構成を持ち、1つのデータセンターに障害が起きても別のデータセンターへ切り替えられるようにしている。</p>
       </div>
       <div class="concept-card">
         <h4>スケーリング(垂直・水平)</h4>
         <p>負荷が増えた時にどう対応を増やすか。<strong>垂直スケーリング</strong>は1台のスペック(CPU・メモリ)を上げること、<strong>水平スケーリング</strong>は台数を増やすこと。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>垂直スケーリングは「1人の店員をもっと有能にする」、水平スケーリングは「店員の人数を増やす」に近い。サーバーレスは水平スケーリングを自動でやってくれる仕組み。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowでは、インスタンスのサイズ(スペック)を上げるのが垂直スケーリング、アプリケーションノードを増やすのが水平スケーリングに相当する。</p>
       </div>
     </div>
 
