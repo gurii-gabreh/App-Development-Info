@@ -268,12 +268,12 @@
       <div class="concept-card">
         <h4>対称鍵暗号(共通鍵暗号)</h4>
         <p>暗号化と復号に同じ1つの鍵を使う方式。計算コストが低く高速なため、大量データの暗号化に向く。代表例はAES-256(多くの準拠基準で事実上の標準)。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>家の鍵のように、施錠も解錠も同じ鍵で行うイメージ。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowがIntegrationHub経由で外部システムとREST通信する際、TLS接続確立後のデータ本体のやり取りは、この対称鍵暗号(AES-256)で行われている。</p>
       </div>
       <div class="concept-card">
         <h4>公開鍵暗号(非対称鍵暗号)</h4>
         <p>公開鍵(誰に渡してもよい)と秘密鍵(本人だけが保持)のペアを使う方式。事前の鍵共有が不要な代わりに計算コストが高い。デジタル署名や証明書の発行にも使われる。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>南京錠(公開鍵)は誰でも掛けられるが、それを開けられる鍵(秘密鍵)は持ち主だけが持っているイメージ。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowが外部システムとTLS接続を確立する最初の鍵交換(ハンドシェイク)や、証明書の検証がこの公開鍵暗号方式で行われている。</p>
       </div>
     </div>
 
@@ -346,12 +346,12 @@
       <div class="concept-card">
         <h4>認証(Authentication)</h4>
         <p>「あなたは誰か」を確認するプロセス。パスワード・指紋・ワンタイムコードなど、本人だけが提示できる証拠(クレデンシャル)で確認する。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>会社の入館証をかざして「この人は社員本人である」と確認される場面。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowへのログイン時、ID・パスワードやSSO(シングルサインオン)で「このユーザーは本人である」と確認される場面。</p>
       </div>
       <div class="concept-card">
         <h4>認可(Authorization)</h4>
         <p>本人確認された後、「その人が具体的に何にアクセスできるか」を確認するプロセス。役職・部署などに応じた権限設定に基づいて判定される。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>入館は許可されても、経理部のフロアには専用の権限が無いと入れない、という場面。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowにログインできても、ACL(アクセス制御リスト)で許可されていないテーブルやフィールドは、閲覧も更新もできない、という場面。</p>
       </div>
     </div>
 
@@ -415,7 +415,7 @@
       <div class="concept-card">
         <h4>コードへの直書きを避ける</h4>
         <p>ハードコーディングと、テスト用に書いてコミット前に消し忘れることが、シークレット漏えいの主要原因とされる。環境変数化が最低限の対策。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>このプロジェクトでも、GitHubリポジトリへのAPIキー直書きは厳禁というルールで運用している。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowでは、外部連携のAPIキーをBusiness Ruleのスクリプト内に直書きせず、「Connection & Credential Alias」という専用の仕組みに保管し、スクリプトからは参照だけする設計が推奨されている。</p>
       </div>
       <div class="concept-card">
         <h4>一元管理(Single Source of Truth)</h4>
