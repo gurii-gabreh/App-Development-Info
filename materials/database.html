@@ -212,12 +212,12 @@
       <div class="concept-card">
         <h4>正規化前(非正規)</h4>
         <p>注文テーブルに顧客名・住所を直接コピーして持たせる。同じ顧客が何度も注文すると、同じ情報が何行にも重複する。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>引っ越したのに、過去の注文履歴の住所が古いまま矛盾して残ってしまう。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowで、Incidentテーブルに申請者の氏名・部署名をそのままコピーして持たせると、その人が異動したのに、過去のインシデントには古い部署名のまま矛盾して残ってしまう。</p>
       </div>
       <div class="concept-card">
         <h4>正規化後</h4>
         <p>顧客情報は「顧客」テーブルに1つだけ持ち、注文テーブルからは顧客IDで参照する。顧客情報の更新は1箇所で済む。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>住所変更は顧客テーブルの1行を直すだけで、紐づく全注文に自動的に反映される。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのIncidentテーブルは、申請者を直接名前で持たず<code>caller_id</code>という参照フィールドでsys_user(ユーザー)テーブルの1行を指す。異動があってもsys_user側を1回直すだけで、紐づく全インシデントの表示に自動反映される。</p>
       </div>
       <div class="concept-card">
         <h4>トレードオフ</h4>
@@ -262,7 +262,7 @@
       <div class="concept-card">
         <h4>インデックスがある場合</h4>
         <p>特定の列であらかじめ検索しやすい順序を作っておき、該当箇所へ一気にアクセスできる。検索は速くなるが、書き込み(挿入・更新・削除)のたびにインデックスも更新する必要があり、その分遅くなる。</p>
-        <p class="ex"><span class="ex-tag">身近な例</span>分厚い辞書の索引ページ。索引が無ければ最初から1ページずつめくって探すことになる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのIncidentテーブルの<code>number</code>列(INC0010023のような番号)には標準でインデックスが張られているため一瞬で検索できるが、インデックスの無い自由記述の説明欄を条件に大量データを検索すると、フルスキャンが発生して重くなる。</p>
       </div>
       <div class="concept-card">
         <h4>使いどころの判断</h4>
