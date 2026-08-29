@@ -138,10 +138,12 @@
       <div class="concept-card">
         <h4>画面遷移図</h4>
         <p>どの画面からどの画面へ、どんな操作で移動するかを図示したもの。ユーザーの操作の流れ全体を俯瞰できる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのService Portalで、問い合わせフォームを送信した後、確認画面・チケット詳細画面のどちらへ遷移させるかを、実装前に図示しておく。</p>
       </div>
       <div class="concept-card">
         <h4>画面項目定義</h4>
         <p>各入力欄のデータ型・必須/任意・入力チェック仕様(文字数上限、形式など)を一覧化したもの。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのフォームで各フィールドの必須/任意・文字数上限を決めるのは、テーブルのDictionary Entry(辞書定義)の設定そのもの。</p>
       </div>
     </div>
 
@@ -176,14 +178,17 @@
       <div class="concept-card">
         <h4>データ形式</h4>
         <p>JSON・XML・CSVなど、やり取りするデータの形式。フィールド名・型・必須項目も含めて定義する。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScripted REST APIが外部システムとやり取りするJSONのフィールド名・型を、事前に定義しておく。</p>
       </div>
       <div class="concept-card">
         <h4>プロトコル</h4>
         <p>HTTP/HTTPS・WebSocketなど、どの通信方式を使うか。サーバー・インフラ分野で学んだHTTP/HTTPSの知識がここで直結する。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのIntegrationHubで外部システムと連携する際は、基本的にHTTPS上のREST通信が使われる。</p>
       </div>
       <div class="concept-card">
         <h4>エラーコードの取り決め</h4>
         <p>連携先とどんなエラーコード・エラーメッセージ形式でやり取りするかを、事前に合意しておく。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScripted REST APIが外部システムからのリクエストに失敗した時、どのHTTPステータスコード・エラーメッセージ形式で返すかを事前に決めておく。</p>
       </div>
     </div>
 
@@ -218,10 +223,12 @@
       <div class="concept-card">
         <h4>フローチャート</h4>
         <p>処理の流れを図で表現したもの。分岐(条件分け)・ループ(繰り返し)・例外(異常系)を含めて描く。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのFlow Designerで組むフロー自体が、分岐(条件)・ループを視覚的に表現したものそのもの。</p>
       </div>
       <div class="concept-card">
         <h4>擬似コード</h4>
         <p>特定のプログラミング言語に依存しない、処理手順の書き下し。実装前に処理ロジックの妥当性を確認できる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのBusiness Ruleを実際にスクリプトで書く前に、「優先度を判定→SLAを設定→担当グループを決定」という処理手順を擬似コードで書き出しておく。</p>
       </div>
     </div>
 
@@ -257,10 +264,12 @@
       <div class="concept-card">
         <h4>RFC 9457(Problem Details for HTTP APIs)</h4>
         <p>HTTP APIの機械可読なエラー応答を定めたIETF標準。type(エラー種別のURI)・title(概要)・status(HTTPステータスコード)・detail(詳細説明)・instance(発生箇所)の5フィールドが基本。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScripted REST APIのエラー応答も、外部の開発者向けに公開するなら、この形式に沿わせておくと連携先が扱いやすくなる。</p>
       </div>
       <div class="concept-card">
         <h4>異常系の一覧化</h4>
         <p>入力エラー・認証エラー・外部連携先の障害・タイムアウトなど、想定される異常系をあらかじめリスト化し、それぞれの応答仕様を定めておく。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのIntegrationHubで外部システムと連携する際、接続先のタイムアウト・認証エラー・レート制限超過をあらかじめリスト化し、それぞれの対応(リトライ・アラート等)を決めておく。</p>
       </div>
     </div>
 
@@ -297,10 +306,12 @@
       <div class="concept-card">
         <h4>OpenAPI Specification(OAS)</h4>
         <p>HTTP APIのインターフェースを、言語非依存な形式(YAML/JSON)で記述する標準規格。エンドポイント・パラメータ・レスポンス形式・認証方式を機械可読な形で定義できる。最新版はOpenAPI 3.2.0(2025年9月)。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScripted REST APIを外部の開発者に公開する際、このOpenAPI形式でドキュメント化しておくと、連携先が仕様を機械的に読み込んでコードを生成できる。</p>
       </div>
       <div class="concept-card">
         <h4>API仕様=契約</h4>
         <p>フロントエンドとバックエンドが並行して開発する際、API仕様が両者の合意点(契約)になる。仕様が固まっていれば、実装の完成を待たずにモックを使って並行開発できる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScripted REST APIの仕様さえ先に固めておけば、外部システム側のチームはServiceNowの実装完成を待たずに、モックレスポンスを使って並行開発できる。</p>
       </div>
     </div>
 
