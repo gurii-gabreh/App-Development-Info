@@ -159,18 +159,22 @@
       <div class="concept-card">
         <h4>単体テスト(Unit Test)</h4>
         <p>1つの関数・クラスなど最小単位を対象に、他への依存を切り離して確認する。実行が速く、素早いフィードバックが得られる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScript Includeの1つのメソッドを、他のテーブルや外部連携から切り離して、ATF(Automated Test Framework)で確認する。</p>
       </div>
       <div class="concept-card">
         <h4>結合テスト(Integration Test)</h4>
         <p>複数の部品(サービスとDB、複数のマイクロサービス間など)が正しく連携するかを確認する。「部品同士の契約が守られているか」がポイント。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのBusiness RuleとFlow Designerが連携して、インシデント登録から通知送信までが正しく動くかを、ATFのステップを組み合わせて確認する。</p>
       </div>
       <div class="concept-card">
         <h4>E2Eテスト(End-to-End Test)</h4>
         <p>実際に動いているアプリ上で、ユーザー操作の流れ全体を確認する。合否の基準は技術的な契約ではなく「ユーザーから見て目的の操作が完了できるか」。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのService Portalで、ユーザーが問い合わせフォームを送信してからインシデントが作成され確認画面が表示されるまでの一連の操作を、ATFのシナリオテストで確認する。</p>
       </div>
       <div class="concept-card">
         <h4>2026年時点の配分の変化</h4>
         <p>AIによるコード生成を多用するチームでは、従来のテストピラミッド配分より、単体60%・結合25%・E2E15%(高リスクな領域では50/30/20)程度の比率の方が、実際の障害発生率を下げるという知見が出てきている。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>AIにBusiness RuleやScript Includeを生成してもらう機会が増えているServiceNow開発でも、単体レベル(ATFでの個別メソッド確認)を厚めにする配分の考え方はそのまま当てはまる。</p>
       </div>
     </div>
 
@@ -238,14 +242,17 @@
       <div class="concept-card">
         <h4>① Red</h4>
         <p>実装がまだ無い状態で、期待する動作をテストとして書く。当然このテストは失敗(赤)する。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>まだBusiness Ruleを書いていない状態で、「優先度1のインシデントはSLAが1時間になるはず」というATFテストを先に書く。当然失敗する。</p>
       </div>
       <div class="concept-card">
         <h4>② Green</h4>
         <p>そのテストが通る、必要最小限の実装をする。きれいさより「まず通す」ことを優先する。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>そのATFテストが通る、最小限のBusiness Ruleを実装する。他の優先度への対応やコードの綺麗さは、まだ気にしない。</p>
       </div>
       <div class="concept-card">
         <h4>③ Refactor</h4>
         <p>テストが通っている状態を維持したまま、コードの構造を整理する。テストがあるおかげで、整理中に壊してもすぐ気づける。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ATFのテストが通ったまま、Business Ruleの中のif文の並びをScript Includeへ切り出して整理する。整理中に壊してもATFがすぐ教えてくれる。</p>
       </div>
     </div>
 
@@ -282,10 +289,12 @@
       <div class="concept-card">
         <h4>カバレッジが測るもの</h4>
         <p>コードの各行・分岐が、テスト実行中に少なくとも1回通過したかどうか。実行されたかどうかだけを見ており、結果が正しいかは見ていない。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScript Includeの各行がATFテストで実行されたかは計測できても、その結果(戻り値)を正しくassertしていなければ、実質何も確認できていない。</p>
       </div>
       <div class="concept-card">
         <h4>「高カバレッジ=高品質」ではない</h4>
         <p>複数の単体を組み合わせて初めて意味のある結果が出るような処理は、カバレッジだけでは品質の指標として不十分とされる。結合テスト・E2Eテストと合わせて評価する必要がある。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>複数のBusiness Rule・Flowが連携して初めて意味を持つインシデント処理は、個々のカバレッジが高くても、ATFの結合テスト・シナリオテストと合わせて評価する必要がある。</p>
       </div>
     </div>
 
