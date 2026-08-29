@@ -166,14 +166,17 @@
       <div class="concept-card">
         <h4>システムプロンプト / ユーザープロンプト</h4>
         <p>システムプロンプトは役割・トーン・厳守すべき制約など「変わらないルール」を定義し、ユーザープロンプトはその場の質問・指示を書く。役割を分けることで指示がぶれにくくなる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのNow Assist Skill Builderで、AIの役割・出力形式を事前に固定しておき、ユーザーがチャットで入力する具体的な質問はユーザープロンプトとして扱われる。</p>
       </div>
       <div class="concept-card">
         <h4>Few-shot(少数例示)</h4>
         <p>期待する出力の具体例をいくつか見せてから本番の指示を出す技法。「こういう形式で答えてほしい」を言葉で説明するより、例を見せた方が伝わりやすいことが多い。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>Now Assist Skill Builderの設定で、期待するインシデント要約の出力例をいくつか含めておくことで、実際の生成結果の形式が安定する。</p>
       </div>
       <div class="concept-card">
         <h4>Chain-of-Thought(思考の連鎖)</h4>
         <p>「一気に答えを出す」のではなく、考える過程を段階的に書かせることで、複雑な推論タスクの精度を上げる技法。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>インシデントの重大度をAIに判定させる際、「影響範囲→緊急度→過去の類似事例」の順に段階的に考えさせることで、いきなり結論だけ出させるより精度が上がる。</p>
       </div>
     </div>
 
@@ -245,14 +248,17 @@
       <div class="concept-card">
         <h4>チャンク分割(Chunking)</h4>
         <p>元の文書を、検索しやすい小さな断片(チャンク)に分割しておく前処理。文書全体を毎回渡すのではなく、関連する断片だけを渡すことで効率化する。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのAI Searchが、SharePointやConfluenceの長いドキュメントを取り込む際、検索しやすい断片に分割してインデックス化する処理。</p>
       </div>
       <div class="concept-card">
         <h4>ベクトルデータベース</h4>
         <p>文書の断片をEmbedding(数値ベクトル)に変換して保存しておくデータベース。質問も同じ方法でベクトル化し、意味が近いものを検索する。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのナレッジベース記事も、AI Searchの内部ではEmbeddingに変換されて保存され、ユーザーの質問と意味が近い記事を検索する。</p>
       </div>
       <div class="concept-card">
         <h4>ハイブリッド検索</h4>
         <p>意味の近さで探す方法(Embedding検索)と、キーワードの一致で探す従来型の検索(BM25等)を組み合わせる手法。両方を使うと、検索精度(再現率)が5〜15%程度向上するとされ、2026年時点のベストプラクティスとされる。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのAI Search自体が、キーワード一致と意味検索を組み合わせたハイブリッド方式を採用している。</p>
       </div>
     </div>
 
@@ -312,14 +318,17 @@
       <div class="concept-card">
         <h4>Embeddingモデル</h4>
         <p>文章を数値ベクトルに変換するための専用モデル。384〜3072次元程度のベクトルを出力するものが一般的。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのAI Searchも、内部でこうしたEmbeddingモデルを使ってナレッジ記事を数値ベクトルに変換している。</p>
       </div>
       <div class="concept-card">
         <h4>コサイン類似度</h4>
         <p>2つのベクトルの「向き」がどれだけ近いかを測る指標。ベクトルDBはこの指標を使って、質問と意味が近い文書断片を探す。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのAI Searchが「似ているナレッジ記事」を探す際、この指標で記事同士の意味的な近さを測っている。</p>
       </div>
       <div class="concept-card">
         <h4>意味検索(セマンティック検索)</h4>
         <p>単語の一致ではなく意味の近さで検索する方法。Embeddingがあるからこそ実現できる、RAGの中核技術。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのポータルで「PCが動かない」と検索しても、「端末が起動しない」というタイトルのナレッジ記事がヒットするのは、この意味検索のおかげ。</p>
       </div>
     </div>
 
@@ -373,18 +382,22 @@
       <div class="concept-card">
         <h4>トークン</h4>
         <p>AIが文章を処理する際の最小単位。単語そのものではなく、単語の一部や記号単位に分割されることも多い。入力・出力どちらも課金対象。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowからClaude APIを呼び出して、AI Search用の要約や通知文を自動生成する場合、送信したインシデント内容(入力)と生成された要約(出力)のどちらもトークン数に応じて課金される。</p>
       </div>
       <div class="concept-card">
         <h4>レート制限</h4>
         <p>一定時間内に処理できる量の上限。多くのプロバイダで、契約プランそのものではなく<strong>累積の利用額(支払実績)</strong>に応じて上限が引き上げられる仕組みになっている。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowのScheduled Jobから大量のレコードに対して1件ずつClaude APIを呼び出すような処理を組むと、この上限に引っかかりやすい。まとめて処理するなどの工夫が必要になる。</p>
       </div>
       <div class="concept-card">
         <h4>プロンプトキャッシュ</h4>
         <p>同じ内容を繰り返し送る場合、2回目以降を安く・レート制限の対象外として扱う仕組み。長い会話・大きな資料を繰り返し参照するタスクのコスト削減に有効。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowから同じシステムプロンプト(役割定義)を毎回送ってClaude APIを呼び出す場合、その部分をキャッシュ対象にすることでコストを抑えられる。</p>
       </div>
       <div class="concept-card">
         <h4>モデルの使い分け(ルーティング)</h4>
         <p>ai-config.jsonの🔀AIルーティングでも扱った考え方。単純な作業は安価なモデルに、複雑な作業は高性能モデルに振り分けることで、コストと品質のバランスを取る。</p>
+        <p class="ex"><span class="ex-tag">身近な例</span>ServiceNowと連携する音声ブリッジ拡張機能でも、単純な雑談の応答は安価なHaikuモデル、実装作業が必要な判断はより高性能なSonnetモデルに振り分ける、という設計を検討している。</p>
       </div>
     </div>
 
