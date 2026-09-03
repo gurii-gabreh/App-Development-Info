@@ -270,6 +270,99 @@ Embedding(埋め込み)
     </ol>
   </div>
 
+  <div class="part-marker"><span class="part-num">PART 7</span><span class="part-label">自分の理解(間隔反復レビュー・原文まま記録)</span></div>
+  <h3 class="part-title">間隔反復レビュー(STU-012)</h3>
+  <p class="part-lede">
+    PART1〜5の積極的想起チェック(2026-08-21)から日を空けての再想起。何も見ずに、資料4トピックのうち
+    RAG・トークン/レート制限/コストの関係の2トピックについて改めてまとめた内容。誤字・表記ゆれもそのまま原文で記録する。
+  </p>
+  <p class="raw-note-caption">記録日: 2026-09-03</p>
+  <div class="raw-note">AI.LLMとは
+RAG
+AIに知らないことを答えさせるための仕組み。
+LLMは、学習時点までの情報しか知らない。
+知らない情報は、ユーザが納得するような回答を作り、正確でない情報も盛り込んだ回答をしてしまう。
+ハルシネーションと呼ばれる。
+RAGは、質問に関する情報を外部データから検索し、それを含めてプロンプトに含ませることで、この弱点を補う。
+チャンク分割
+検索しやすい細かい断片にして、情報検索を効率化する方法。
+ベクトルデータベース
+文書の情報をembeddingにして保存することで、情報を検索しやすくする。
+ハイブリット検索
+embedding検索とキーワード検索両方を掛け合わせてやるやり方。
+トークン、レート制限、コストの関係
+出力トークンは、入力トークンより大きい。
+トークンは、AIが処理する最小単位。
+レート制限
+一定時間内にAIが処理できる上限の量
+プロンプトキャッシュ
+同じ内容を送る際に、二回目の方が安くて、レート制限外にすることを指す。
+モデルの使い分け　ルーティング
+単純作業は、安価なモデル、複雑な作業は高性能モデルにやらせる。</div>
+
+  <div class="part-marker"><span class="part-num">PART 8</span><span class="part-label">正誤の記録(間隔反復レビュー)</span></div>
+  <h3 class="part-title">照合結果(間隔反復レビュー)</h3>
+  <p class="part-lede">
+    上記PART7を学習資料の内容と照合した結果。10項目全てが正しく、訂正は無かった。なお資料4トピックのうち
+    「プロンプトエンジニアリングの基本」「Embedding(埋め込み)」の2トピックには今回触れていない
+    (直近の想起はPART1〜2で実施済み)。
+  </p>
+
+  <div class="verdict-group-title good">✅ 正しい理解(10項目)</div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>RAG=AIに知らないことを答えさせるための仕組み。LLMは学習時点までの情報しか知らない</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>知らない情報でもユーザが納得するような回答を作ってしまう(ハルシネーション)</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>RAGは質問に関する情報を外部データから検索し、プロンプトに含めることでこの弱点を補う</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>チャンク分割=検索しやすい細かい断片にして情報検索を効率化する方法</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>ベクトルデータベース=文書の情報をembeddingにして保存し検索しやすくするもの</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>ハイブリッド検索=embedding検索とキーワード検索を組み合わせるやり方</strong> — 正確(「ハイブリット」は表記ゆれ、正しくは「ハイブリッド」)</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>トークン=AIが処理する最小単位</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>出力トークンは入力トークンより大きい(価格が高い)</strong> — 方向性は正確。前回(PART5)は「約2倍」と具体的倍率を誤って訂正が入ったが、今回は倍率を断定せず「大きい」とだけ書いており、不正確な数値を繰り返していない</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>レート制限=一定時間内にAIが処理できる上限の量</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>プロンプトキャッシュ=同じ内容を送る際、2回目の方が安くレート制限の対象外になること</strong> — 正確</p></div>
+  </div>
+  <div class="verdict-card good">
+    <span class="verdict-mark">✅</span>
+    <div class="verdict-body"><p><strong>モデルの使い分け(ルーティング)=単純作業は安価なモデル、複雑な作業は高性能モデルにやらせる</strong> — 正確</p></div>
+  </div>
+
+  <div class="verdict-group-title neutral">➖ 今回触れていない範囲(2トピック)</div>
+  <div class="verdict-card neutral">
+    <span class="verdict-mark">➖</span>
+    <div class="verdict-body">
+      <p><strong>プロンプトエンジニアリングの基本 / Embedding(埋め込み)</strong></p>
+      <p>資料4トピックのうち、この2トピックは今回の間隔反復レビューでは対象外だった(RAG・トークン関係の2トピックのみ実施)。誤りではないが、次回の復習であわせて振り返ることを推奨。</p>
+    </div>
+  </div>
+
   <div class="closing" style="margin-top:44px;">
     <strong>このページの位置づけ</strong>: progress-tracker-dashboardのDGT-005(学習記録ページの新規実装)に対応。
     学んだ内容そのものは<a href="../materials/ai-llm.html">学習資料ページ</a>に分けてある。
