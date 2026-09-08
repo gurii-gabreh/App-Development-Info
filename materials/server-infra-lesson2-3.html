@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — サーバー・インフラ(2周目課題: 可用性の指標と冗長化)</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 16px; }
+  .lede a { color: var(--accent-strong); }
+  .time-badge {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 6px; padding: 4px 10px; margin: 0 0 40px;
+  }
+
+  section.topic { margin: 0; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .topic-lede { font-size: 14px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 22px; }
+
+  .exam-tag {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin: 0 0 14px;
+  }
+
+  .ladder { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .ladder-row {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px;
+  }
+  .ladder-row:last-child { border-bottom: none; }
+  .ladder-row .rank { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-align: right; }
+  .ladder-row .name { color: var(--ink); }
+  .ladder-row .grade {
+    font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .grade.best { color: #1d7a4c; background: #d9f2e3; }
+  .grade.worst { color: #a13939; background: #f6dede; }
+  :root:not([data-theme="light"]) .grade.best, :root[data-theme="dark"] .grade.best { color: #7fd9ab; background: #123425; }
+  :root:not([data-theme="light"]) .grade.worst, :root[data-theme="dark"] .grade.worst { color: #e69a9a; background: #3a1c1c; }
+
+  .concept-grid { display: grid; gap: 12px; margin: 0 0 22px; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .concept-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 6px; }
+  .concept-card code { font-family: var(--mono); font-size: 12px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .example { display: flex; gap: 12px; padding: 14px 16px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 22px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+  .recap { margin: 22px 0 0; padding: 15px 18px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .quiz { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .quiz .q-tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin-bottom: 8px; }
+  .quiz p.q { font-size: 14px; color: var(--ink); margin: 0 0 10px; }
+  .quiz details { font-size: 13px; color: var(--ink-soft); }
+  .quiz summary { cursor: pointer; color: var(--accent-strong); font-size: 12.5px; font-family: var(--mono); }
+  .quiz details[open] summary { margin-bottom: 8px; }
+
+  .why { margin: 0 0 22px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 15px; font-weight: 600; margin: 0 0 8px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .closing { margin-top: 34px; padding: 18px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 13.5px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="server-infra.html">← サーバー・インフラのLesson一覧に戻る</a>
+  <p class="eyebrow">学習資料 — サーバー・インフラ / Lesson2-3</p>
+  <h1>2周目課題: 可用性の指標と冗長化</h1>
+  <p class="lede">システムが「止まらないこと」をどう数値化し、どう設計で担保するかを扱う。運用・インフラ設計の基本語彙。</p>
+  <span class="time-badge">⏱ 所要時間の目安: 約15分</span>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">06</span>
+      <h2>可用性の指標(稼働率・MTBF・MTTR)と冗長化構成</h2>
+    </div>
+    <span class="exam-tag">基本情報・応用情報 頻出</span>
+    <p class="topic-lede">「落ちないシステム」を作るには、まず「落ちない度合い」を数値で語れる必要がある。基本情報・応用情報のシステム運用分野で頻出。</p>
+
+
+    <div class="why">
+      <h3>そもそも、なぜ数値化するのか</h3>
+      <p>
+        「安定して動く」という言葉だけでは、SLA(サービス品質保証)の契約にも、設計判断の比較にも使えない。
+        稼働率・MTBF・MTTRという3つの指標は、可用性を客観的に比較・議論するための共通言語になっている。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>MTBF(平均故障間隔)</h4>
+        <p>Mean Time Between Failures。システムが故障してから次に故障するまでの、平均的な正常稼働時間。<strong>長いほど故障しにくい</strong>ことを意味する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>MTTR(平均修理時間)</h4>
+        <p>Mean Time To Repair。故障してから復旧するまでにかかる、平均的な時間。<strong>短いほど早く直る</strong>ことを意味する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>稼働率</h4>
+        <p>全体の時間のうち、実際にシステムが正常に動いていた時間の割合。計算式は <code>稼働率 = MTBF ÷ (MTBF + MTTR)</code>。MTBFを伸ばす(壊れにくくする)か、MTTRを縮める(早く直す)かの、どちらか(または両方)で稼働率は上がる。</p>
+      </div>
+    </div>
+
+    <div class="example">
+      <span class="tag">具体例</span>
+      <p>
+        MTBFが「99時間」、MTTRが「1時間」のシステムなら、稼働率 = 99 ÷ (99+1) = 0.99(99%)。
+        「99.9%(スリーナイン)」「99.99%(フォーナイン)」のようにナインの数で語られることが多く、1年あたりの停止許容時間に換算すると、
+        99%で年間約3.65日、99.9%で年間約8.76時間、99.99%で年間約52.6分と、桁が大きく変わる。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>デュアルシステム</h4>
+        <p>2系統のシステムを常に同時に稼働させ、常に結果を照合し続ける構成。片方が故障してもすぐもう片方だけで継続できる(信頼性は高いがコストも高い)。</p>
+      </div>
+      <div class="concept-card">
+        <h4>デュプレックスシステム</h4>
+        <p>普段使う「主系」と、待機しておく「従系」に分ける構成。主系が故障したら従系に切り替える。従系を常に稼働させておく方式(ホットスタンバイ)と、必要な時だけ起動する方式(コールドスタンバイ)がある。デュアルシステムよりコストを抑えやすい。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>MTBF</strong>=壊れにくさ(長いほど良い)、<strong>MTTR</strong>=直りやすさ(短いほど良い)</li>
+        <li><strong>稼働率 = MTBF ÷ (MTBF + MTTR)</strong>——公式は暗記必須</li>
+        <li><strong>デュアルシステム</strong>=常時2系統で照合、<strong>デュプレックスシステム</strong>=主系+待機系で切替</li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <span class="q-tag">確認問題1(FE形式)</span>
+      <p class="q">Q. MTBFが「190時間」、MTTRが「10時間」のシステムの稼働率は何%か。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: 90% / イ: 95% / ウ: 99% / エ: 5%<br><br><strong>正解: イ(95%)</strong>。190÷(190+10)=190÷200=0.95=95%。稼働率の公式 MTBF÷(MTBF+MTTR) にそのまま当てはめる。</p>
+      </details>
+    </div>
+    <div class="quiz">
+      <span class="q-tag">確認問題2(FE形式)</span>
+      <p class="q">Q. 普段は主系だけで運用し、故障時に待機系へ切り替える構成を何と呼ぶか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: デュアルシステム / イ: デュプレックスシステム / ウ: ロードバランシング / エ: シンクライアント<br><br><strong>正解: イ</strong>。常に2系統を同時稼働させ結果を照合するのはデュアルシステム。主系/従系に分けて切り替えるのはデュプレックスシステム。</p>
+      </details>
+    </div>
+
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: サーバー・インフラ Lesson2-1(参照資料)を踏まえた2周目の応用課題(基本情報・応用情報試験対策も兼ねる)。
+    <a href="server-infra-lesson2-2.html">Lesson2-2に戻る</a> / 自分の理解の記録は
+    <a href="../records/server-infra.html">学習記録ページ</a>へ(未作成分野は分野一覧から)。
+  </div>
+
+</div>
+</body>
+</html>

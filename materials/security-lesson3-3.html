@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — セキュリティ(2周目課題: 代表的な攻撃手法と対策)</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 16px; }
+  .lede a { color: var(--accent-strong); }
+  .time-badge {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 6px; padding: 4px 10px; margin: 0 0 40px;
+  }
+
+  section.topic { margin: 0; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .topic-lede { font-size: 14px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 22px; }
+
+  .exam-tag {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin: 0 0 14px;
+  }
+
+  .ladder { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .ladder-row {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px;
+  }
+  .ladder-row:last-child { border-bottom: none; }
+  .ladder-row .rank { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-align: right; }
+  .ladder-row .name { color: var(--ink); }
+  .ladder-row .grade {
+    font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .grade.best { color: #1d7a4c; background: #d9f2e3; }
+  .grade.worst { color: #a13939; background: #f6dede; }
+  :root:not([data-theme="light"]) .grade.best, :root[data-theme="dark"] .grade.best { color: #7fd9ab; background: #123425; }
+  :root:not([data-theme="light"]) .grade.worst, :root[data-theme="dark"] .grade.worst { color: #e69a9a; background: #3a1c1c; }
+
+  .concept-grid { display: grid; gap: 12px; margin: 0 0 22px; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .concept-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 6px; }
+  .concept-card code { font-family: var(--mono); font-size: 12px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .example { display: flex; gap: 12px; padding: 14px 16px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 22px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+  .recap { margin: 22px 0 0; padding: 15px 18px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .quiz { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .quiz .q-tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin-bottom: 8px; }
+  .quiz p.q { font-size: 14px; color: var(--ink); margin: 0 0 10px; }
+  .quiz details { font-size: 13px; color: var(--ink-soft); }
+  .quiz summary { cursor: pointer; color: var(--accent-strong); font-size: 12.5px; font-family: var(--mono); }
+  .quiz details[open] summary { margin-bottom: 8px; }
+
+  .why { margin: 0 0 22px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 15px; font-weight: 600; margin: 0 0 8px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .closing { margin-top: 34px; padding: 18px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 13.5px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="security.html">← セキュリティのLesson一覧に戻る</a>
+  <p class="eyebrow">学習資料 — セキュリティ / Lesson3-3</p>
+  <h1>2周目課題: 代表的な攻撃手法と対策</h1>
+  <p class="lede"><a href="security-lesson3-1.html">Lesson3-1</a>のOWASP Top 10で名前が挙がった脆弱性を、具体的な攻撃の仕組みと対策のペアで扱う。</p>
+  <span class="time-badge">⏱ 所要時間の目安: 約15分</span>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">06</span>
+      <h2>代表的な攻撃手法と対策</h2>
+    </div>
+    <span class="exam-tag">基本情報・応用情報 頻出</span>
+    <p class="topic-lede">「攻撃名」だけでなく「どういう仕組みで成立し、どう防ぐか」までセットで押さえる。基本情報・応用情報のセキュリティ分野で最頻出。</p>
+
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>SQLインジェクション</h4>
+        <p>入力フォームに、意図しないSQL文の断片を混入させ、データベースを不正に操作する攻撃。例: ログインフォームに<code>' OR '1'='1</code>のような文字列を入力し、認証を無理やり通す。<strong>対策</strong>: 入力値をそのままSQL文に組み込まず、プレースホルダ(バインド変数)を使う。</p>
+      </div>
+      <div class="concept-card">
+        <h4>XSS(クロスサイトスクリプティング)</h4>
+        <p>攻撃者が悪意あるスクリプトをWebページに埋め込み、それを見た他の利用者のブラウザ上で実行させる攻撃。Cookie(セッション情報)の盗み出し等に悪用される。<strong>対策</strong>: 利用者からの入力をそのままHTMLとして出力せず、エスケープ処理(<code>&lt;</code>等の特殊文字を無害化)する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>CSRF(クロスサイトリクエストフォージェリ)</h4>
+        <p>利用者が別のサイトにログインしたままの状態を悪用し、利用者が意図しないリクエスト(例: 送金・退会)を、悪意あるサイト経由で勝手に送信させる攻撃。<strong>対策</strong>: リクエストごとに正規の画面経由でしか発行されない使い捨てトークン(CSRFトークン)を要求する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>DoS/DDoS攻撃</h4>
+        <p>大量のリクエストを送りつけ、サーバーやネットワークを過負荷にしてサービスを利用不能にする攻撃。1台から行うのがDoS、多数の端末(踏み台にされたもの含む)から一斉に行うのがDDoS。<strong>対策</strong>: WAF・CDNによるトラフィックの分散/フィルタリング、アクセス数の異常検知。</p>
+      </div>
+    </div>
+
+    <div class="example">
+      <span class="tag">SQLインジェクションの具体的な流れ</span>
+      <p>
+        <code>SELECT * FROM users WHERE id = '入力値'</code> という組み立て方をしているとき、入力値に <code>' OR '1'='1</code> を入れると、
+        実行される文が <code>SELECT * FROM users WHERE id = '' OR '1'='1'</code> となり、<code>'1'='1'</code>が常に真になるため全件が条件を満たし、
+        本来アクセスできないはずのデータまで取得・操作されてしまう。プレースホルダを使えば、入力値は「値」として扱われ、SQL文の構造そのものを書き換えられなくなる。
+      </p>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>SQLインジェクション</strong>=入力値でSQL文自体を書き換える → プレースホルダで対策</li>
+        <li><strong>XSS</strong>=悪意あるスクリプトを他人のブラウザで実行させる → 出力時のエスケープで対策</li>
+        <li><strong>CSRF</strong>=ログイン状態を悪用し意図しないリクエストを送らせる → CSRFトークンで対策</li>
+        <li><strong>DoS/DDoS</strong>=大量アクセスでサービスを止める → WAF・CDN・異常検知で対策</li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <span class="q-tag">確認問題1(FE形式)</span>
+      <p class="q">Q. Webアプリの入力フォームから悪意あるSQL文の断片を混入させ、データベースを不正操作する攻撃への対策として最も適切なものはどれか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: 入力値をエスケープしてHTMLとして出力する / イ: プレースホルダ(バインド変数)を使ってSQL文を組み立てる / ウ: CSRFトークンを発行する / エ: アクセス数を監視する<br><br><strong>正解: イ</strong>。アはXSS対策、ウはCSRF対策、エはDoS/DDoS対策にあたる。</p>
+      </details>
+    </div>
+    <div class="quiz">
+      <span class="q-tag">確認問題2(FE形式)</span>
+      <p class="q">Q. 利用者が別サイトにログイン中であることを悪用し、利用者の意図しない送金リクエストを勝手に送信させる攻撃はどれか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: SQLインジェクション / イ: XSS / ウ: CSRF / エ: DDoS攻撃<br><br><strong>正解: ウ</strong>。ログイン状態(セッション)を悪用して、利用者本人になりすましたリクエストを送らせるのがCSRFの特徴。</p>
+      </details>
+    </div>
+
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: セキュリティ Lesson3-1(参照資料)を踏まえた2周目の応用課題(基本情報・応用情報試験対策も兼ねる)。
+    <a href="security-lesson3-2.html">Lesson3-2に戻る</a> / 自分の理解の記録は
+    <a href="../records/security.html">学習記録ページ</a>へ(未作成分野は分野一覧から)。
+  </div>
+
+</div>
+</body>
+</html>

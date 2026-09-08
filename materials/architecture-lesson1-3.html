@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — アーキテクチャ(2周目課題: 開発モデル)</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 16px; }
+  .lede a { color: var(--accent-strong); }
+  .time-badge {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 6px; padding: 4px 10px; margin: 0 0 40px;
+  }
+
+  section.topic { margin: 0; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .topic-lede { font-size: 14px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 22px; }
+
+  .exam-tag {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin: 0 0 14px;
+  }
+
+  .ladder { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .ladder-row {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px;
+  }
+  .ladder-row:last-child { border-bottom: none; }
+  .ladder-row .rank { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-align: right; }
+  .ladder-row .name { color: var(--ink); }
+  .ladder-row .grade {
+    font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .grade.best { color: #1d7a4c; background: #d9f2e3; }
+  .grade.worst { color: #a13939; background: #f6dede; }
+  :root:not([data-theme="light"]) .grade.best, :root[data-theme="dark"] .grade.best { color: #7fd9ab; background: #123425; }
+  :root:not([data-theme="light"]) .grade.worst, :root[data-theme="dark"] .grade.worst { color: #e69a9a; background: #3a1c1c; }
+
+  .concept-grid { display: grid; gap: 12px; margin: 0 0 22px; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .concept-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 6px; }
+  .concept-card code { font-family: var(--mono); font-size: 12px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .example { display: flex; gap: 12px; padding: 14px 16px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 22px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+  .recap { margin: 22px 0 0; padding: 15px 18px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .quiz { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .quiz .q-tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin-bottom: 8px; }
+  .quiz p.q { font-size: 14px; color: var(--ink); margin: 0 0 10px; }
+  .quiz details { font-size: 13px; color: var(--ink-soft); }
+  .quiz summary { cursor: pointer; color: var(--accent-strong); font-size: 12.5px; font-family: var(--mono); }
+  .quiz details[open] summary { margin-bottom: 8px; }
+
+  .why { margin: 0 0 22px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 15px; font-weight: 600; margin: 0 0 8px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .closing { margin-top: 34px; padding: 18px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 13.5px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="architecture.html">← アーキテクチャのLesson一覧に戻る</a>
+  <p class="eyebrow">学習資料 — アーキテクチャ / Lesson1-3</p>
+  <h1>2周目課題: 開発モデル</h1>
+  <p class="lede"><a href="architecture-lesson1-1.html">Lesson1-1</a>の「モノリス vs マイクロサービス」が"システムの構造"の選択なら、こちらは"開発の進め方"の選択。試験でも頻出の4モデルを扱う。</p>
+  <span class="time-badge">⏱ 所要時間の目安: 約15分</span>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">06</span>
+      <h2>開発モデル(ウォーターフォール/アジャイル等)</h2>
+    </div>
+    <span class="exam-tag">基本情報・応用情報 頻出</span>
+    <p class="topic-lede">ソフトウェア開発の工程をどう進めるかという、プロジェクトマネジメントの基本方針。基本情報・応用情報のどちらでも頻出。</p>
+
+
+    <div class="why">
+      <h3>そもそも、なぜ複数のモデルがあるのか</h3>
+      <p>
+        「要件がどれだけ最初から明確か」「変更がどれだけ頻繁に起きそうか」によって、最適な進め方は変わる。
+        1970年代のウォーターフォールモデル確立以降、実務での失敗経験を踏まえて改良版が提案されてきた歴史があり、
+        <strong>どのモデルが優れているかではなく、状況に応じてどれを選ぶべきかを判断できることが重要</strong>。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>ウォーターフォールモデル</h4>
+        <p>要件定義→設計→実装→テストの各工程を、前工程が完全に終わってから次に進む(原則、後戻りしない)。計画が立てやすい一方、後工程で要件の誤りが見つかると手戻りの影響が大きい。要件が最初から明確な大規模システムに向く。</p>
+      </div>
+      <div class="concept-card">
+        <h4>プロトタイプモデル</h4>
+        <p>開発の早い段階で試作品(プロトタイプ)を作り、利用者に見せて要件を確認しながら進める。「言葉では伝わらないイメージのズレ」を早期に解消できる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>スパイラルモデル</h4>
+        <p>システムをいくつかのサブシステムに分割し、設計→実装→評価のサイクルを繰り返しながら、少しずつ完成度を上げていく。ウォーターフォールの計画性と、変更への対応力を両立させる狙い。</p>
+      </div>
+      <div class="concept-card">
+        <h4>アジャイル(例: スクラム)</h4>
+        <p>1〜4週間程度の短い期間(イテレーション/スプリント)ごとに、動くソフトウェアの単位で開発・リリースを繰り返す。要件変更が多い・優先順位が変わりやすいプロジェクトに向く。Lesson1-1の「まずモノリスで作り必要な箇所だけ切り出す」という段階的アプローチとも相性が良い。</p>
+      </div>
+    </div>
+
+    <div class="example">
+      <span class="tag">選び方の目安</span>
+      <p>
+        <strong>要件がほぼ固まっている・後戻りのコストが極めて大きい(例: 大規模基幹システムの刷新)</strong> → ウォーターフォール寄り。
+        <strong>要件が曖昧・使う人の反応を見ながら固めたい</strong> → プロトタイプ。
+        <strong>大規模かつリスクが高く、段階的に検証しながら進めたい</strong> → スパイラル。
+        <strong>優先順位や要件が頻繁に変わる・早く価値を出したい</strong> → アジャイル。実務では複数を組み合わせる(例: 全体はスパイラル的に、各サブシステム内はアジャイルで進める)ことも多い。
+      </p>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>ウォーターフォール</strong>=工程を順に進め後戻りしない、要件が固いプロジェクト向き</li>
+        <li><strong>プロトタイプ</strong>=試作品で早期に要件のズレを解消</li>
+        <li><strong>スパイラル</strong>=サブシステム単位で反復し、段階的に完成度を上げる</li>
+        <li><strong>アジャイル</strong>=短い反復で動くソフトウェアを繰り返しリリース、変更に強い</li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <span class="q-tag">確認問題1(FE形式)</span>
+      <p class="q">Q. 要件の変更が頻繁に発生することが見込まれるプロジェクトで、最も適した開発モデルはどれか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>
+          ア: ウォーターフォールモデル / イ: アジャイル(スクラム) / ウ: 単体テストのみを繰り返すモデル / エ: 要件定義を省略するモデル<br><br>
+          <strong>正解: イ</strong>。短い反復ごとに優先順位を見直しながら進めるアジャイルは、要件変更が多い状況に強い。逆にウォーターフォールは、最初に要件を固定する前提のため、頻繁な変更には弱い。
+        </p>
+      </details>
+    </div>
+    <div class="quiz">
+      <span class="q-tag">確認問題2(FE形式)</span>
+      <p class="q">Q. 利用者から「使ってみないと要望がうまく言葉にできない」と言われたシステムの初期段階で、最も有効な手法はどれか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>
+          ア: ウォーターフォールモデルで要件定義書を精緻化する / イ: プロトタイプを作り実際に触ってもらいながら要件を固める / ウ: スパイラルモデルで全工程を一度に反復する / エ: テスト工程を前倒しする<br><br>
+          <strong>正解: イ</strong>。「言葉にできない要望」は、実物を見せることで初めて具体化されることが多い。プロトタイプモデルはこのズレを早期に解消するために使う。
+        </p>
+      </details>
+    </div>
+
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: アーキテクチャ Lesson1-1(参照資料)を踏まえた2周目の応用課題(基本情報・応用情報試験対策も兼ねる)。
+    <a href="architecture-lesson1-2.html">Lesson1-2に戻る</a> / 自分の理解の記録は
+    <a href="../records/architecture.html">学習記録ページ</a>へ(未作成分野は分野一覧から)。
+  </div>
+
+</div>
+</body>
+</html>

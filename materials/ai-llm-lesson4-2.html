@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — AI・LLM(2周目課題: 機械学習の基礎語彙)</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 16px; }
+  .lede a { color: var(--accent-strong); }
+  .time-badge {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 6px; padding: 4px 10px; margin: 0 0 40px;
+  }
+
+  section.topic { margin: 0; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .topic-lede { font-size: 14px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 22px; }
+
+  .exam-tag {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin: 0 0 14px;
+  }
+
+  .ladder { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .ladder-row {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px;
+  }
+  .ladder-row:last-child { border-bottom: none; }
+  .ladder-row .rank { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-align: right; }
+  .ladder-row .name { color: var(--ink); }
+  .ladder-row .grade {
+    font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .grade.best { color: #1d7a4c; background: #d9f2e3; }
+  .grade.worst { color: #a13939; background: #f6dede; }
+  :root:not([data-theme="light"]) .grade.best, :root[data-theme="dark"] .grade.best { color: #7fd9ab; background: #123425; }
+  :root:not([data-theme="light"]) .grade.worst, :root[data-theme="dark"] .grade.worst { color: #e69a9a; background: #3a1c1c; }
+
+  .concept-grid { display: grid; gap: 12px; margin: 0 0 22px; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .concept-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 6px; }
+  .concept-card code { font-family: var(--mono); font-size: 12px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .example { display: flex; gap: 12px; padding: 14px 16px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 22px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+  .recap { margin: 22px 0 0; padding: 15px 18px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .quiz { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .quiz .q-tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin-bottom: 8px; }
+  .quiz p.q { font-size: 14px; color: var(--ink); margin: 0 0 10px; }
+  .quiz details { font-size: 13px; color: var(--ink-soft); }
+  .quiz summary { cursor: pointer; color: var(--accent-strong); font-size: 12.5px; font-family: var(--mono); }
+  .quiz details[open] summary { margin-bottom: 8px; }
+
+  .why { margin: 0 0 22px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 15px; font-weight: 600; margin: 0 0 8px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .closing { margin-top: 34px; padding: 18px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 13.5px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="ai-llm.html">← AI・LLMのLesson一覧に戻る</a>
+  <p class="eyebrow">学習資料 — AI・LLM / Lesson4-2</p>
+  <h1>2周目課題: 機械学習の基礎語彙</h1>
+  <p class="lede"><a href="ai-llm-lesson4-1.html">Lesson4-1</a>のLLM活用の話の土台にある、機械学習そのものの基本的な考え方・語彙を扱う。</p>
+  <span class="time-badge">⏱ 所要時間の目安: 約15分</span>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">05</span>
+      <h2>機械学習の基礎語彙</h2>
+    </div>
+    <span class="exam-tag">基本情報・応用情報 頻出</span>
+    <p class="topic-lede">LLM(大規模言語モデル)も機械学習の一種。その土台となる基本語彙(学習方式の分類・過学習)を、確立された標準的な整理として押さえる。</p>
+
+
+    <div class="why">
+      <h3>そもそも、なぜLLMの前に機械学習の基礎が要るか</h3>
+      <p>
+        Lesson4-1で扱ったプロンプトエンジニアリングやRAGは「学習済みのLLMをどう活用するか」の話。
+        一方で、そのLLM自体がどう作られているか(学習のさせ方)を知っていると、
+        「なぜこのプロンプトの書き方で結果が変わるのか」「なぜ古い情報しか知らないモデルがあるのか」といった挙動の理由を理解しやすくなる。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>教師あり学習</h4>
+        <p>「入力」と「正解ラベル」のペアを大量に与えて学習させる方式。例: 大量のメールに「迷惑メールか否か」のラベルを付けて学習させ、新しいメールを判定するモデルを作る。</p>
+      </div>
+      <div class="concept-card">
+        <h4>教師なし学習</h4>
+        <p>正解ラベルを与えず、データそのものの構造(似ているものをグループ分けする等)を学習させる方式。例: 購買データから、似た傾向を持つ顧客層をグループ分けする(クラスタリング)。</p>
+      </div>
+      <div class="concept-card">
+        <h4>強化学習</h4>
+        <p>「行動」に対して「報酬」を与え、報酬が最大になるような行動を学習させる方式。試行錯誤を通じて学習する点が他の2つと異なる。ゲームAIや、LLMの回答を人間の評価に近づける調整(RLHF)などに使われる。</p>
+      </div>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>ニューラルネットワークの基本イメージ</h4>
+        <p>人間の脳の神経細胞のつながりを単純化した数理モデル。「入力層→中間層(複数層になっているものが"ディープラーニング")→出力層」という構造で、層を通過するたびにデータが変換され、最終的に予測結果を出力する。各層の間の「重み」を、大量のデータを使って少しずつ調整していくのが学習の実体。</p>
+      </div>
+      <div class="concept-card">
+        <h4>過学習(オーバーフィッティング)</h4>
+        <p>学習に使ったデータには非常によく当てはまるが、学習に使っていない新しいデータにはうまく対応できなくなる現象。「練習問題の答えを丸暗記しすぎて、応用問題が解けなくなる」状態に近い。学習データと評価データを分けて精度を検証することで検知する。</p>
+      </div>
+    </div>
+
+    <div class="example">
+      <span class="tag">LLMとのつながり</span>
+      <p>
+        LLMは大量のテキストデータを使った教師あり学習(次に来る単語を予測する形の学習)がベースになっており、
+        そこに人間のフィードバックを使った強化学習(RLHF)を組み合わせて、より人間の意図に沿う回答をするよう調整されている、というのが大まかな全体像。
+      </p>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>教師あり学習</strong>=正解ラベル付きデータで学習、<strong>教師なし学習</strong>=正解なしでデータの構造を学習、<strong>強化学習</strong>=報酬を最大化するよう試行錯誤</li>
+        <li>ニューラルネットワークは<strong>入力層→中間層→出力層</strong>の構造、層を重ねたものがディープラーニング</li>
+        <li><strong>過学習</strong>=学習データに寄りすぎて、新しいデータへの対応力が落ちる状態</li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <span class="q-tag">確認問題1</span>
+      <p class="q">Q. 大量の顧客購買データに正解ラベルを付けず、傾向が似ている顧客をグループ分けする手法は、次のどの学習方式に分類されるか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: 教師あり学習 / イ: 教師なし学習 / ウ: 強化学習 / エ: 過学習<br><br><strong>正解: イ</strong>。正解ラベルを与えず、データ自体の構造(似たもの同士のグループ分け=クラスタリング)を学習させる教師なし学習の典型例。</p>
+      </details>
+    </div>
+    <div class="quiz">
+      <span class="q-tag">確認問題2</span>
+      <p class="q">Q. 学習データに対する精度は非常に高いが、未知のデータに対する精度が著しく低いモデルの状態を何と呼ぶか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: 強化学習 / イ: クラスタリング / ウ: 過学習 / エ: RAG<br><br><strong>正解: ウ</strong>。学習データに適合しすぎて、新しいデータへの汎化(応用がきくこと)ができなくなった状態を過学習と呼ぶ。</p>
+      </details>
+    </div>
+
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: AI・LLM Lesson4-1(参照資料)を踏まえた2周目の応用課題(基本情報・応用情報試験対策も兼ねる)。
+    <a href="ai-llm-lesson4-1.html">Lesson4-1に戻る</a> / 自分の理解の記録は
+    <a href="../records/ai-llm.html">学習記録ページ</a>へ(未作成分野は分野一覧から)。
+  </div>
+
+</div>
+</body>
+</html>

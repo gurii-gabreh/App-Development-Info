@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — セキュリティ(2周目課題: 暗号技術の具体的な仕組み)</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 16px; }
+  .lede a { color: var(--accent-strong); }
+  .time-badge {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 6px; padding: 4px 10px; margin: 0 0 40px;
+  }
+
+  section.topic { margin: 0; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .topic-lede { font-size: 14px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 22px; }
+
+  .exam-tag {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin: 0 0 14px;
+  }
+
+  .ladder { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .ladder-row {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px;
+  }
+  .ladder-row:last-child { border-bottom: none; }
+  .ladder-row .rank { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-align: right; }
+  .ladder-row .name { color: var(--ink); }
+  .ladder-row .grade {
+    font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .grade.best { color: #1d7a4c; background: #d9f2e3; }
+  .grade.worst { color: #a13939; background: #f6dede; }
+  :root:not([data-theme="light"]) .grade.best, :root[data-theme="dark"] .grade.best { color: #7fd9ab; background: #123425; }
+  :root:not([data-theme="light"]) .grade.worst, :root[data-theme="dark"] .grade.worst { color: #e69a9a; background: #3a1c1c; }
+
+  .concept-grid { display: grid; gap: 12px; margin: 0 0 22px; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .concept-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 6px; }
+  .concept-card code { font-family: var(--mono); font-size: 12px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .example { display: flex; gap: 12px; padding: 14px 16px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 22px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+  .recap { margin: 22px 0 0; padding: 15px 18px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .quiz { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .quiz .q-tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin-bottom: 8px; }
+  .quiz p.q { font-size: 14px; color: var(--ink); margin: 0 0 10px; }
+  .quiz details { font-size: 13px; color: var(--ink-soft); }
+  .quiz summary { cursor: pointer; color: var(--accent-strong); font-size: 12.5px; font-family: var(--mono); }
+  .quiz details[open] summary { margin-bottom: 8px; }
+
+  .why { margin: 0 0 22px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 15px; font-weight: 600; margin: 0 0 8px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .closing { margin-top: 34px; padding: 18px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 13.5px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="security.html">← セキュリティのLesson一覧に戻る</a>
+  <p class="eyebrow">学習資料 — セキュリティ / Lesson3-2</p>
+  <h1>2周目課題: 暗号技術の具体的な仕組み</h1>
+  <p class="lede"><a href="security-lesson3-1.html">Lesson3-1</a>で見た「対称鍵 vs 公開鍵」を、代表的なアルゴリズムとハッシュ・デジタル署名まで掘り下げる。</p>
+  <span class="time-badge">⏱ 所要時間の目安: 約15分</span>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">05</span>
+      <h2>代表アルゴリズムとハッシュ関数・デジタル署名</h2>
+    </div>
+    <span class="exam-tag">基本情報・応用情報 頻出</span>
+    <p class="topic-lede">暗号化の「仕組みの種類」だけでなく、「具体的に何を使うか」「改ざん検知・なりすまし防止をどう実現するか」まで扱う。基本情報・応用情報のセキュリティ分野で頻出。</p>
+
+
+    <div class="why">
+      <h3>Lesson3-1の続きとして押さえること</h3>
+      <p>
+        Lesson3-1では「対称鍵/公開鍵」という2つの<strong>仕組み</strong>を学んだ。ここでは、それぞれの
+        <strong>代表的な実装(具体的なアルゴリズム名)</strong>と、暗号化とは別の目的である
+        <strong>「改ざんされていないか」「本人からのデータか」を保証する仕組み</strong>(ハッシュ関数・デジタル署名)を扱う。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>AES(対称鍵暗号の代表)</h4>
+        <p>Advanced Encryption Standard。現在最も広く使われている対称鍵暗号方式。暗号化・復号を同じ鍵で行うため高速で、大量データの暗号化に向く。HTTPS通信でも、実際のデータ本体のやり取りにはAESのような対称鍵暗号が使われる。</p>
+      </div>
+      <div class="concept-card">
+        <h4>RSA(公開鍵暗号の代表)</h4>
+        <p>大きな数の素因数分解が困難であることを利用した公開鍵暗号方式。Lesson3-1で見たとおり計算コストが高いため、大量データの暗号化そのものより、鍵交換やデジタル署名に使われることが多い。</p>
+      </div>
+      <div class="concept-card">
+        <h4>ハッシュ関数(SHA-256等)</h4>
+        <p>任意の長さのデータから、固定長の「指紋」のような値(ハッシュ値)を生成する一方向の関数。同じ入力からは必ず同じハッシュ値が得られるが、ハッシュ値から元のデータを逆算することはできない。データが1ビットでも変われば、ハッシュ値は大きく変わる(改ざん検知に使える理由)。</p>
+      </div>
+    </div>
+
+    <div class="example">
+      <span class="tag">改ざん検知の具体例</span>
+      <p>
+        ファイルを配布する際、配布元が正しいファイルのハッシュ値を公開しておく。受け取った側が自分でハッシュ値を計算し、公開されている値と一致すれば「配布時点から改ざんされていない」と確認できる。パスワードの保存も、平文ではなくハッシュ値で保存するのが基本(万一データが漏れても、元のパスワードは分からない)。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>デジタル署名</h4>
+        <p>送信者が「自分の秘密鍵」でデータのハッシュ値を暗号化したものを、データに添付して送る。受信者は「送信者の公開鍵」で復号し、自分で計算したハッシュ値と一致するか確認する。一致すれば「確かに送信者本人が送った」(本人性)かつ「途中で改ざんされていない」(完全性)ことが同時に確認できる。</p>
+        <p class="ex"><span class="ex-tag">向きに注意</span>通常の暗号化は「相手の公開鍵で暗号化→相手の秘密鍵で復号」(誰でも送れる、本人だけ読める)。デジタル署名はその逆向き「自分の秘密鍵で暗号化→自分の公開鍵で復号」(本人だけ作れる、誰でも検証できる)。</p>
+      </div>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>AES</strong>=対称鍵の代表(高速、大量データ向き)、<strong>RSA</strong>=公開鍵の代表(鍵交換・署名向き)</li>
+        <li><strong>ハッシュ関数</strong>=一方向・固定長、改ざん検知やパスワード保存に使う</li>
+        <li><strong>デジタル署名</strong>=「自分の秘密鍵で署名→相手が自分の公開鍵で検証」、本人性と完全性を同時に保証</li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <span class="q-tag">確認問題1(FE形式)</span>
+      <p class="q">Q. パスワードをデータベースに保存する際、最も適切な方法はどれか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: 平文のまま保存する / イ: AESで暗号化して保存し、必要な時に復号する / ウ: ハッシュ関数でハッシュ値に変換して保存する / エ: RSAの公開鍵で暗号化して保存する<br><br><strong>正解: ウ</strong>。パスワードは「元に戻す必要がない」ため、一方向のハッシュ関数で保存するのが基本(万一漏洩しても元のパスワードが分からない)。暗号化(イ・エ)は復号できてしまう点でリスクが残る。</p>
+      </details>
+    </div>
+    <div class="quiz">
+      <span class="q-tag">確認問題2(FE形式)</span>
+      <p class="q">Q. デジタル署名において、送信者が署名を作成する際に使う鍵はどれか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: 送信者の公開鍵 / イ: 送信者の秘密鍵 / ウ: 受信者の公開鍵 / エ: 受信者の秘密鍵<br><br><strong>正解: イ</strong>。署名は「本人だけが作れる」必要があるため、本人しか持たない秘密鍵で作成し、公開されている公開鍵で誰でも検証できるようにする。</p>
+      </details>
+    </div>
+
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: セキュリティ Lesson3-1(参照資料)を踏まえた2周目の応用課題(基本情報・応用情報試験対策も兼ねる)。
+    <a href="security-lesson3-1.html">Lesson3-1に戻る</a> / <a href="security-lesson3-3.html">次のLesson3-3(攻撃手法と対策)へ</a> / 自分の理解の記録は
+    <a href="../records/security.html">学習記録ページ</a>へ(未作成分野は分野一覧から)。
+  </div>
+
+</div>
+</body>
+</html>

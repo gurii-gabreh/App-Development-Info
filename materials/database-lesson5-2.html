@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — データベース(2周目課題: 正規化の具体的な段階)</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 16px; }
+  .lede a { color: var(--accent-strong); }
+  .time-badge {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 6px; padding: 4px 10px; margin: 0 0 40px;
+  }
+
+  section.topic { margin: 0; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .topic-lede { font-size: 14px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 22px; }
+
+  .exam-tag {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin: 0 0 14px;
+  }
+
+  .ladder { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .ladder-row {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px;
+  }
+  .ladder-row:last-child { border-bottom: none; }
+  .ladder-row .rank { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-align: right; }
+  .ladder-row .name { color: var(--ink); }
+  .ladder-row .grade {
+    font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .grade.best { color: #1d7a4c; background: #d9f2e3; }
+  .grade.worst { color: #a13939; background: #f6dede; }
+  :root:not([data-theme="light"]) .grade.best, :root[data-theme="dark"] .grade.best { color: #7fd9ab; background: #123425; }
+  :root:not([data-theme="light"]) .grade.worst, :root[data-theme="dark"] .grade.worst { color: #e69a9a; background: #3a1c1c; }
+
+  .concept-grid { display: grid; gap: 12px; margin: 0 0 22px; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .concept-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 6px; }
+  .concept-card code { font-family: var(--mono); font-size: 12px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .example { display: flex; gap: 12px; padding: 14px 16px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 22px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+  .recap { margin: 22px 0 0; padding: 15px 18px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .quiz { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .quiz .q-tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin-bottom: 8px; }
+  .quiz p.q { font-size: 14px; color: var(--ink); margin: 0 0 10px; }
+  .quiz details { font-size: 13px; color: var(--ink-soft); }
+  .quiz summary { cursor: pointer; color: var(--accent-strong); font-size: 12.5px; font-family: var(--mono); }
+  .quiz details[open] summary { margin-bottom: 8px; }
+
+  .why { margin: 0 0 22px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 15px; font-weight: 600; margin: 0 0 8px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .closing { margin-top: 34px; padding: 18px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 13.5px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="database.html">← データベースのLesson一覧に戻る</a>
+  <p class="eyebrow">学習資料 — データベース / Lesson5-2</p>
+  <h1>2周目課題: 正規化の具体的な段階</h1>
+  <p class="lede"><a href="database-lesson5-1.html">Lesson5-1</a>で見た「正規化」を、第1〜第3正規形という具体的な手順に分解する。</p>
+  <span class="time-badge">⏱ 所要時間の目安: 約15分</span>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">05</span>
+      <h2>正規化の3段階(第1〜第3正規形)</h2>
+    </div>
+    <span class="exam-tag">基本情報・応用情報 頻出</span>
+    <p class="topic-lede">「重複を減らす設計」を、実際にどういう手順で進めるか。基本情報・応用情報のデータベース分野で最頻出のテーマの1つ。</p>
+
+
+    <div class="why">
+      <h3>そもそも、段階に分ける理由</h3>
+      <p>
+        Lesson5-1では正規化を「同じ情報を重複して持たない設計」とまとめたが、実際には一気にやるのではなく、
+        <strong>1つずつ問題点を解消していく段階的な手順</strong>として整理されている。各段階は、前の段階の条件を満たした上で、さらに追加の条件を満たす形になっている。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>第1正規形</h4>
+        <p>1つのセル(列)に、複数の値を詰め込まない状態にすること。例えば「電話番号」列に「090-xxxx, 03-xxxx」のように複数値をカンマ区切りで入れているのはNG。1行1値になるよう表を分割・整理する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>第2正規形</h4>
+        <p>第1正規形を満たした上で、<strong>主キーの一部だけに依存する列</strong>(部分関数従属)を、別の表に切り出すこと。例: 「注文明細(注文ID+商品ID)」表に「商品名」があると、商品名は商品IDだけで決まる(注文IDには依存しない)ため、商品マスタ表へ分離する。</p>
+      </div>
+      <div class="concept-card">
+        <h4>第3正規形</h4>
+        <p>第2正規形を満たした上で、<strong>主キー以外の列に依存する列</strong>(推移的関数従属)を、別の表に切り出すこと。例: 「社員(社員ID・部署ID・部署名)」表で、部署名は部署ID(主キーではない列)に依存しているため、部署マスタ表へ分離する。</p>
+      </div>
+    </div>
+
+    <div class="example">
+      <span class="tag">関数従属性という考え方</span>
+      <p>
+        「列Aの値が決まれば、列Bの値も自動的に1つに決まる」関係を、<strong>AがBを関数的に決定する(関数従属)</strong>と呼ぶ。
+        正規化の各段階は、この関数従属の「望ましくないパターン」(1つの表の中に、主キー以外を起点とする従属関係が混ざっている状態)を、順番に見つけて分離していく作業と言い換えられる。
+      </p>
+    </div>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>第1正規形</strong>=1セルに複数値を入れない</li>
+        <li><strong>第2正規形</strong>=主キーの一部だけに依存する列(部分関数従属)を分離</li>
+        <li><strong>第3正規形</strong>=主キー以外に依存する列(推移的関数従属)を分離</li>
+        <li>各段階は<strong>前の段階の条件を含んだ上で</strong>、さらに条件を追加していく</li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <span class="q-tag">確認問題1(FE形式)</span>
+      <p class="q">Q. 「注文明細(注文ID, 商品ID, 商品名, 数量)」の表で、商品名が商品IDだけで決まり注文IDには依存しない場合、この表を第2正規形にするために行う操作はどれか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: 商品名の列を削除する / イ: 商品名を商品ID・商品名だけの別表(商品マスタ)に分離する / ウ: 注文IDと商品IDを1つの列に結合する / エ: 数量の列を複数の値に分割する<br><br><strong>正解: イ</strong>。主キー(注文ID+商品ID)の一部(商品ID)だけに依存する列を別表に切り出すのが第2正規形化。</p>
+      </details>
+    </div>
+    <div class="quiz">
+      <span class="q-tag">確認問題2(FE形式)</span>
+      <p class="q">Q. 「社員(社員ID, 部署ID, 部署名)」の表で、部署名が部署ID(主キーではない列)に依存している状態を解消する正規化はどれか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>ア: 第1正規形 / イ: 第2正規形 / ウ: 第3正規形 / エ: 正規化は不要<br><br><strong>正解: ウ</strong>。主キー以外の列(部署ID)に依存する列(部署名)を分離するのは第3正規形化(推移的関数従属の解消)。</p>
+      </details>
+    </div>
+
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: データベース Lesson5-1(参照資料)を踏まえた2周目の応用課題(基本情報・応用情報試験対策も兼ねる)。
+    <a href="database-lesson5-1.html">Lesson5-1に戻る</a> / <a href="database-lesson5-3.html">次のLesson5-3(排他制御)へ</a> / 自分の理解の記録は
+    <a href="../records/database.html">学習記録ページ</a>へ(未作成分野は分野一覧から)。
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習資料 — アーキテクチャ(2周目課題: 結合度・凝集度)</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 5vw, 34px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 62ch; margin: 0 0 16px; }
+  .lede a { color: var(--accent-strong); }
+  .time-badge {
+    display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 6px; padding: 4px 10px; margin: 0 0 40px;
+  }
+
+  section.topic { margin: 0; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .topic-lede { font-size: 14px; color: var(--ink-soft); max-width: 58ch; margin: 0 0 22px; }
+
+  .exam-tag {
+    display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+    color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin: 0 0 14px;
+  }
+
+  .ladder { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .ladder-row {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px;
+    padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px;
+  }
+  .ladder-row:last-child { border-bottom: none; }
+  .ladder-row .rank { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-align: right; }
+  .ladder-row .name { color: var(--ink); }
+  .ladder-row .grade {
+    font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .grade.best { color: #1d7a4c; background: #d9f2e3; }
+  .grade.worst { color: #a13939; background: #f6dede; }
+  :root:not([data-theme="light"]) .grade.best, :root[data-theme="dark"] .grade.best { color: #7fd9ab; background: #123425; }
+  :root:not([data-theme="light"]) .grade.worst, :root[data-theme="dark"] .grade.worst { color: #e69a9a; background: #3a1c1c; }
+
+  .concept-grid { display: grid; gap: 12px; margin: 0 0 22px; }
+  .concept-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .concept-card h4 { font-family: var(--mono); font-size: 13px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .concept-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  .concept-card p + p { margin-top: 6px; }
+  .concept-card code { font-family: var(--mono); font-size: 12px; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 5px; border-radius: 4px; }
+
+  .example { display: flex; gap: 12px; padding: 14px 16px; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; margin: 0 0 22px; }
+  .example .tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); white-space: nowrap; padding-top: 2px; }
+  .example p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+  .recap { margin: 22px 0 0; padding: 15px 18px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+  .recap .recap-tag { display: block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent-strong); margin-bottom: 8px; }
+  .recap ul { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink); }
+  .recap li { margin-bottom: 5px; }
+  .recap li:last-child { margin-bottom: 0; }
+  .recap strong { font-weight: 700; }
+
+  .quiz { margin: 0 0 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .quiz .q-tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 5px; padding: 2px 7px; margin-bottom: 8px; }
+  .quiz p.q { font-size: 14px; color: var(--ink); margin: 0 0 10px; }
+  .quiz details { font-size: 13px; color: var(--ink-soft); }
+  .quiz summary { cursor: pointer; color: var(--accent-strong); font-size: 12.5px; font-family: var(--mono); }
+  .quiz details[open] summary { margin-bottom: 8px; }
+
+  .why { margin: 0 0 22px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .why h3 { font-family: var(--serif); font-size: 15px; font-weight: 600; margin: 0 0 8px; color: var(--ink); }
+  .why p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; }
+  .why p:last-child { margin-bottom: 0; }
+  .why strong { color: var(--ink); font-weight: 600; }
+
+  .closing { margin-top: 34px; padding: 18px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-radius: 10px; font-size: 13.5px; color: var(--ink-soft); }
+  .closing strong { color: var(--ink); }
+  .closing a { color: var(--accent-strong); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="architecture.html">← アーキテクチャのLesson一覧に戻る</a>
+  <p class="eyebrow">学習資料 — アーキテクチャ / Lesson1-2</p>
+  <h1>2周目課題: 結合度・凝集度</h1>
+  <p class="lede"><a href="architecture-lesson1-1.html">Lesson1-1</a>で見た「モジュールをどう分けるか」という問いを、モジュール分割の良し悪しを測る古典的な指標に掘り下げる。</p>
+  <span class="time-badge">⏱ 所要時間の目安: 約15分</span>
+
+  <section class="topic">
+    <div class="topic-head">
+      <span class="topic-num">05</span>
+      <h2>結合度・凝集度</h2>
+    </div>
+    <span class="exam-tag">基本情報・応用情報 頻出</span>
+    <p class="topic-lede">Lesson1-1のSOLID(特にS: 単一責任の原則)を、「モジュール分割の良し悪しを測る具体的なものさし」にした古典的な指標。IPA試験(基本情報・応用情報)のソフトウェア設計分野で繰り返し問われる定番テーマ。</p>
+
+
+    <div class="why">
+      <h3>そもそも、なぜ2つの指標が必要か</h3>
+      <p>
+        「良い設計」は感覚的な言葉になりがちだが、結合度・凝集度はそれを<strong>数値的な段階として言語化</strong>したもの。
+        1970年代、構造化設計の文脈でラリー・コンスタンチンらが整理した考え方で、今でもソフトウェア設計の教科書・IPA試験の定番として使われ続けている。
+      </p>
+      <p>
+        <strong>結合度</strong>はモジュール<strong>同士</strong>の関係(外向き)、<strong>凝集度</strong>はモジュール<strong>内部</strong>の関係(内向き)を見ている、という向きの違いを押さえるのが最初の一歩。
+      </p>
+    </div>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>結合度(モジュール間の依存の強さ)</h4>
+        <p>2つのモジュールが、どれだけ密接に依存し合っているかを表す。<strong>結合度は低いほど良い</strong>(片方を変更しても、もう片方への影響が小さいため)。</p>
+      </div>
+      <div class="concept-card">
+        <h4>凝集度(モジュール内部のまとまりの強さ)</h4>
+        <p>1つのモジュールの中身が、どれだけ「1つの目的」に集中しているかを表す。<strong>凝集度は高いほど良い</strong>(Lesson1-1のSOLID・Sと同じ考え方)。</p>
+      </div>
+    </div>
+
+    <div class="ladder">
+      <div class="ladder-row"><span class="rank">弱</span><span class="name">データ結合 — 必要な引数だけを渡す</span><span class="grade best">最も良い</span></div>
+      <div class="ladder-row"><span class="rank">↑</span><span class="name">スタンプ結合 — 構造体やレコードごと渡す</span><span class="grade"></span></div>
+      <div class="ladder-row"><span class="rank">↑</span><span class="name">制御結合 — 相手の処理を制御するフラグを渡す</span><span class="grade"></span></div>
+      <div class="ladder-row"><span class="rank">↑</span><span class="name">外部結合 — 外部宣言したデータを共有</span><span class="grade"></span></div>
+      <div class="ladder-row"><span class="rank">↑</span><span class="name">共通結合 — グローバル変数を共有</span><span class="grade"></span></div>
+      <div class="ladder-row"><span class="rank">強</span><span class="name">内容結合 — 相手の内部を直接書き換える</span><span class="grade worst">最も悪い</span></div>
+    </div>
+    <p class="topic-lede">結合度は6段階(弱いほど良い)。試験では「結合度が最も弱い(良い)組み合わせはどれか」という形でよく問われる。</p>
+
+    <div class="example">
+      <span class="tag">具体例</span>
+      <p>
+        <strong>データ結合(良い例)</strong>: <code>calcTax(price)</code> のように、計算に必要な値だけを引数で渡す。呼び出し側と計算側は、その値の意味だけを共有していればよい。<br>
+        <strong>共通結合(悪い例)</strong>: グローバル変数 <code>currentPrice</code> を複数のモジュールが直接読み書きする。どのモジュールがいつ値を変えたか追いづらく、1箇所の変更が予期しない場所に影響しやすい。
+      </p>
+    </div>
+
+    <div class="ladder">
+      <div class="ladder-row"><span class="rank">弱</span><span class="name">暗号的強度 — たまたま同じモジュールに置いただけ</span><span class="grade worst">最も悪い</span></div>
+      <div class="ladder-row"><span class="rank">↑</span><span class="name">論理的強度 — 似た種類の処理を1つにまとめただけ</span><span class="grade"></span></div>
+      <div class="ladder-row"><span class="rank">↑</span><span class="name">時間的強度 — 初期化処理など「同じ時に実行する」だけでまとめる</span><span class="grade"></span></div>
+      <div class="ladder-row"><span class="rank">↑</span><span class="name">手順的強度 — 決まった順番で実行する処理をまとめる</span><span class="grade"></span></div>
+      <div class="ladder-row"><span class="rank">↑</span><span class="name">連絡的強度 — 同じデータを使う処理をまとめる</span><span class="grade"></span></div>
+      <div class="ladder-row"><span class="rank">強</span><span class="name">機能的強度 — 単一の明確な機能のためだけに存在する</span><span class="grade best">最も良い</span></div>
+    </div>
+    <p class="topic-lede">凝集度は7段階(強いほど良い)。最上位(機能的強度)と最下位(暗号的強度)の2つだけ確実に覚えれば、試験・実務ともにほぼ困らない。Lesson1-1のSOLID・S(単一責任)が目指す状態は、まさにこの「機能的強度」。</p>
+
+    <div class="recap">
+      <span class="recap-tag">要点</span>
+      <ul>
+        <li><strong>結合度は低く、凝集度は高く</strong>——この2軸だけ覚えれば設計の良し悪しを判断できる</li>
+        <li>結合度が最も弱い(良い)のは<strong>データ結合</strong>、最も強い(悪い)のは<strong>内容結合</strong></li>
+        <li>凝集度が最も強い(良い)のは<strong>機能的強度</strong>、最も弱い(悪い)のは<strong>暗号的強度</strong></li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <span class="q-tag">確認問題1(FE形式)</span>
+      <p class="q">Q. モジュール分割の設計方針として最も適切なものはどれか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>
+          ア: 結合度・凝集度とも高くする / イ: 結合度は高く、凝集度は低くする / ウ: 結合度は低く、凝集度は高くする / エ: 結合度・凝集度とも低くする<br><br>
+          <strong>正解: ウ</strong>。モジュール間の依存(結合度)は弱く、モジュール内部のまとまり(凝集度)は強くするのが良い設計の基本方針。
+        </p>
+      </details>
+    </div>
+    <div class="quiz">
+      <span class="q-tag">確認問題2(FE形式)</span>
+      <p class="q">Q. 複数のモジュールが同じグローバル変数を直接読み書きしている設計は、結合度の分類上どれに最も近いか。</p>
+      <details>
+        <summary>選択肢と答えを見る</summary>
+        <p>
+          ア: データ結合 / イ: スタンプ結合 / ウ: 共通結合 / エ: 内容結合<br><br>
+          <strong>正解: ウ(共通結合)</strong>。複数モジュールが共有領域(グローバル変数)を介して間接的に依存し合っている状態。なお、他モジュールの内部データ構造や処理そのものを直接書き換える(さらに強い依存)場合は内容結合になる。
+        </p>
+      </details>
+    </div>
+
+  </section>
+
+  <div class="closing">
+    <strong>このページの位置づけ</strong>: アーキテクチャ Lesson1-1(参照資料)を踏まえた2周目の応用課題(基本情報・応用情報試験対策も兼ねる)。
+    <a href="architecture-lesson1-1.html">Lesson1-1に戻る</a> / <a href="architecture-lesson1-3.html">次のLesson1-3(開発モデル)へ</a> / 自分の理解の記録は
+    <a href="../records/architecture.html">学習記録ページ</a>へ(未作成分野は分野一覧から)。
+  </div>
+
+</div>
+</body>
+</html>
