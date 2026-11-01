@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>図の種類</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 820px; margin: 0 auto; padding: 56px 24px 96px; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 38px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15.5px; color: var(--ink-soft); max-width: 64ch; margin: 0 0 24px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .caveat { margin: 0 0 44px; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 13.5px; color: var(--ink-soft); }
+  .caveat strong { color: var(--ink); font-weight: 600; }
+
+  section.topic { margin: 0 0 56px; padding-top: 40px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 999px; padding: 2px 10px; }
+  .topic-lede { font-size: 14.5px; color: var(--ink-soft); max-width: 60ch; margin: 10px 0 20px; }
+
+  .diagram-box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; margin: 0 0 16px; display: flex; justify-content: center; }
+  .diagram-box svg { max-width: 100%; height: auto; }
+
+  .use-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0; }
+  .use-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+  .use-card h4 { font-size: 13px; font-weight: 700; margin: 0 0 4px; color: var(--ink); }
+  .use-card p { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 14px; }
+
+  @media (max-width: 560px) {
+    .use-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">図の種類</p>
+  <h1>設計・資料作成でよく使う図の種類</h1>
+  <p class="lede">
+    基本情報技術者試験・応用情報技術者試験のソフトウェア設計/プロジェクトマネジメント分野で登場する図のうち、代表的なものをサンプル図付きでまとめています。
+    <strong>今後、資料や設計書を作る際にどの図を使うか迷ったら、ここを一覧として参照する。</strong>
+  </p>
+
+  <div class="caveat">
+    <strong>この一覧の位置づけ</strong><br>
+    このセッションの作成時点で、IPA公式のシラバスPDF(ipa.go.jp)へ直接アクセスできなかったため、ITmedia MONOIST等の解説記事や一般的な教科書的知識をもとに作成しています。
+    IPAの最新シラバスでの正確な項目名・分類との一字一句の一致は未確認です。網羅的な一覧ではなく、まず代表的なものだけを収録した状態なので、
+    <strong>追加してほしい図の種類があれば、その都度リクエストしてください。</strong>
+  </div>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">01</span><h2>フローチャート</h2><span class="topic-tag">基本情報</span></div>
+    <p class="topic-lede">処理の手順を、記号(端子・処理・判断など)と矢印で表した最も基本的な図。プログラムの処理の流れを表すのに使う。</p>
+    <div class="diagram-box">
+      <svg viewBox="0 0 260 300" width="220" height="254" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="fc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-soft)"/></marker></defs>
+        <ellipse cx="130" cy="24" rx="46" ry="20" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="130" y="29" text-anchor="middle" font-size="12" fill="var(--ink)">開始</text>
+        <line x1="130" y1="44" x2="130" y2="70" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#fc-arrow)"/>
+        <rect x="76" y="70" width="108" height="36" rx="4" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="130" y="92" text-anchor="middle" font-size="12" fill="var(--ink)">入力を受け取る</text>
+        <line x1="130" y1="106" x2="130" y2="130" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#fc-arrow)"/>
+        <polygon points="130,130 180,168 130,206 80,168" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="130" y="172" text-anchor="middle" font-size="12" fill="var(--ink)">条件を満たす?</text>
+        <line x1="180" y1="168" x2="226" y2="168" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#fc-arrow)"/>
+        <text x="203" y="160" text-anchor="middle" font-size="11" fill="var(--ink-faint)">No</text>
+        <line x1="226" y1="168" x2="226" y2="250" stroke="var(--ink-soft)" stroke-width="1.5"/>
+        <line x1="226" y1="250" x2="130" y2="250" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#fc-arrow)"/>
+        <line x1="130" y1="206" x2="130" y2="226" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#fc-arrow)"/>
+        <text x="140" y="220" font-size="11" fill="var(--ink-faint)">Yes</text>
+        <rect x="76" y="226" width="108" height="34" rx="4" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="130" y="247" text-anchor="middle" font-size="12" fill="var(--ink)">処理を実行</text>
+        <line x1="130" y1="260" x2="130" y2="276" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#fc-arrow)"/>
+        <ellipse cx="130" cy="290" rx="40" ry="18" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="130" y="294" text-anchor="middle" font-size="12" fill="var(--ink)">終了</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">02</span><h2>DFD(データフローダイアグラム)</h2><span class="topic-tag">基本情報/応用情報</span></div>
+    <p class="topic-lede">データがどこから来て、どう処理され、どこに保存・出力されるかを表す図。外部システム・処理・データの保管場所を記号で区別する。</p>
+    <div class="diagram-box">
+      <svg viewBox="0 0 320 160" width="300" height="150" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="dfd-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-soft)"/></marker></defs>
+        <rect x="10" y="60" width="70" height="40" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="45" y="84" text-anchor="middle" font-size="12" fill="var(--ink)">利用者</text>
+        <line x1="80" y1="80" x2="125" y2="80" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#dfd-arrow)"/>
+        <circle cx="160" cy="80" r="36" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="160" y="84" text-anchor="middle" font-size="12" fill="var(--ink)">注文処理</text>
+        <line x1="196" y1="80" x2="235" y2="80" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#dfd-arrow)"/>
+        <path d="M240,65 H310 V95 H240" fill="none" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <line x1="240" y1="65" x2="240" y2="95" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="275" y="84" text-anchor="middle" font-size="12" fill="var(--ink)">注文DB</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">03</span><h2>E-R図</h2><span class="topic-tag">基本情報/応用情報</span></div>
+    <p class="topic-lede">データベース設計で、実体(エンティティ)同士の関連と多重度(1対多など)を表す図。テーブル設計の土台になる。</p>
+    <div class="diagram-box">
+      <svg viewBox="0 0 300 120" width="280" height="112" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="35" width="90" height="50" rx="4" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="55" y="55" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">顧客</text>
+        <line x1="10" y1="60" x2="100" y2="60" stroke="var(--line)" stroke-width="1"/>
+        <text x="55" y="76" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)">顧客ID, 氏名</text>
+        <line x1="100" y1="60" x2="200" y2="60" stroke="var(--ink-soft)" stroke-width="1.5"/>
+        <text x="112" y="55" font-size="11" fill="var(--ink-faint)">1</text>
+        <text x="186" y="55" font-size="11" fill="var(--ink-faint)">N</text>
+        <rect x="200" y="35" width="90" height="50" rx="4" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="245" y="55" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">注文</text>
+        <line x1="200" y1="60" x2="290" y2="60" stroke="var(--line)" stroke-width="1"/>
+        <text x="245" y="76" text-anchor="middle" font-size="10.5" fill="var(--ink-soft)">注文ID, 顧客ID</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">04</span><h2>状態遷移図</h2><span class="topic-tag">基本情報/応用情報</span></div>
+    <p class="topic-lede">対象が持つ状態と、イベントによる状態の変化(遷移)を表す図。注文の状態管理やUIの画面状態など、「〇〇のとき△△になる」を整理するのに向く。</p>
+    <div class="diagram-box">
+      <svg viewBox="0 0 320 110" width="300" height="103" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="st-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-soft)"/></marker></defs>
+        <circle cx="55" cy="55" r="34" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="55" y="59" text-anchor="middle" font-size="12" fill="var(--ink)">未決済</text>
+        <line x1="89" y1="55" x2="151" y2="55" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#st-arrow)"/>
+        <text x="120" y="45" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">決済完了</text>
+        <circle cx="185" cy="55" r="34" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="185" y="59" text-anchor="middle" font-size="12" fill="var(--ink)">発送準備</text>
+        <line x1="219" y1="55" x2="281" y2="55" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#st-arrow)"/>
+        <text x="250" y="45" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">発送</text>
+        <circle cx="300" cy="55" r="18" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+        <circle cx="300" cy="55" r="12" fill="var(--accent)"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">05</span><h2>UMLクラス図</h2><span class="topic-tag">基本情報/応用情報</span></div>
+    <p class="topic-lede">プログラムのクラス(モノの種類)が持つ属性・操作と、クラス同士の関係(継承・関連)を表す図。オブジェクト指向設計の基本。</p>
+    <div class="diagram-box">
+      <svg viewBox="0 0 280 150" width="260" height="140" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="cl-arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0,0 L10,6 L0,12 z" fill="var(--surface)" stroke="var(--ink-soft)" stroke-width="1"/></marker></defs>
+        <rect x="90" y="8" width="100" height="56" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="140" y="24" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Animal</text>
+        <line x1="90" y1="30" x2="190" y2="30" stroke="var(--line)" stroke-width="1"/>
+        <text x="96" y="44" font-size="10.5" fill="var(--ink-soft)">- name</text>
+        <line x1="90" y1="50" x2="190" y2="50" stroke="var(--line)" stroke-width="1"/>
+        <text x="96" y="62" font-size="10.5" fill="var(--ink-soft)">+ speak()</text>
+        <line x1="140" y1="64" x2="140" y2="100" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#cl-arrow)"/>
+        <rect x="90" y="100" width="100" height="42" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="140" y="116" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Dog</text>
+        <line x1="90" y1="122" x2="190" y2="122" stroke="var(--line)" stroke-width="1"/>
+        <text x="96" y="135" font-size="10.5" fill="var(--ink-soft)">+ speak()</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">06</span><h2>UMLシーケンス図</h2><span class="topic-tag">基本情報/応用情報</span></div>
+    <p class="topic-lede">複数のオブジェクト(利用者・画面・サーバーなど)の間で、時間の流れに沿ってどういう順番でメッセージをやり取りするかを表す図。</p>
+    <div class="diagram-box">
+      <svg viewBox="0 0 300 150" width="280" height="140" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="sq-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-soft)"/></marker></defs>
+        <rect x="20" y="10" width="70" height="26" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="55" y="27" text-anchor="middle" font-size="11" fill="var(--ink)">利用者</text>
+        <line x1="55" y1="36" x2="55" y2="140" stroke="var(--line-strong)" stroke-dasharray="4,3" stroke-width="1.5"/>
+        <rect x="200" y="10" width="70" height="26" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="235" y="27" text-anchor="middle" font-size="11" fill="var(--ink)">サーバー</text>
+        <line x1="235" y1="36" x2="235" y2="140" stroke="var(--line-strong)" stroke-dasharray="4,3" stroke-width="1.5"/>
+        <line x1="55" y1="60" x2="235" y2="60" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#sq-arrow)"/>
+        <text x="145" y="52" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">ログイン要求</text>
+        <line x1="235" y1="100" x2="55" y2="100" stroke="var(--ink-soft)" stroke-width="1.5" stroke-dasharray="2,2" marker-end="url(#sq-arrow)"/>
+        <text x="145" y="92" text-anchor="middle" font-size="10.5" fill="var(--ink-faint)">認証結果を返す</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">07</span><h2>UMLアクティビティ図</h2><span class="topic-tag">基本情報/応用情報</span></div>
+    <p class="topic-lede">処理の流れを、担当者ごとの区分(スイムレーン)も含めて表せる図。フローチャートに近いが、並行処理(分岐して同時に進む処理)も表現できる点が特徴。</p>
+    <div class="diagram-box">
+      <svg viewBox="0 0 260 260" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="ac-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-soft)"/></marker></defs>
+        <circle cx="130" cy="18" r="10" fill="var(--ink)"/>
+        <line x1="130" y1="28" x2="130" y2="50" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#ac-arrow)"/>
+        <rect x="70" y="50" width="120" height="30" rx="15" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="130" y="70" text-anchor="middle" font-size="12" fill="var(--ink)">注文を受け付ける</text>
+        <line x1="130" y1="80" x2="130" y2="100" stroke="var(--ink-soft)" stroke-width="1.5"/>
+        <rect x="40" y="100" width="180" height="8" fill="var(--ink)"/>
+        <line x1="90" y1="108" x2="90" y2="130" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#ac-arrow)"/>
+        <line x1="170" y1="108" x2="170" y2="130" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#ac-arrow)"/>
+        <rect x="40" y="130" width="100" height="30" rx="15" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="90" y="150" text-anchor="middle" font-size="11" fill="var(--ink)">在庫を確保</text>
+        <rect x="130" y="130" width="80" height="30" rx="15" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="170" y="150" text-anchor="middle" font-size="11" fill="var(--ink)">決済する</text>
+        <line x1="90" y1="160" x2="90" y2="185" stroke="var(--ink-soft)" stroke-width="1.5"/>
+        <line x1="170" y1="160" x2="170" y2="185" stroke="var(--ink-soft)" stroke-width="1.5"/>
+        <rect x="40" y="185" width="180" height="8" fill="var(--ink)"/>
+        <line x1="130" y1="193" x2="130" y2="215" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#ac-arrow)"/>
+        <circle cx="130" cy="232" r="13" fill="none" stroke="var(--ink)" stroke-width="2"/>
+        <circle cx="130" cy="232" r="7" fill="var(--ink)"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">08</span><h2>ガントチャート</h2><span class="topic-tag">応用情報(PM分野)</span></div>
+    <p class="topic-lede">プロジェクトの各作業を横軸(時間)に沿った棒(バー)で表し、作業の開始・終了・並行度を一覧できる図。プロジェクト管理の定番。</p>
+    <div class="diagram-box">
+      <svg viewBox="0 0 320 150" width="300" height="140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="90" y1="10" x2="90" y2="135" stroke="var(--line)" stroke-width="1"/>
+        <line x1="150" y1="10" x2="150" y2="135" stroke="var(--line)" stroke-width="1"/>
+        <line x1="210" y1="10" x2="210" y2="135" stroke="var(--line)" stroke-width="1"/>
+        <line x1="270" y1="10" x2="270" y2="135" stroke="var(--line)" stroke-width="1"/>
+        <text x="90" y="8" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">1週</text>
+        <text x="150" y="8" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">2週</text>
+        <text x="210" y="8" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">3週</text>
+        <text x="270" y="8" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)">4週</text>
+        <text x="10" y="32" font-size="11.5" fill="var(--ink)">要件定義</text>
+        <rect x="30" y="20" width="90" height="16" rx="3" fill="var(--accent)"/>
+        <text x="10" y="62" font-size="11.5" fill="var(--ink)">設計</text>
+        <rect x="90" y="50" width="90" height="16" rx="3" fill="var(--accent)"/>
+        <text x="10" y="92" font-size="11.5" fill="var(--ink)">実装</text>
+        <rect x="150" y="80" width="120" height="16" rx="3" fill="var(--accent)"/>
+        <text x="10" y="122" font-size="11.5" fill="var(--ink)">テスト</text>
+        <rect x="240" y="110" width="70" height="16" rx="3" fill="var(--accent-strong)"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">09</span><h2>アローダイアグラム(PERT図)</h2><span class="topic-tag">応用情報(PM分野)</span></div>
+    <p class="topic-lede">作業の前後関係を矢印でつなぎ、どの経路が最も時間がかかるか(クリティカルパス)を見つけるための図。ガントチャートとセットで使われることが多い。</p>
+    <div class="diagram-box">
+      <svg viewBox="0 0 300 120" width="280" height="112" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="pert-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent-strong)"/></marker></defs>
+        <circle cx="25" cy="60" r="18" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="25" y="64" text-anchor="middle" font-size="11" fill="var(--ink)">①</text>
+        <line x1="43" y1="60" x2="97" y2="60" stroke="var(--accent-strong)" stroke-width="2" marker-end="url(#pert-arrow)"/>
+        <text x="70" y="50" text-anchor="middle" font-size="10" fill="var(--ink-faint)">3日</text>
+        <circle cx="115" cy="60" r="18" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="115" y="64" text-anchor="middle" font-size="11" fill="var(--ink)">②</text>
+        <line x1="133" y1="60" x2="187" y2="60" stroke="var(--accent-strong)" stroke-width="2" marker-end="url(#pert-arrow)"/>
+        <text x="160" y="50" text-anchor="middle" font-size="10" fill="var(--ink-faint)">5日</text>
+        <circle cx="205" cy="60" r="18" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="205" y="64" text-anchor="middle" font-size="11" fill="var(--ink)">③</text>
+        <line x1="223" y1="60" x2="257" y2="60" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#pert-arrow)"/>
+        <text x="240" y="50" text-anchor="middle" font-size="10" fill="var(--ink-faint)">2日</text>
+        <circle cx="275" cy="60" r="18" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"/>
+        <text x="275" y="64" text-anchor="middle" font-size="11" fill="var(--ink)">④</text>
+      </svg>
+    </div>
+  </section>
+
+  <div class="use-grid">
+    <div class="use-card"><h4>選び方の目安</h4><p>処理の順序を示したいならフローチャート/アクティビティ図、データの流れならDFD、データ構造ならE-R図、状態の変化なら状態遷移図、クラス構造ならクラス図、やり取りの順序ならシーケンス図、スケジュールならガントチャート、作業の依存関係ならアローダイアグラム。</p></div>
+    <div class="use-card"><h4>今後の追加方針</h4><p>この一覧は一旦作れる範囲でまとめたもの。ユースケース図・コンポーネント図・ネットワーク構成図など、必要になった時点で都度追加していく。</p></div>
+  </div>
+
+  <p class="source-note">作成日: 2026-11-01。IPA公式シラバスへの直接アクセスができなかったため、ITmedia MONOIST等の解説記事・一般的な教科書的知識をもとに作成(二次情報ベース)。公式シラバスでの項目名・分類との一致は未確認。</p>
+
+</div>
+</body>
+</html>
