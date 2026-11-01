@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI要素の名称集(namethatui.com参照)</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 920px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back-link { display: inline-block; font-size: 12.5px; color: var(--accent-strong); text-decoration: none; margin: 0 0 18px; }
+  .back-link:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 5vw, 36px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 64ch; margin: 0 0 24px; }
+
+  .caveat { margin: 0 0 32px; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 13.5px; color: var(--ink-soft); }
+  .caveat strong { color: var(--ink); font-weight: 600; }
+  .caveat a { color: var(--accent-strong); }
+
+  .ui-toggle { display: flex; gap: 8px; margin: 0 0 24px; border-bottom: 1px solid var(--line); }
+  .ui-toggle button {
+    font-family: var(--sans); font-size: 13.5px; font-weight: 600; color: var(--ink-soft);
+    background: none; border: none; border-bottom: 2px solid transparent; padding: 10px 4px; cursor: pointer;
+  }
+  .ui-toggle button.active { color: var(--accent-strong); border-bottom-color: var(--accent); }
+
+  .ui-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .ui-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; }
+  .ui-card h4 { font-family: var(--serif); font-size: 14.5px; font-weight: 700; margin: 0 0 5px; color: var(--ink); }
+  .ui-card p { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+  .ui-panel { display: none; }
+  .ui-panel.active { display: block; }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 24px; }
+  .source-note a { color: var(--accent-strong); }
+
+  @media (max-width: 560px) {
+    .ui-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="design.html">← 基本・詳細設計に戻る</a>
+  <p class="eyebrow">学習資料 — 基本・詳細設計</p>
+  <h1>UI要素の名称集(namethatui.com参照)</h1>
+  <p class="lede">UIのパーツには正式な名前があります。「あの、クリックしたら小さいウィンドウが出てくる感じのやつ」ではなく、正式名称で話せると、設計書・相談・コーディングAIへの指示がぶれなくなります。</p>
+
+  <div class="caveat">
+    <strong>この一覧の位置づけ</strong><br>
+    <a href="https://namethatui.com" target="_blank" rel="noopener">namethatui.com</a>(無料で公開されているUI要素のビジュアル辞典)の無料枠の範囲で参照・抽出した内容です(2026-11-01時点、Web 58件・macOS 33件の全件)。
+    有料(Proプラン)が必要な機能(画像アップロードでの検索等)は使っていません。この一覧自体は無料で閲覧できる範囲の情報をもとに作成しています。
+    設計の際、どの名称を使うか迷ったらここを参照し、必要なら<a href="design.html">design.html</a>の「自作」タブにある手書きの資料と併せて使ってください。
+  </div>
+
+  <div class="ui-toggle">
+    <button type="button" class="active" data-panel="web">Web (58)</button>
+    <button type="button" data-panel="mac">macOS (33)</button>
+  </div>
+
+  <div class="ui-panel active" id="panel-web">
+    <div class="ui-grid">
+      <div class="ui-card">
+        <h4>Accordion (Disclosure)</h4>
+        <p>“it has a plus icon when collapsed and minus icon when expanded” is called Accordion (Disclosure). Stacked sections whose headings expand and collapse their content. An accordion is a vertical stack of headings that disclose or hide associated content.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Avatar Group</h4>
+        <p>“the overlapping circles of profile pictures” is called Avatar Group. Overlapping profile circles with a ring between them and a +N at the end. “The overlapping circles of profile pictures” are an avatar group: a row of Avatar circles pulled over each other with a negative margin, each wearing a rin</p>
+      </div>
+      <div class="ui-card">
+        <h4>Badge vs. Chip vs. Pill vs. Tag</h4>
+        <p>“the little number bubble on an icon” is called Badge vs. Chip vs. Pill vs. Tag. Compact labels distinguished by meaning, shape, and interactivity. A badge is a tiny count or status marker attached to another object.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Bento Grid</h4>
+        <p>“several boxes in a grid bento” is called Bento Grid. One grid, mixed tile sizes — a layout packed like a bento box. “Several boxes in a grid — bento” is a bento grid: one CSS grid where tiles span different numbers of cells, so a hero tile sits among small ones like compartments in a Japanese lunch</p>
+      </div>
+      <div class="ui-card">
+        <h4>Bottom Navigation (Tab Bar)</h4>
+        <p>“bottom menu to go to different parts” is called Bottom Navigation (Tab Bar). The row of three to five icons pinned to the bottom of a phone app that switches sections. “The glass thing at the bottom of my iOS apps that has like 4 or 5 options” is a tab bar on iOS (UITabBar, SwiftUI TabView) and a n</p>
+      </div>
+      <div class="ui-card">
+        <h4>Breadcrumbs</h4>
+        <p>“the home slash section slash current page links” is called Breadcrumbs. A hierarchy trail from the current page back to its ancestors. Breadcrumbs show the current page&#x27;s position in a hierarchy and offer direct links back to its ancestors.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Card</h4>
+        <p>“status cards” is called Card. The rectangle with media, title, body, and a footer — every part has a name. “Those boxes on the dashboard” are cards, and every region of one has a name: the media on top, the header with the title, the body, the metadata row, and the footer with the actions.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Carousel</h4>
+        <p>“a card slider” is called Carousel. A strip of slides you page through with arrows or the little dots. “A card slider / carousel slider thing” is a carousel: a strip of slides you page through with arrow buttons or the little dots — the dots are officially the slide picker controls.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Chat Bubble (Message Bubble)</h4>
+        <p>“los bocadillos que salen en una conversacion” is called Chat Bubble (Message Bubble). The rounded box around one message in a conversation, yours on one side, theirs on the other. “Los bocadillos que salen en una conversación” (the speech bubbles in a conversation) are chat bubbles, also called mes</p>
+      </div>
+      <div class="ui-card">
+        <h4>Combobox (Autocomplete / Typeahead)</h4>
+        <p>“输入下拉” is called Combobox (Autocomplete / Typeahead). A text input paired with a filtered list of selectable suggestions. A combobox combines an editable text field with a popup list of matching values.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Command Palette</h4>
+        <p>“the command k menu” is called Command Palette. A keyboard-first searchable launcher for actions and navigation. A command palette is a keyboard-first overlay that searches actions, pages, and objects from one place.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Data Table (Table View)</h4>
+        <p>“list of records with columns” is called Data Table (Table View). Rows and columns of records, with column names you click to sort. “A list of records with columns” is a data table: an HTML &lt;table&gt; on the web, an NSTableView (SwiftUI Table) on the Mac, the Details view in Windows File Explorer.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Date Picker</h4>
+        <p>“calendar” is called Date Picker. The little calendar that pops up on a date field — and the highlighted stripe of a range. “The little calendar that pops up” on a date field is a date picker — the field is the trigger, the floating month is the calendar popover, and the grid of days is a role=&quot;grid</p>
+      </div>
+      <div class="ui-card">
+        <h4>Divider vs. Separator vs. Rule</h4>
+        <p>“between those line breaks” is called Divider vs. Separator vs. Rule. The same thin line can mark a topic break, separate controls, or be decoration. A horizontal rule marks a change of topic in content, so HTML gives it the semantic &lt;hr&gt; element.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Drag &amp; Drop</h4>
+        <p>“those kind of a 3x3 or 2x2” is called Drag &amp; Drop. The grips, handles, previews, and landing cues around a drag interaction. Drag and drop lets someone move or place an object directly.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Easing (Timing Function)</h4>
+        <p>“the animation feels robotic and linear” is called Easing (Timing Function). The speed curve of an animation — why motion feels smooth or robotic. “The animation feels robotic” is almost always easing — the timing function, the curve that maps time to progress.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Empty State</h4>
+        <p>“the screen shown when there is nothing here” is called Empty State. Purposeful guidance shown when a view has no content yet. An empty state replaces a content view when there are no items to show, whether on first use, after filtering, or after everything is removed.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Floating Action Button vs. Chat Launcher vs. Back-to-Top</h4>
+        <p>“a round button at the bottom of the screen” is called Floating Action Button vs. Chat Launcher vs. Back-to-Top. Three different round buttons that float in the bottom-right corner of a screen. “A round button at the bottom of the screen” is usually one of three things: a floating action button, a c</p>
+      </div>
+      <div class="ui-card">
+        <h4>Focus Ring (:focus-visible)</h4>
+        <p>“the outline around a button after pressing tab” is called Focus Ring (:focus-visible). The keyboard-aware outline that identifies the active control. A focus ring identifies the element that will receive the next keyboard action.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Form Field</h4>
+        <p>“the gray text inside the box that disappears when you type” is called Form Field. Every part of a labeled input — label, placeholder, helper text, and the red error line. “The gray text inside the box that disappears when you type” is the placeholder — one of five parts of a form field that each ha</p>
+      </div>
+      <div class="ui-card">
+        <h4>Hamburger Menu (Nav Drawer)</h4>
+        <p>“the three horizontal lines used to open a menu” is called Hamburger Menu (Nav Drawer). The three-line button and the navigation panel it slides open. “The three horizontal lines used to open a menu” are a hamburger button, and the panel it slides open is a navigation drawer.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Hover Card</h4>
+        <p>“the profile preview when you hover a username” is called Hover Card. A rich, non-modal preview revealed from a hovered or focused reference. A hover card is a rich preview associated with a person, place, or linked object.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Hover Highlight vs. Hover Lift vs. Cursor Spotlight</h4>
+        <p>“when you hover over a button, it changes color” is called Hover Highlight vs. Hover Lift vs. Cursor Spotlight. Three things a button or card can do when the mouse moves over it. “When you hover over a button, it changes color” is a hover highlight, the pale tint CSS paints with :hover (Material cal</p>
+      </div>
+      <div class="ui-card">
+        <h4>Inline Alert vs. Callout vs. Banner</h4>
+        <p>“the yellow warning box” is called Inline Alert vs. Callout vs. Banner. Three in-page notices named by where they sit, and none of them is a toast. “The yellow warning box” is an inline alert: a notice that sits in the content flow and stays until it is resolved or dismissed (Material UI &lt;Alert seve</p>
+      </div>
+      <div class="ui-card">
+        <h4>Lightbox</h4>
+        <p>“when you click a photo and it opens big with a dark background” is called Lightbox. The click-to-enlarge image overlay that dims the page behind it. “Click the picture and it opens big with everything dark behind it” is a lightbox: a modal image viewer layered over the page.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Marquee</h4>
+        <p>“the logos that scroll sideways by themselves” is called Marquee. Content that auto-scrolls sideways in an endless loop. “The logos that slide across by themselves” is a marquee — content auto-scrolling in an endless horizontal loop, named after the deprecated &lt;marquee&gt; tag.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Masonry Layout (Pinterest Grid)</h4>
+        <p>“the pinterest style grid where every card is a different height” is called Masonry Layout (Pinterest Grid). Cards of different heights packed into columns with no row gaps. “The Pinterest grid where every card keeps its own height” is a masonry layout — each new item joins the shortest column, so c</p>
+      </div>
+      <div class="ui-card">
+        <h4>Modal Dialog vs. Drawer vs. Sheet</h4>
+        <p>“the popup in the middle that blocks the page” is called Modal Dialog vs. Drawer vs. Sheet. Three overlay patterns distinguished by placement, scope, and task depth. A modal dialog is centered, blocks the underlying interface, and suits a short decision or focused task.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Multi-select</h4>
+        <p>“dropdown with checkboxes” is called Multi-select. One control holding several values: the checkbox dropdown, the chip field, and the two-pane transfer list. A multi-select is one control that holds several chosen values at once.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Pagination</h4>
+        <p>“datatable pagination” is called Pagination. The numbered page buttons under a list — and the dot version, the page control. “The numbered buttons at the bottom of the list” are pagination — a nav landmark of page-number links with the current one marked aria-current=&quot;page&quot;.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Parallax Scrolling</h4>
+        <p>“efecto de imagen atras de web” is called Parallax Scrolling. Layers that scroll at different speeds — the background lags and depth appears. “The background moves slower than the page” is parallax scrolling — layers translating at different rates while you scroll, faking depth.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Pie Chart vs. Donut Chart</h4>
+        <p>“the circle chart with a hole in the middle” is called Pie Chart vs. Donut Chart. A circle cut into slices, or the same ring with a hole in the middle. “A circle split into slices” is a pie chart; cut a hole in the middle and it becomes a donut chart (Swift Charts SectorMark with innerRadius, Chart.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Popover vs. Dropdown Menu vs. Tooltip</h4>
+        <p>“the little box attached to a button” is called Popover vs. Dropdown Menu vs. Tooltip. Three anchored overlays with different triggers, content, and dismissal rules. A popover opens on click and can contain rich text, controls, or forms; it stays until explicitly or externally dismissed.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Product Tour (Coach Marks)</h4>
+        <p>“the page goes dark except one button, with a little bubble pointing at it” is called Product Tour (Coach Marks). The first-run walkthrough that dims the page and lights up one button at a time. “The page goes dark except one button, with a little bubble pointing at it” is a product tour, also calle</p>
+      </div>
+      <div class="ui-card">
+        <h4>Progress Ring vs. Spinner vs. Progress Bar</h4>
+        <p>“that circle for the countdown, that circle that gets filled up” is called Progress Ring vs. Spinner vs. Progress Bar. A spinner means wait; a ring or bar can show how much work is complete. A spinner loops without showing how much work remains.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Resize Handle (Size Grip)</h4>
+        <p>“three small diagonal lines at the bottom right of a text field” is called Resize Handle (Size Grip). The three diagonal lines in a text box&#x27;s corner that you drag to make it bigger. “Three small diagonal lines at the bottom right of a text field” is the resize handle, or size grip — the ribbed corn</p>
+      </div>
+      <div class="ui-card">
+        <h4>Scrim (Backdrop / Overlay)</h4>
+        <p>“the dark see-through layer behind a popup” is called Scrim (Backdrop / Overlay). The translucent layer that separates a modal surface from the page. A scrim is the translucent full-area layer between an open modal surface and the content behind it.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Scroll Reveal vs. Stacking Cards vs. Hide-on-Scroll Header</h4>
+        <p>“the animations which show up as you scroll” is called Scroll Reveal vs. Stacking Cards vs. Hide-on-Scroll Header. Three things that move as you scroll: a fade-in, a card pile, a hiding header. “The animations which show up as you scroll” are usually one of three effects: a scroll reveal, stacking c</p>
+      </div>
+      <div class="ui-card">
+        <h4>Scrollspy</h4>
+        <p>“a tab section updated by the scroll” is called Scrollspy. The On this page list whose current link follows what you&#x27;re reading. “The contents list down the side that follows where I am in the article” is a scrollspy, also called scroll-linked or in-page navigation.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Sign-in Form</h4>
+        <p>“登陆界面” is called Sign-in Form. The login form&#x27;s nameable parts — the eye, the OR line, and the Continue-with buttons. “The eye icon on the password field”, “the sign in with google buttons”, “the line that says or” — a sign-in form (login form to everyone else) is a bundle of parts with real names: </p>
+      </div>
+      <div class="ui-card">
+        <h4>Site Header vs. Navigation Bar</h4>
+        <p>“navbar” is called Site Header vs. Navigation Bar. The whole top strip is the header; the row of page links inside it is the nav. “The navbar” is usually two nested things.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Skeleton vs. Spinner</h4>
+        <p>“the grey shapes while content loads” is called Skeleton vs. Spinner. Two loading indicators for predictable layouts and indeterminate waits. A skeleton previews the geometry of content that has not arrived, reducing layout shift and making a predictable page feel faster.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Spring Animation</h4>
+        <p>“the bouncy animation that goes past and comes back” is called Spring Animation. Physics-based motion that overshoots the target and settles. “It bounces a little past where it lands” is a spring animation — motion driven by physics (stiffness, damping, mass) instead of a duration and curve.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Status Dot (Presence Indicator)</h4>
+        <p>“the little green dot” is called Status Dot (Presence Indicator). The tiny colored circle on an avatar or row that says online, away, busy or live. “The little green dot” is a status dot, called a presence indicator when it shows whether a person is online (Fluent UI: PresenceBadge; Ant Design&#x27;s own</p>
+      </div>
+      <div class="ui-card">
+        <h4>Steps</h4>
+        <p>“the numbered circles showing step 1 2 3 at checkout” is called Steps. The numbered circles across the top of a checkout or wizard, one per stage. “The numbered circles showing step 1 2 3 at checkout” are Steps (Material UI calls the component a Stepper, Ant Design and Chakra UI call it Steps).</p>
+      </div>
+      <div class="ui-card">
+        <h4>Sticky vs. Fixed Positioning</h4>
+        <p>“the header that stays while the panel scrolls” is called Sticky vs. Fixed Positioning. Two ways to keep an element visible with different containing blocks. A sticky element participates in normal layout until scrolling reaches its inset, then stays pinned within its containing scroll area.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Submenu vs. Cascader vs. Drill-Down Menu</h4>
+        <p>“a menu option with an arrow that opens a second menu beside it” is called Submenu vs. Cascader vs. Drill-Down Menu. Three ways a menu opens its next level: beside it, in columns, or in place. “A menu option with an arrow that opens a second menu” is a submenu (Radix DropdownMenu.Sub): pointing at t</p>
+      </div>
+      <div class="ui-card">
+        <h4>Switch vs. Checkbox vs. Radio</h4>
+        <p>“the on off sliding control” is called Switch vs. Checkbox vs. Radio. Controls for an on/off setting, independent choices, or one choice from a group. A switch controls a binary setting and communicates that the change takes effect immediately, like turning notifications on.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Tabs</h4>
+        <p>“the row of labels that switches the panel below” is called Tabs. A single row of labels that switches one shared content region. Tabs organize peer views into one shared region, with exactly one tab and panel active at a time.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Text Scramble (Decode Effect)</h4>
+        <p>“the text that shuffles random letters until it spells the word” is called Text Scramble (Decode Effect). Random characters churn and settle into the real text. “The letters shuffle until they spell the word” is a text scramble, also called the decode or Matrix effect — every character churns throug</p>
+      </div>
+      <div class="ui-card">
+        <h4>The Three Dots (Overflow Menu)</h4>
+        <p>“the three dots menu” is called The Three Dots (Overflow Menu). Horizontal dots, vertical dots, three lines, and an ellipsis mean different things. Three horizontal dots are commonly called meatballs and three vertical dots a kebab; both usually open an overflow or More menu of secondary actions.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Timeline</h4>
+        <p>“timeline” is called Timeline. A vertical line of dots with one dated event beside each, in the order things happened. “Vertical lines connecting like a change log does” is a Timeline: a list of events in the order they happened, each marked by a dot, with a connector line running from dot to dot an</p>
+      </div>
+      <div class="ui-card">
+        <h4>Toast (Snackbar)</h4>
+        <p>“the little message that pops up in the corner” is called Toast (Snackbar). A brief, non-blocking message that appears after an action. A toast is a compact, non-modal status message that appears in a screen corner after an action and dismisses automatically.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Toggle Group (Segmented Control)</h4>
+        <p>“the connected row of buttons where one stays selected” is called Toggle Group (Segmented Control). A connected row of compact options with one persistent selection. A toggle group is a compact row of related buttons that behave as one selection control.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Truncation (Ellipsis &amp; Line Clamp)</h4>
+        <p>“the text gets cut off with three dots” is called Truncation (Ellipsis &amp; Line Clamp). Text cut short with … — at the end of the line, after N lines, or in the middle. “The text that gets cut off with three dots” is truncation, and the dots are an ellipsis (…, one character — not three periods).</p>
+      </div>
+      <div class="ui-card">
+        <h4>Typewriter vs. Rotating Words vs. Text Shimmer</h4>
+        <p>“text that appears letter after letter” is called Typewriter vs. Rotating Words vs. Text Shimmer. Text that types itself, swaps one word, or shimmers while an AI thinks. “Text that appears letter after letter” is a typewriter effect, “the word that rolls up” is rotating words, and “the gray Thinking</p>
+      </div>
+      <div class="ui-card">
+        <h4>Waffle Menu (App Launcher)</h4>
+        <p>“the grid of nine dots in the top corner that opens all your apps” is called Waffle Menu (App Launcher). The nine-dot button in a corner that opens a panel of app icons. “The grid of nine dots in the top corner” is a waffle menu, or app launcher: an icon button that opens a panel of app tiles, each </p>
+      </div>
+      <div class="ui-card">
+        <h4>Wheel Picker vs. Time Field vs. Clock Dial</h4>
+        <p>“a scrollable wheel component, usually used for date picker” is called Wheel Picker vs. Time Field vs. Clock Dial. Three ways to pick a time: a spinning wheel, a typed box, a round dial. “A scrollable wheel” you spin to pick a time is a wheel picker (UIDatePicker in the .wheels style), the iOS slot-</p>
+      </div>
+    </div>
+  </div>
+  <div class="ui-panel" id="panel-mac">
+    <div class="ui-grid">
+      <div class="ui-card">
+        <h4>Alert</h4>
+        <p>“the popup with the app icon and a yellow warning triangle” is called Alert. The small centered window with a badged icon, a bold line, and Cancel/OK buttons. “The little warning window with the app icon and two buttons” is an alert — NSAlert.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Color Well</h4>
+        <p>“the small rectangle showing the current color” is called Color Well. The little swatch button that shows the current color and opens the picker. “The little square showing the current color” is a color well — NSColorWell.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Column View (Browser)</h4>
+        <p>“the finder columns thing” is called Column View (Browser). Finder-style columns that reveal each successive level of a hierarchy. A column view is a hierarchical browser where every selected branch opens its children in the next column to the right.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Combo Button</h4>
+        <p>“the button with a separate little arrow attached” is called Combo Button. A primary action joined to a separate arrow that opens related actions. A combo button combines two adjacent targets: a main button that immediately performs the default action and a small arrow button that opens related alte</p>
+      </div>
+      <div class="ui-card">
+        <h4>Context Menu</h4>
+        <p>“the menu that appears when you right click” is called Context Menu. The menu opened at the pointer by right-clicking or Control-clicking an item. A context menu exposes actions relevant to the object under the pointer and opens from a secondary click or Control-click.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Disclosure Triangle</h4>
+        <p>“the tiny triangle that opens a folder row” is called Disclosure Triangle. The small rotating control that reveals or hides nested content. A disclosure triangle is the compact indicator beside an outline row or section label that reveals nested content.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Dock Badge</h4>
+        <p>“the red number bubble on a dock icon” is called Dock Badge. The red count or status label overlaid on an app&#x27;s Dock icon. A Dock badge is the small red label overlaid on an application&#x27;s Dock icon, usually showing an unread or pending count.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Focus Ring</h4>
+        <p>“the blue glow around the selected control” is called Focus Ring. The accent-colored glow that identifies the control receiving keyboard input. A focus ring is the accent-colored glow, commonly blue, around the control that currently receives keyboard interaction.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Insertion Caret (Insertion Point)</h4>
+        <p>“the blinking line where i am typing” is called Insertion Caret (Insertion Point). The blinking line inside text that marks where the next character will appear. “The blinking line where I am typing” is the insertion caret, also called the insertion point.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Inspector</h4>
+        <p>“the properties panel on the right side” is called Inspector. The right-hand panel for viewing and editing details of the current selection. An inspector is a trailing panel that displays properties and controls for the item currently selected in the main content.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Level Indicator</h4>
+        <p>“the row of stars for a rating” is called Level Indicator. A Mac gauge rendered as a capacity bar, rating stars, or relevance meter. A level indicator shows a value inside a known range rather than the progress of an ongoing task.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Mac Window</h4>
+        <p>“the whole mac app box on screen” is called Mac Window. The movable Mac app frame, from its title bar and toolbar to its resize edges. A Mac window is the movable, usually resizable frame that holds one app surface.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Menu Bar</h4>
+        <p>“the bar at the top of the mac screen” is called Menu Bar. The strip along the top of the Mac screen — every part, labeled. The menu bar is the translucent strip across the top of the Mac screen.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Menu Bar Extra (Status Item)</h4>
+        <p>“the icon in the top right of the mac menu bar” is called Menu Bar Extra (Status Item). The icon that lives on the right side of the macOS menu bar. A menu bar extra is the small icon on the right side of the macOS menu bar, next to the clock — Wi-Fi, battery, and third-party apps all live here.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Outline View</h4>
+        <p>“the indented list with little expand arrows” is called Outline View. An indented tree of rows that expand to reveal nested children. An outline view is a tree-shaped list: rows can contain children, indentation shows depth, and disclosure triangles expand or collapse branches.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Panel (Floating Window / HUD)</h4>
+        <p>“small utility window that stays above the main window” is called Panel (Floating Window / HUD). An auxiliary macOS window that floats above related document windows. A panel is an auxiliary window for tools, controls, or transient information rather than a primary document.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Pointer (Cursor)</h4>
+        <p>“the text cursor with little bits at the top and bottom” is called Pointer (Cursor). Every shape the mouse pointer takes — and the real name of each one. Every shape the Mac pointer takes has a real name.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Pop-Up Button vs. Pull-Down Button vs. Combo Box</h4>
+        <p>“the dropdown that shows the currently selected option” is called Pop-Up Button vs. Pull-Down Button vs. Combo Box. Three similar-looking macOS controls for choosing a value or invoking a menu action. A pop-up button represents a selection: its closed label shows the current choice, and opening it p</p>
+      </div>
+      <div class="ui-card">
+        <h4>Popover</h4>
+        <p>“the little floating bubble with an arrow” is called Popover. A floating bubble whose arrow points back to the control that opened it. A popover is a lightweight floating bubble for controls or information related to one specific source view.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Rule Editor (Predicate Editor)</h4>
+        <p>“rows of dropdowns with a minus and plus button at the end of each row” is called Rule Editor (Predicate Editor). The rows of pop-up menus with − and + buttons that build a search. “The rows of dropdowns with a − and + at the end” are a rule editor, AppKit&#x27;s NSPredicateEditor.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Save Panel</h4>
+        <p>“the mac save as window” is called Save Panel. The standard Mac dialog for naming a file and choosing where to save it. A save panel is the system dialog for choosing a filename, location, and sometimes file format.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Scroll View (Scroller)</h4>
+        <p>“the area you can scroll inside” is called Scroll View (Scroller). A viewport whose AppKit scrollbar is called a scroller. A scroll view is a viewport onto content larger than the visible region.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Search Field</h4>
+        <p>“the rounded box with a magnifying glass” is called Search Field. A Mac text field with built-in search, clearing, and recent-query controls. A search field is a text input specialized for filtering or finding content.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Segmented Control</h4>
+        <p>“the connected row of buttons where one stays selected” is called Segmented Control. A row of connected choices with the current segment visibly selected. A segmented control groups a small set of related choices into one horizontal row of connected buttons.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Sheet</h4>
+        <p>“dialog that slides down from the window title bar” is called Sheet. A modal panel attached to one macOS window rather than the whole app. A sheet is a modal panel attached to a particular window, traditionally descending from its title bar.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Sidebar (Source List)</h4>
+        <p>“the translucent list down the left side of a mac app” is called Sidebar (Source List). The translucent navigation column along the left edge of a macOS window. A sidebar is the leftmost navigation column used by apps such as Finder and Mail to organize destinations into sections.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Slider</h4>
+        <p>“the dot you drag left and right to change a value” is called Slider. The round knob you drag along a track to pick a value from a range. “The dot you drag along a line” is a slider — NSSlider.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Split View</h4>
+        <p>“the window divided into two resizable panels” is called Split View. Resizable panes separated by a draggable divider inside a Mac window. A split view divides one window region into two or more panes that can resize independently.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Stepper</h4>
+        <p>“the tiny up and down arrows beside a number field” is called Stepper. The compact up-and-down arrow pair used to increment or decrement a value. A stepper is a pair of small stacked arrow buttons for changing a value by a fixed increment.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Token Field</h4>
+        <p>“the text field with removable pills inside it” is called Token Field. A text input that turns recognized values into removable rounded tokens. A token field converts recognized pieces of typed text into discrete rounded tokens, like recipients in a mail compose window.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Toolbar (Unified Title Bar)</h4>
+        <p>“the row of buttons across the top of a mac window” is called Toolbar (Unified Title Bar). A row of window actions integrated with the modern macOS title bar. A toolbar holds the primary actions for a window and can share a single top row with the window title in the unified style.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Traffic Lights (Window Controls)</h4>
+        <p>“the three colored dots in the corner of a mac window” is called Traffic Lights (Window Controls). The red, yellow, and green controls at the top-left of a macOS window. Traffic lights are the red close, yellow minimize, and green window controls at the top-left of a macOS window.</p>
+      </div>
+      <div class="ui-card">
+        <h4>Visual Effect Material (Vibrancy)</h4>
+        <p>“the frosted glass background behind a mac sidebar” is called Visual Effect Material (Vibrancy). The adaptive translucent background used behind macOS sidebars, menus, and panels. A visual effect material supplies the adaptive translucent background seen behind macOS sidebars, menus, and panels.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="source-note">作成日: 2026-11-01。出典: <a href="https://namethatui.com" target="_blank" rel="noopener">namethatui.com</a>(各名称の詳細な解剖図・エイリアス・コーディングエージェント向けプロンプトは公式サイト側で確認してください)。</p>
+
+</div>
+<script>
+  document.querySelectorAll(".ui-toggle button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".ui-toggle button").forEach((b) => b.classList.toggle("active", b === btn));
+      const target = btn.dataset.panel;
+      document.getElementById("panel-web").classList.toggle("active", target === "web");
+      document.getElementById("panel-mac").classList.toggle("active", target === "mac");
+    });
+  });
+</script>
+</body>
+</html>

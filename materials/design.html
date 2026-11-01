@@ -73,6 +73,15 @@
     font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--ink-faint);
     background: var(--surface-2); border-radius: 5px; padding: 2px 7px; white-space: nowrap;
   }
+
+  .src-toggle { display: flex; gap: 8px; margin: 0 0 20px; border-bottom: 1px solid var(--line); }
+  .src-toggle button {
+    font-family: var(--sans); font-size: 13.5px; font-weight: 600; color: var(--ink-soft);
+    background: none; border: none; border-bottom: 2px solid transparent; padding: 10px 4px; cursor: pointer;
+  }
+  .src-toggle button.active { color: var(--accent-strong); border-bottom-color: var(--accent); }
+  .src-panel { display: none; }
+  .src-panel.active { display: block; }
 </style>
 </head>
 <body>
@@ -83,24 +92,54 @@
   <h1>基本・詳細設計</h1>
   <p class="lede">UI・画面設計/外部インターフェース仕様/処理フローの詳細設計/エラーハンドリング仕様/API仕様の詳細</p>
 
-  <a class="subject-row" href="design-lesson7-1.html">
-    <span class="icon">📐</span>
-    <span class="body">
-      <h2><span class="lesson-tag">Lesson7-1</span>1周目(参照資料)</h2>
-      <p>UI・画面設計/外部インターフェース仕様/処理フローの詳細設計/エラーハンドリング仕様/API仕様の詳細</p>
-    </span>
-    <span class="arrow">→</span>
-  </a>
-  <a class="subject-row" href="design-lesson7-2.html">
-    <span class="icon">📐</span>
-    <span class="body">
-      <h2><span class="lesson-tag">Lesson7-2</span>DFD・E-R図の基本</h2>
-      <p>データフロー図と実体関連図、多重度(基本情報・応用情報 頻出)。約15分。</p>
-    </span>
-    <span class="arrow">→</span>
-  </a>
+  <!-- 2026-11-01追加、ユーザー指示「自作とこのサイト(namethatui.com)の、学習資料一覧内で
+       切り替えられるようにしてほしい」。既存のデータソースタブ(manager-subview-toggle)と
+       同じボタン+パネル切り替えパターンを、この学習資料ページ内にも適用した(rule23)。 -->
+  <div class="src-toggle">
+    <button type="button" class="active" data-src="own">自作</button>
+    <button type="button" data-src="external">外部サイト参照</button>
+  </div>
 
+  <div class="src-panel active" id="src-panel-own">
+    <a class="subject-row" href="design-lesson7-1.html">
+      <span class="icon">📐</span>
+      <span class="body">
+        <h2><span class="lesson-tag">Lesson7-1</span>1周目(参照資料)</h2>
+        <p>UI・画面設計/外部インターフェース仕様/処理フローの詳細設計/エラーハンドリング仕様/API仕様の詳細</p>
+      </span>
+      <span class="arrow">→</span>
+    </a>
+    <a class="subject-row" href="design-lesson7-2.html">
+      <span class="icon">📐</span>
+      <span class="body">
+        <h2><span class="lesson-tag">Lesson7-2</span>DFD・E-R図の基本</h2>
+        <p>データフロー図と実体関連図、多重度(基本情報・応用情報 頻出)。約15分。</p>
+      </span>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <div class="src-panel" id="src-panel-external">
+    <a class="subject-row" href="design-lesson7-3.html">
+      <span class="icon">🔗</span>
+      <span class="body">
+        <h2><span class="lesson-tag">Lesson7-3</span>UI要素の名称集(namethatui.com参照)</h2>
+        <p>Web 58件・macOS 33件、計91件のUI要素の正式名称と説明。namethatui.com(無料枠)から抽出。</p>
+      </span>
+      <span class="arrow">→</span>
+    </a>
+  </div>
 
 </div>
+<script>
+  document.querySelectorAll(".src-toggle button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".src-toggle button").forEach((b) => b.classList.toggle("active", b === btn));
+      const target = btn.dataset.src;
+      document.getElementById("src-panel-own").classList.toggle("active", target === "own");
+      document.getElementById("src-panel-external").classList.toggle("active", target === "external");
+    });
+  });
+</script>
 </body>
 </html>
