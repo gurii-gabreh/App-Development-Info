@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>使用システム一覧</title>
+<style>
+  :root {
+    --bg: #eef2f0;
+    --surface: #ffffff;
+    --surface-2: #f5f8f7;
+    --ink: #1b2a2f;
+    --ink-soft: #55676c;
+    --ink-faint: #8b9a9e;
+    --accent: #2e6e8e;
+    --accent-strong: #204d64;
+    --accent-soft: #dbe9ef;
+    --accent-soft-2: #eef4f7;
+    --warn: #a5572a;
+    --warn-soft: #f7ecdf;
+    --line: #d6dfe0;
+    --line-strong: #b9c6c8;
+    --serif: Iowan Old Style, "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+      --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+      --accent: #74b9d6; --accent-strong: #a7d4e8;
+      --accent-soft: #223640; --accent-soft-2: #1c2d35;
+      --warn: #e0a06a; --warn-soft: #2e2419;
+      --line: #2a3639; --line-strong: #3b4a4d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101718; --surface: #182124; --surface-2: #1c2629;
+    --ink: #e7eef0; --ink-soft: #a3b3b6; --ink-faint: #6c7c80;
+    --accent: #74b9d6; --accent-strong: #a7d4e8;
+    --accent-soft: #223640; --accent-soft-2: #1c2d35;
+    --warn: #e0a06a; --warn-soft: #2e2419;
+    --line: #2a3639; --line-strong: #3b4a4d;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  .page { max-width: 860px; margin: 0 auto; padding: 56px 24px 96px; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 5vw, 36px); line-height: 1.25; margin: 0 0 16px; text-wrap: balance; color: var(--ink); }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 64ch; margin: 0 0 24px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .caveat { margin: 0 0 44px; padding: 16px 20px; background: var(--accent-soft-2); border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 13.5px; color: var(--ink-soft); }
+  .caveat strong { color: var(--ink); font-weight: 600; }
+
+  section.topic { margin: 0 0 52px; padding-top: 36px; border-top: 1px solid var(--line); }
+  section.topic:first-of-type { border-top: none; padding-top: 0; }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .topic-num { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0; color: var(--ink); text-wrap: balance; }
+  .topic-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 999px; padding: 2px 10px; }
+
+  .sys-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0 0 14px; }
+  .sys-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .sys-card h4 { font-size: 12.5px; font-weight: 700; margin: 0 0 6px; color: var(--accent-strong); }
+  .sys-card p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+
+  .sys-block { margin: 0 0 14px; }
+  .sys-block h4 { font-size: 12.5px; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+  .sys-block p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  .used-in-list { margin: 0; padding-left: 18px; font-size: 13px; color: var(--ink-soft); }
+  .used-in-list li { margin-bottom: 3px; }
+  .used-in-list strong { color: var(--ink); }
+
+  .sys-concern { margin: 0 0 14px; padding: 12px 16px; background: var(--warn-soft); border: 1px solid var(--warn); border-radius: 8px; }
+  .sys-concern h4 { font-size: 12.5px; font-weight: 700; margin: 0 0 6px; color: var(--warn); }
+  .sys-concern p { font-size: 13px; color: var(--ink); margin: 0; }
+
+  .sys-docs { font-size: 12px; color: var(--ink-faint); margin: 0 0 6px; word-break: break-all; }
+  .sys-docs a { color: var(--accent-strong); }
+
+  .source-note { font-size: 11.5px; color: var(--ink-faint); margin: 0; }
+
+  @media (max-width: 560px) {
+    .sys-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="design.html" style="display:inline-block;font-size:12.5px;color:var(--accent-strong);text-decoration:none;margin:0 0 18px;">← 基本・詳細設計に戻る</a>
+  <p class="eyebrow">学習資料 — 基本・詳細設計</p>
+  <h1>使用システム一覧(実績つき)</h1>
+  <p class="lede">これまで管理対象リポジトリ群で実際に使ったシステム・プラットフォームの一覧です。<strong>新しい要件が出たとき、まずここを見て「このシステムが使えるか」を判断する</strong>ための参照資料です。</p>
+
+  <div class="caveat">
+    <strong>この一覧の位置づけ</strong><br>
+    無料枠・条件はサービス側の都合で変わるため、各項目に確認日(verifiedAt)と情報の確度(confidence: official=公式ドキュメントで確認／secondary=二次情報のみ)を付けています。古くなっていると感じたら、使う前に公式ドキュメントで再確認してください。最終更新: 2026-11-02。
+  </div>
+
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">01</span><h2>GitHub Pages + GitHub Actions</h2><span class="topic-tag">静的ホスティング + 自動化(CI/CD)</span></div>
+
+    <div class="sys-grid">
+      <div class="sys-card"><h4>最適な用途</h4><p>サーバー側処理が不要な静的サイト(HTML/CSS/JS、JSONを直接fetchして表示するダッシュボード等)。mainへのpushをトリガーに自動デプロイできるため、このセッション(Claude Code)だけでcommit→push→公開まで完全に完結できるのが最大の利点。</p></div>
+      <div class="sys-card"><h4>使用できる条件(無料枠等)</h4><p>公開サイトのサイズ1GBまで(ソースリポジトリも1GB推奨上限)、帯域は月100GBのソフトリミット、ビルドは1時間10回のソフトリミット(ただしカスタムのGitHub Actionsワークフローでビルド・公開する場合はこの制限の対象外)、デプロイは10分でタイムアウト。GitHub Actionsは2026年1月の改定でFreeプラン月2,000分(パブリックリポジトリの標準ランナーは無制限無料とする記事もあり)。</p></div>
+    </div>
+
+    <div class="sys-block"><h4>どのアプリで使ったか</h4><ul class="used-in-list"><li><strong>progress-tracker-dashboard</strong>: dashboard.html本体、deploy-pages.yml</li><li><strong>App-Development-Info</strong>: 学習資料・学習方針・図の種類・UI要素名称集</li><li><strong>servicenow-sub-agent</strong>: AI研究ビューアーサイト</li><li><strong>claude-voice-bridge</strong>: 拡張機能に関連する公開ページ</li><li><strong>Task-WBS</strong>: WBSカレンダー表示</li></ul></div>
+
+    <div class="sys-concern"><h4>⚠ 懸念箇所</h4><p>サーバー側処理(APIキーを隠した外部連携・Webhook受信・認証・定期cron)ができない。データはJSONファイルをgit管理する形になるため、大規模なリレーショナル検索には不向き。</p></div>
+
+    <div class="sys-block"><h4>必要な設定</h4><p>リポジトリのPages設定を有効化するだけ(初回のみユーザー側でON)。以降の更新はClaude Code側のgit push+Actionsで完結し、追加のユーザー操作は不要。</p></div>
+
+    <div class="sys-docs">公式ドキュメント: <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits" target="_blank" rel="noopener">https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits</a></div>
+    <p class="source-note">確認日: 2026-11-02 ／ 情報の確度: official(GitHub Pagesの制限値のみ公式ドキュメントで確認。Actionsの無料枠分数は二次情報)</p>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">02</span><h2>Google Apps Script(GAS) + Google Sheets</h2><span class="topic-tag">軽量バックエンド + スプレッドシートDB</span></div>
+
+    <div class="sys-grid">
+      <div class="sys-card"><h4>最適な用途</h4><p>スプレッドシートを人が直接見る/編集するUIとして使いたい場合。Webアプリとしてデプロイすれば、認証無しの簡易API(doGet/doPost)としても使える。</p></div>
+      <div class="sys-card"><h4>使用できる条件(無料枠等)</h4><p>スクリプト本体の実行時間は1実行あたり6分、カスタム関数は30秒、同時実行数は30、という情報があるが2026年時点の正確な数値は公式未確認。</p></div>
+    </div>
+
+    <div class="sys-block"><h4>どのアプリで使ったか</h4><ul class="used-in-list"><li><strong>progress-tracker-dashboard</strong>: gas/Code.gs、GASウェブアプリ経由の依頼タスクタブ⇄完了タブ移動(README記載、現在はtasks.json直接管理が主流で縮小傾向)</li><li><strong>ai-research-radar</strong>: Gemini APIによる1日1回自動調査、依頼タスクタブのステータス直接更新</li><li><strong>study-app</strong>: gas/</li><li><strong>gemini-monitor</strong>: gas/</li><li><strong>claude-voice-bridge</strong>: gas/</li><li><strong>supermarket-price-tracker</strong>: Code.gs</li><li><strong>prompt-manager</strong>: Code.gs</li></ul></div>
+
+    <div class="sys-concern"><h4>⚠ 懸念箇所</h4><p>コード変更のたびに手動での再デプロイが必要(GitHubと自動連携していない)。ghGetJson_/ghPut_パターンはファイル全体を読んで全体を書き戻す方式のため、頻繁に書くログと滅多に書かないデータを同居させると非効率(data/claude-core-rules.mdルール29参照)。</p></div>
+
+    <div class="sys-block"><h4>必要な設定</h4><p>初回のGASエディタでのデプロイ(ウェブアプリとして公開、アクセス権限設定)はユーザー側で行う必要がある。コード自体はClaude Codeが書ける。</p></div>
+
+    
+    <p class="source-note">確認日: 2026-11-02 ／ 情報の確度: secondary(実行時間等のクォータ数値は二次情報のみ、公式クォータページ未確認)</p>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">03</span><h2>Cloudflare Workers + D1 + Pages + Workers AI</h2><span class="topic-tag">サーバーレスバックエンド + SQLiteデータベース + AI推論</span></div>
+
+    <div class="sys-grid">
+      <div class="sys-card"><h4>最適な用途</h4><p>本格的なサーバー側処理(認証・暗号化・定期cron・AI推論)が必要なアプリ。D1はSQLite互換のリレーショナルDBとして使える。</p></div>
+      <div class="sys-card"><h4>使用できる条件(無料枠等)</h4><p>Workers無料枠は1日10万リクエスト(UTC 0時リセット)、CPU時間30ms、スクリプトサイズ1MB。Pagesは月500ビルド・同時1ビルド・ファイル数2万。D1の無料枠の具体的数値は今回未確認。</p></div>
+    </div>
+
+    <div class="sys-block"><h4>どのアプリで使ったか</h4><ul class="used-in-list"><li><strong>kizashi</strong>: 都知事杯オープンデータ・ハッカソン2026提出作品。D1(事案データ)・Workers AI(傾聴AIチャット)・cron(毎日19:00 UTC=日本時間4:00に事案自動削除)を使用。本番URL: kizashi-app.yui-gurii.workers.dev</li></ul></div>
+
+    <div class="sys-concern"><h4>⚠ 懸念箇所</h4><p>実際のCloudflareアカウントへのデプロイ(wrangler login/d1 create/secret put/deploy)はユーザー自身の認証情報が必要で、このセッションだけでは完結できない(PTD系の他アプリと違う最大の制約)。ハッカソン等でイベント運営から「Paidプラン相当」の招待を受けた組織アカウントを使う場合、自分がBilling権限を持たない可能性があり、請求状況の自己確認ができないことがある(2026-11-01、kizashiのtokyo_odh_260アカウントで確認)。</p></div>
+
+    <div class="sys-block"><h4>必要な設定</h4><p>wrangler login(ブラウザでの認証)、D1データベースの実体作成、マイグレーション適用、secret put(APIキー等。Claude Codeは入力しない)、wrangler deploy。いずれもユーザー自身の操作が必要。</p></div>
+
+    
+    <p class="source-note">確認日: 2026-11-02 ／ 情報の確度: secondary(Workers/Pagesの無料枠数値は二次情報、公式Limitsページ未確認。D1は未確認)</p>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">04</span><h2>ServiceNow PDI(Personal Developer Instance)</h2><span class="topic-tag">無料開発者インスタンス(Scheduled Job・REST連携)</span></div>
+
+    <div class="sys-grid">
+      <div class="sys-card"><h4>最適な用途</h4><p>定期実行(Scheduled Job)でAPI/RSSから情報を自動収集し、GitHub Actionsへエクスポートするパイプライン。</p></div>
+      <div class="sys-card"><h4>使用できる条件(無料枠等)</h4><p>個人開発者向けに無料で提供されるインスタンス。定期的に使わないと非アクティブ判定され、最終的に回収(reclaim)される可能性がある(具体的な日数は公式未確認)。回収されると復旧できない。新規申請の待機期間は2〜3週間以上かかる場合があるとの報告あり。</p></div>
+    </div>
+
+    <div class="sys-block"><h4>どのアプリで使ったか</h4><ul class="used-in-list"><li><strong>servicenow-sub-agent</strong>: AI/開発関連情報の自動収集パイプライン(Scheduled Job→REST Message→u_ai_research_itemテーブル→GitHub Actionsでresearch-items.jsonへエクスポート)</li></ul></div>
+
+    <div class="sys-concern"><h4>⚠ 懸念箇所</h4><p>非アクティブによる自動回収リスクがある(定期的なログイン・利用が必要)。障害時にPDI自体が一時利用不可になることがある(2026年7月に発生例あり、コミュニティ報告ベース)。</p></div>
+
+    <div class="sys-block"><h4>必要な設定</h4><p>developer.servicenow.comでのPDI申請・取得(ユーザー側)。Scheduled Job・REST Messageの設定はClaude Codeが支援できるが、PDIへのログイン自体はユーザーの認証情報が必要。</p></div>
+
+    
+    <p class="source-note">確認日: 2026-11-02 ／ 情報の確度: secondary(ServiceNow公式ドキュメントではなくコミュニティ投稿ベース)</p>
+  </section>
+
+  <section class="topic">
+    <div class="topic-head"><span class="topic-num">05</span><h2>LINE Messaging API</h2><span class="topic-tag">メッセージング連携(無料コミュニケーションプラン)</span></div>
+
+    <div class="sys-grid">
+      <div class="sys-card"><h4>最適な用途</h4><p>ユーザーへのプッシュ通知・Bot的な応答機能。</p></div>
+      <div class="sys-card"><h4>使用できる条件(無料枠等)</h4><p>無料の「コミュニケーションプラン」は月200通まで(送信回数×友だち数で計算)。応答メッセージ(Reply API)は無料枠にカウントされない、とする解説が複数あるが公式料金ページでの裏付けは今回未確認。2026年10月に追加メッセージの単価改定があったとの報道あり(具体的な金額は未確認)。</p></div>
+    </div>
+
+    <div class="sys-block"><h4>どのアプリで使ったか</h4><ul class="used-in-list"><li><strong>kizashi</strong>: crisisResponse.js・chat.jsで使用</li></ul></div>
+
+    <div class="sys-concern"><h4>⚠ 懸念箇所</h4><p>無料枠の月200通は少なく、友だち数が増えると配信回数が制限される。応答メッセージ中心の設計にすれば枠消費を抑えられる(二次情報ベース)。</p></div>
+
+    <div class="sys-block"><h4>必要な設定</h4><p>LINE Developersコンソールでのチャネル作成・アクセストークン発行はユーザー側で行う必要がある。</p></div>
+
+    <div class="sys-docs">公式ドキュメント: <a href="https://developers.line.biz/ja/docs/messaging-api/overview/" target="_blank" rel="noopener">https://developers.line.biz/ja/docs/messaging-api/overview/</a></div>
+    <p class="source-note">確認日: 2026-11-02 ／ 情報の確度: secondary(無料枠の通数等は二次情報、公式料金ページでの金額未確認)</p>
+  </section>
+
+</div>
+</body>
+</html>
